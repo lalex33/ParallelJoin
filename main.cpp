@@ -1,4 +1,3 @@
-#include "SortMergeJoin.h"
 #include "Statistique.h"
 
 int main(){
