@@ -7,10 +7,10 @@
 #include <cstdio>
 #include <ctime>
 
-const int NB_ROWS_MAX = 90000;
-const int INTEGER_MAX = 100;
+const int NB_ROWS_MAX = 90000; // maximum value of rows to compute
+const int INTEGER_MAX = 100; // maximum value of random integer generated
 
-const string FILE_NAME = "join_stat.csv";
+const string FILE_NAME = "join_stat.csv"; // output file for the results
 
 void launchPerformanceTest();
 
