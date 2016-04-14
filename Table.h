@@ -35,6 +35,8 @@ public:
 
     // http://stackoverflow.com/a/12468109
     friend std::string random_string( size_t length );
+
+    friend void testTableSortMergeJoin();
 };
 
 

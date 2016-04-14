@@ -29,7 +29,7 @@ void Table::addRandomRows(size_t nbRows) {
         // add data
         row.rowId = nbRow;
         for(int column=0; column<nbColumns; column++){
-            row.values.push_back(random_string(FIELD_MAX_LENGTH));
+            //row.values.push_back(random_string(FIELD_MAX_LENGTH));
         }
 
         // add the row generated
@@ -50,7 +50,7 @@ void Table::sort(uint columnsToSort[]) {
  * merge two tables on one or more columns
  */
 Table Table::merge(const Table &table, uint columnsToMergeR1[], uint columnsTomergeR2[]) {
-    return nullptr;
+    return Table(5);
 }
 
 /*
@@ -69,4 +69,20 @@ string random_string(size_t length) {
     string str(length, 0);
     generate_n(str.begin(), length, randchar);
     return str;
+}
+
+void testTableSortMergeJoin() {
+    Table R(3);
+    Table S(3);
+
+    R.addRandomRows(10);
+    S.addRandomRows(10);
+
+    uint columnR[2] = {0,2};
+    R.sort(columnR);
+
+    uint columnS[2] = {2,0};
+    S.sort(columnS);
+
+    Table result = R.merge(S, columnR, columnS);
 }

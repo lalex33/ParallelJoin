@@ -59,11 +59,9 @@ void printSortMerge(const Relation &r, const Relation &s, const vector<string> &
  * fill a table of <nbRows> rows with random integer between 0 and <maxValue>
  */
 void initRandomData(Relation &relation, int maxValue, int nbRows){
-    int i=0;
-    while(i < nbRows){
+    for(int i=0; i < nbRows; i++){
         int value = rand() % maxValue;
         relation.push_back(value);
-        i++;
     }
 }
 
