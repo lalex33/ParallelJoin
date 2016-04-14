@@ -15,16 +15,18 @@ const int R_SIZE = 10; // number of rows in R
 const int S_SIZE = 10; // number of rows in S
 const int MAX_VALUE = 20; // max value for random integer
 
+typedef vector<int> Relation;
+
 void testSortMergeJoin();
 
-void printRelation(const vector<int> &relation);
+void printRelation(const Relation &relation);
 
-void printSortMerge(const vector<int> &r, const vector<int> &s, const vector<string> &result);
+void printSortMerge(const Relation &r, const Relation &s, const vector<string> &result);
 
-void initRandomData(vector<int> &relation, int maxValue, int nbRows);
+void initRandomData(Relation &relation, int maxValue, int nbRows);
 
-void sortRelation(vector<int> &relation);
+void sortRelation(Relation &relation);
 
-vector<string> mergeRelations(const vector<int> &r, const vector<int> &s);
+vector<string> mergeRelations(const Relation &r, const Relation &s);
 
 #endif //SORTMERGEJOIN_SORTMERGEJOIN_H

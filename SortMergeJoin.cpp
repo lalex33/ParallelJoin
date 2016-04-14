@@ -8,8 +8,8 @@
 void testSortMergeJoin() {
     srand(time(NULL)); // generate a seed
 
-    vector<int> R;
-    vector<int> S;
+    Relation R;
+    Relation S;
 
     // initialize relations with random data
     initRandomData(R, MAX_VALUE, R_SIZE);
@@ -29,7 +29,7 @@ void testSortMergeJoin() {
 /*
  * print rows of a table
  */
-void printRelation(const vector<int> &relation){
+void printRelation(const Relation &relation){
     cout << "Row    | Value" << endl;
     int row=0;
     for(auto value : relation){
@@ -40,7 +40,7 @@ void printRelation(const vector<int> &relation){
 /*
  * print sorted relations then the result of sort-merge join
  */
-void printSortMerge(const vector<int> &r, const vector<int> &s, const vector<string> &result){
+void printSortMerge(const Relation &r, const Relation &s, const vector<string> &result){
     cout << "Table R sorted" << endl;
     printRelation(r);
     cout << endl << endl;
@@ -58,7 +58,7 @@ void printSortMerge(const vector<int> &r, const vector<int> &s, const vector<str
 /*
  * fill a table of <nbRows> rows with random integer between 0 and <maxValue>
  */
-void initRandomData(vector<int> &relation, int maxValue, int nbRows){
+void initRandomData(Relation &relation, int maxValue, int nbRows){
     int i=0;
     while(i < nbRows){
         int value = rand() % maxValue;
@@ -70,12 +70,12 @@ void initRandomData(vector<int> &relation, int maxValue, int nbRows){
 /*
  * sort a table with STL function
  */
-void sortRelation(vector<int> &relation){
+void sortRelation(Relation &relation){
     sort(relation.begin(), relation.end());
 }
 
 // implementation of sort-merge-algorithm : http://www.dcs.ed.ac.uk/home/tz/phd/thesis/node20.htm
-vector<string> mergeRelations(const vector<int> &r, const vector<int> &s){
+vector<string> mergeRelations(const Relation &r, const Relation &s){
     // init vars
     vector<string> result;
     string match;
