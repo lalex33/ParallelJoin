@@ -1,7 +1,3 @@
-//
-// Created by Alexis bayle on 13/04/2016.
-//
-
 #ifndef SORTMERGEJOIN_SORTMERGEJOIN_H
 #define SORTMERGEJOIN_SORTMERGEJOIN_H
 

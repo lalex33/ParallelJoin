@@ -1,7 +1,3 @@
-//
-// Created by Alexis bayle on 13/04/2016.
-//
-
 #include "SortMergeJoin.h"
 
 // launch a join and display result

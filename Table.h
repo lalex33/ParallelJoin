@@ -1,7 +1,3 @@
-//
-// Created by Alexis bayle on 14/04/2016.
-//
-
 #ifndef SORTMERGEJOIN_TABLE_H
 #define SORTMERGEJOIN_TABLE_H
 
