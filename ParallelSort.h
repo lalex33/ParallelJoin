@@ -6,14 +6,16 @@
 #include <time.h>
 #include <vector>
 
+// https://www.youtube.com/watch?v=xhr26ia4k38
+
 typedef unsigned int uint;
 typedef unsigned long ulong;
 
 // constants
-const size_t TABLE_ROWS_R = 16;
+const size_t TABLE_ROWS_R = 10000;
 const size_t TABLE_ROWS_S = 16;
-const uint MAX_RAND_VALUE = 506;
-const uint NB_THREAD = 8;
+const uint MAX_RAND_VALUE = 12300;
+const uint NB_THREAD = 4;
 
 void test();
 
@@ -38,7 +40,7 @@ void radixSort(int* table, std::vector<std::vector<int>>& buckets,
 
 // utility function
 int max(int* table, int size);
-int getDigit (int number, int pos);
+int getDigit (int number, int pos); // http://stackoverflow.com/a/7438270
 
 /*
  * NOT IMPLEMENTED

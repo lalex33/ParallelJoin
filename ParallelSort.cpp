@@ -28,9 +28,15 @@ void test(){
 
     int* R = new int[TABLE_ROWS_R];
     fillTable(R, TABLE_ROWS_R, MAX_RAND_VALUE);
+
+    clock_t start = clock();
+
     parallelSort(R, TABLE_ROWS_R);
 
-    cout << "finished" << endl;
+    cout << (( clock() - start ) / (double) CLOCKS_PER_SEC) << endl;
+    for(int i=0; i<TABLE_ROWS_R; i++){
+        cout << R[i] << "  <  ";
+    }
 
     delete[] R;
 }
@@ -43,7 +49,7 @@ void fillTable(int* table, size_t size, uint maxValue){
 
 void parallelSort(int* table, int size){
     // compute size of the max int
-    ulong digitLength = to_string(max(table, size)).length();
+    ulong digitLength = to_string(max(table, size)).length(); // can be improved with thread
 
     // compute number of int to sort by a thread
     uint sizePerThread = size / NB_THREAD;
@@ -64,18 +70,18 @@ void parallelSort(int* table, int size){
             thread.join();
         }
 
-        // put sorted values in array
+        // put sorted digit values in array
         int* pos = table;
-        for(uint i=0; i < buckets.size() ; i++){
-            for(uint j=0; j < buckets[i].size(); j++){
-                *pos = buckets[i][j];
+        for(auto bucket : buckets){
+            for(auto value : bucket){
+                *pos = value;
                 ++pos;
             }
         }
 
         // clear temporary arrays
-        for(auto bucket : buckets){
-            bucket.clear(); // not freed
+        for(auto &bucket : buckets){
+            bucket.clear();
         }
         threads.clear();
     }
