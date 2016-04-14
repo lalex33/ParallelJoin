@@ -14,16 +14,14 @@ void launchPerformanceTest(){
         std::clock_t start;
         double duration;
 
-        for(int p = 1; p <= NB_POW; p++){
-            int nb_rows = powInteger(10, p);
-
+        for(int nb_rows = 5000; nb_rows <= NB_ROWS_MAX; nb_rows += 5000){
             R.clear();
             S.clear();
 
             initRandomData(R, INTEGER_MAX, nb_rows);
             initRandomData(S, INTEGER_MAX, nb_rows);
 
-            cout << "Starting compute " << nb_rows << endl;
+            cout << "Computing " << nb_rows << " rows" << endl;
             start = std::clock();
 
             sortRelation(R);
@@ -32,7 +30,7 @@ void launchPerformanceTest(){
             join = mergeRelations(R, S);
 
             duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-            cout << nb_rows << " DONE : " << duration << endl;
+            cout << " DONE in " << duration << " seconds" << endl;
 
             string result = to_string(nb_rows) + ";" + to_string(duration) + "\r\n";
             file.write(result.c_str(), result.size());
@@ -41,13 +39,5 @@ void launchPerformanceTest(){
         file.close();
     }else{
         cout << "error at file opening" << endl;
-    }
-}
-
-int powInteger(int number, int exponent){
-    if(exponent == 0){
-        return 1;
-    }else{
-        return number * powInteger(number, exponent-1);
     }
 }

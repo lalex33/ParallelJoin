@@ -7,13 +7,11 @@
 #include <cstdio>
 #include <ctime>
 
-const int NB_POW = 5;
+const int NB_ROWS_MAX = 90000;
 const int INTEGER_MAX = 100;
 
 const string FILE_NAME = "join_stat.csv";
 
 void launchPerformanceTest();
-
-int powInteger(int number, int exponent);
 
 #endif //SORTMERGEJOIN_STATISTIQUE_H
