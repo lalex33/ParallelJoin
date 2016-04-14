@@ -1,5 +1,6 @@
 #include "Statistique.h"
 #include "Table.h"
+#include "ParallelSort.h"
 
 int main(){
 
@@ -7,10 +8,13 @@ int main(){
     //testSortMergeJoin();
 
     // launch test of sort-merg between two tables
-    launchPerformanceTest();
+    //launchPerformanceTest();
 
     // possible use of Table when it will be fully implemented
     //testTableSortMergeJoin();
+
+    // shows example of parallel sort-merge join
+    testParallelJoin();
 
     return 0;
 }
