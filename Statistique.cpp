@@ -13,7 +13,8 @@ void launchPerformanceTest(){
     vector<string> join;
 
     clock_t start;
-    double duration;
+    double durationSort;
+    double durationMerge;
 
     // open a file to store results
     ofstream file(FILE_NAME, ofstream::out);
@@ -33,21 +34,23 @@ void launchPerformanceTest(){
 
             cout << "Computing " << nb_rows << " rows" << endl;
             // start the chrono
-            start = std::clock();
+            start = clock();
 
             // sort the two relation
             sortRelation(R);
             sortRelation(S);
 
+            durationSort = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+
+            start = clock();
             // merge both sorted relation
             join = mergeRelations(R, S);
 
-            // end the chrono
-            duration = ( clock() - start ) / (double) CLOCKS_PER_SEC;
-            cout << " DONE in " << duration << " seconds" << endl;
+            durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+            cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
 
             // save the result in the file
-            string result = to_string(nb_rows) + ";" + to_string(duration) + "\r\n";
+            string result = to_string(nb_rows) + ";" + to_string(durationSort) + ";" + to_string(durationMerge) + "\r\n";
             file.write(result.c_str(), result.size());
         }
 

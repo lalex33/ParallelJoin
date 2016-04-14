@@ -4,10 +4,10 @@
 int main(){
 
     // shows an example of sort-merge join
-    testSortMergeJoin();
+    //testSortMergeJoin();
 
     // launch test of sort-merg between two tables
-    //launchPerformanceTest();
+    launchPerformanceTest();
 
     // possible use of Table when it will be fully implemented
     //testTableSortMergeJoin();
