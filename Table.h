@@ -8,8 +8,11 @@
 #include <vector>
 #include <string>
 
+typedef unsigned int uint;
+const size_t FIELD_MAX_LENGTH = 10;
+
 struct Row {
-    size_t rowId;
+    std::size_t rowId;
     std::vector<std::string> values;
 };
 
@@ -26,10 +29,12 @@ public:
 
     void addRandomRows(size_t nbRows);
 
-    void sort(unsigned int columnsToSort[]);
+    void sort(uint columnsToSort[]);
 
-    Table merge(const Table &table, unsigned int columnsToMerge[]);
+    Table merge(const Table &table, uint columnsToMergeR1[], uint columnsTomergeR2[]);
 
+    // http://stackoverflow.com/a/12468109
+    friend std::string random_string( size_t length );
 };
 
 

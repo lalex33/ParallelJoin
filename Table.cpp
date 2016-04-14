@@ -2,6 +2,7 @@
 // Created by Alexis bayle on 14/04/2016.
 //
 
+#include <stdlib.h>
 #include "Table.h"
 
 using namespace std;
@@ -28,7 +29,7 @@ void Table::addRandomRows(size_t nbRows) {
         // add data
         row.rowId = nbRow;
         for(int column=0; column<nbColumns; column++){
-            row.values.push_back("random string here");
+            row.values.push_back(random_string(FIELD_MAX_LENGTH));
         }
 
         // add the row generated
@@ -37,15 +38,35 @@ void Table::addRandomRows(size_t nbRows) {
 }
 
 /*
+ * NOT IMPLEMENTED YET
  * sort the table on one or more columns
  */
-void Table::sort(unsigned int columnsToSort[]) {
+void Table::sort(uint columnsToSort[]) {
 
 }
 
 /*
+ * NOT IMPLEMENTED YET
  * merge two tables on one or more columns
  */
-Table Table::merge(const Table &table, unsigned int columnsToMerge[]) {
+Table Table::merge(const Table &table, uint columnsToMergeR1[], uint columnsTomergeR2[]) {
     return nullptr;
+}
+
+/*
+ * generate a random string
+ */
+string random_string(size_t length) {
+    auto randchar = []() -> char
+    {
+        const char charset[] =
+                "0123456789"
+                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                        "abcdefghijklmnopqrstuvwxyz";
+        const size_t max_index = (sizeof(charset) - 1);
+        return charset[ rand() % max_index ];
+    };
+    string str(length, 0);
+    generate_n(str.begin(), length, randchar);
+    return str;
 }
