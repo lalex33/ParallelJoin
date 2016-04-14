@@ -12,7 +12,7 @@ typedef unsigned long ulong;
 // constants
 const size_t TABLE_ROWS_R = 16;
 const size_t TABLE_ROWS_S = 16;
-const uint MAX_RAND_VALUE = 10;
+const uint MAX_RAND_VALUE = 506;
 const uint NB_THREAD = 8;
 
 void test();
