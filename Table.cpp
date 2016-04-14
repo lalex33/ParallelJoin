@@ -14,30 +14,30 @@ Table::Table(size_t nbColumns): nbColumns(nbColumns){ }
 /*
  * add a row to the table
  */
-void Table::addRow(const Tuple &tuple) {
-    rows.push_back(tuple);
+void Table::addRow(const Row &row) {
+    rows.push_back(row);
 }
 
 /*
  * generate <nbRows> rows
  */
 void Table::addRandomRows(size_t nbRows) {
-    for(size_t row = rows.size() - 1; row < nbRows; row++){
-        Tuple tuple;
+    for(size_t nbRow = rows.size(); nbRow < nbRows + rows.size(); nbRow++){
+        Row row;
 
         // add data
-        tuple.rowId = row;
+        row.rowId = nbRow;
         for(int column=0; column<nbColumns; column++){
-            tuple.values.push_back("random string here");
+            row.values.push_back("random string here");
         }
 
         // add the row generated
-        addRow(tuple);
+        addRow(row);
     }
 }
 
 /*
- * sort the table based on the column
+ * sort the table on one or more columns
  */
 void Table::sort(unsigned int columnsToSort[]) {
 

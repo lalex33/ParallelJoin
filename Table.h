@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-struct Tuple{
+struct Row {
     size_t rowId;
     std::vector<std::string> values;
 };
@@ -16,13 +16,13 @@ struct Tuple{
 class Table {
 
 private:
-    std::vector<Tuple> rows;
+    std::vector<Row> rows;
     size_t nbColumns;
 
 public:
     Table(size_t nbColumns);
 
-    void addRow(const Tuple &tuple);
+    void addRow(const Row &row);
 
     void addRandomRows(size_t nbRows);
 

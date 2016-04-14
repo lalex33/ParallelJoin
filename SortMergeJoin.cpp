@@ -74,7 +74,7 @@ void sortRelation(Relation &relation){
     sort(relation.begin(), relation.end());
 }
 
-// implementation of sort-merge-algorithm : http://www.dcs.ed.ac.uk/home/tz/phd/thesis/node20.htm
+// implementation of sort-merge-algorithm based on http://www.dcs.ed.ac.uk/home/tz/phd/thesis/node20.htm
 vector<string> mergeRelations(const Relation &r, const Relation &s){
     // init vars
     vector<string> result;
