@@ -9,8 +9,8 @@ void testParallelJoin(){
     int* R = new int[SIZE_R];
     int* S = new int[SIZE_S];
 
-    fillTable(R, SIZE_R, MAX_RAND_VALUE);
-    fillTable(S, SIZE_S, MAX_RAND_VALUE);
+    fillTable(R, SIZE_R, MAX_RAND_PSMJ);
+    fillTable(S, SIZE_S, MAX_RAND_PSMJ);
 
     parallelSort(R, SIZE_R);
     parallelSort(S, SIZE_S);
@@ -36,7 +36,7 @@ void testParallelSort(bool printSort){
     srand(time(NULL));
 
     int* R = new int[SIZE_R];
-    fillTable(R, SIZE_R, MAX_RAND_VALUE);
+    fillTable(R, SIZE_R, MAX_RAND_PSMJ);
 
     clock_t start = clock();
     parallelSort(R, SIZE_R);

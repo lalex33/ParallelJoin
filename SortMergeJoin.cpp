@@ -8,8 +8,8 @@ void testSortMergeJoin() {
     Relation S;
 
     // initialize relations with random data
-    initRandomData(R, MAX_RANDOM_VALUE, R_SIZE);
-    initRandomData(S, MAX_RANDOM_VALUE, S_SIZE);
+    initRandomData(R, MAX_RAND_SMJ, R_SIZE);
+    initRandomData(S, MAX_RAND_SMJ, S_SIZE);
 
     // sort the two relations
     sortRelation(R);

@@ -13,7 +13,10 @@ int main(){
 
     // shows example of parallel sort-merge join
     //testParallelSort(true);
-    testParallelJoin();
+    //testParallelJoin();
+
+    // launch test of parallel sort-merge
+    benchmarkParallelSMJ();
 
     return 0;
 }

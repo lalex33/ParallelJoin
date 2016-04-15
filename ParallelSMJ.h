@@ -6,7 +6,7 @@
 #include <time.h>
 #include <vector>
 
-// https://www.youtube.com/watch?v=xhr26ia4k38
+// explanation of radix sort -> https://www.youtube.com/watch?v=xhr26ia4k38
 
 typedef unsigned int uint;
 typedef unsigned long ulong;
@@ -15,7 +15,7 @@ typedef std::vector<std::vector<int>> digits_bucket;
 // constants
 const size_t SIZE_R = 4;
 const size_t SIZE_S = 4;
-const uint MAX_RAND_VALUE = 5;
+const uint MAX_RAND_PSMJ = 5;
 const uint NB_THREAD = 4;
 const uint MAX_DIGIT_EXCLUDED = 10;
 
