@@ -13,6 +13,8 @@ const int INTEGER_MAX = INT_MAX; // maximum value of random integer generated
 
 const string FILE_NAME = "join_stat.csv"; // output file for the results
 
-void launchPerformanceTest();
+void benchmarkSMJ();
+
+void benchmarkParallelSMJ();
 
 #endif //SORTMERGEJOIN_STATISTIQUE_H

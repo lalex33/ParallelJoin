@@ -5,7 +5,7 @@ using namespace std;
 /*
  * start a benchmark of the implemented algorithm of sort-merge-join
  */
-void launchPerformanceTest(){
+void benchmarkSMJ(){
 
     // init vars
     vector<int> R;
@@ -59,4 +59,8 @@ void launchPerformanceTest(){
     }else{
         cout << "ERROR : opening file failed" << endl;
     }
+}
+
+void benchmarkParallelSMJ(){
+
 }

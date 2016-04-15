@@ -143,21 +143,26 @@ void parallelMerge(int* R, int* S, uint sizeR, uint sizeS){
     uint rowsPerThread = sizeR / NB_THREAD;
 
     for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
-
         int* startR = R + nbThread*rowsPerThread;
         int* endR = R + nbThread*rowsPerThread + rowsPerThread;
         int* startS = S, *endS = S + sizeS;
 
-        threads.push_back( thread(merge, startR, endR, startS, endS,
+        threads.push_back( thread(mergeRoutine, startR, endR, startS, endS,
                                   ref(results[nbThread]), nbThread*rowsPerThread, 0) );
     }
 
     for(auto& thread : threads){
         thread.join();
     }
+
+    /*for(auto threadResult : results){
+        for(auto match : threadResult){
+            cout << match << endl;
+        }
+    }*/
 }
 
-void merge(int* startR, int* endR, int* startS, int* endS,
+void mergeRoutine(int* startR, int* endR, int* startS, int* endS,
            vector<string>& results, uint rowR, uint rowS){
     uint row_R = rowR, row_S = rowS;
     string match;

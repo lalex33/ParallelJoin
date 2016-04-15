@@ -6,7 +6,7 @@ int main(){
     //testSortMergeJoin();
 
     // launch test of sort-merge between two tables
-    //launchPerformanceTest();
+    //benchmarkSMJ();
 
     // possible use of Table when it will be fully implemented
     //testTableSortMergeJoin();
