@@ -15,7 +15,18 @@ void testParallelJoin(){
     parallelSort(R, SIZE_R);
     parallelSort(S, SIZE_S);
 
-    parallelMerge(R, S, SIZE_R, SIZE_S);
+    auto result = parallelMerge(R, S, SIZE_R, SIZE_S);
+
+    cout << "--- R ---" << endl;
+    printTable(R, SIZE_R);
+    cout << "--- S ---" << endl;
+    printTable(S, SIZE_S);
+    cout << "   R    |    S" << endl;
+    for(auto merge : result){
+        for(auto value : merge){
+            cout << value << endl;
+        }
+    }
 
     delete[] R;
     delete[] S;
@@ -136,12 +147,15 @@ bool checkSorted(int* table, int size){
     return true;
 }
 
-void parallelMerge(int* R, int* S, uint sizeR, uint sizeS){
+vector<vector<string>> parallelMerge(int* R, int* S, uint sizeR, uint sizeS){
+    // allocate merge result for each thread
     vector<vector<string>> results(NB_THREAD);
     vector<thread> threads;
 
+    // compute the number of rows merge by a thread
     uint rowsPerThread = sizeR / NB_THREAD;
 
+    // start <NB_THREAD> threads to merge
     for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
         int* startR = R + nbThread*rowsPerThread;
         int* endR = R + nbThread*rowsPerThread + rowsPerThread;
@@ -151,15 +165,12 @@ void parallelMerge(int* R, int* S, uint sizeR, uint sizeS){
                                   ref(results[nbThread]), nbThread*rowsPerThread, 0) );
     }
 
+    // wait end of all merges
     for(auto& thread : threads){
         thread.join();
     }
 
-    /*for(auto threadResult : results){
-        for(auto match : threadResult){
-            cout << match << endl;
-        }
-    }*/
+    return results;
 }
 
 void mergeRoutine(int* startR, int* endR, int* startS, int* endS,
@@ -179,7 +190,7 @@ void mergeRoutine(int* startR, int* endR, int* startS, int* endS,
             row_R++;
         } else{
             // two equal tuples found -> record the rows
-            match = to_string(row_R) + "       |    " + to_string(row_S);
+            match = "  " + to_string(row_R) + "     |    " + to_string(row_S);
             results.push_back(match);
 
             // loop on s to find other equal tuples after
@@ -187,7 +198,7 @@ void mergeRoutine(int* startR, int* endR, int* startS, int* endS,
             auto rowS2 = row_S + 1;
 
             while(tupleS2 != endS && *tupleS2 == *startR){
-                match = to_string(row_R) + "       |    " + to_string(rowS2);
+                match = "  " + to_string(row_R) + "     |    " + to_string(rowS2);
                 results.push_back(match);
                 tupleS2++;
             }
@@ -197,7 +208,7 @@ void mergeRoutine(int* startR, int* endR, int* startS, int* endS,
             auto rowR2 = row_R + 1;
 
             while(tupleR2 != endR && *tupleR2 == *startS){
-                match = to_string(rowR2) + "       |    " + to_string(row_S);
+                match = "  " + to_string(rowR2) + "     |    " + to_string(row_S);
                 results.push_back(match);
                 tupleR2++;
             }
@@ -209,5 +220,14 @@ void mergeRoutine(int* startR, int* endR, int* startS, int* endS,
             startS++;
             row_S++;
         }
+    }
+}
+
+void printTable(int* table, int size){
+    int *p = table;
+    int *end = table + size;
+    while(p != end){
+        cout << *p << endl;
+        p++;
     }
 }

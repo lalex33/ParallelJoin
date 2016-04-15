@@ -13,8 +13,8 @@ typedef unsigned long ulong;
 typedef std::vector<std::vector<int>> digits_bucket;
 
 // constants
-const size_t SIZE_R = 12;
-const size_t SIZE_S = 12;
+const size_t SIZE_R = 4;
+const size_t SIZE_S = 4;
 const uint MAX_RAND_VALUE = 5;
 const uint NB_THREAD = 4;
 const uint MAX_DIGIT_EXCLUDED = 10;
@@ -53,7 +53,7 @@ int max(int* table, int size);
 
 /*
  * return the digit at the given position
- * starting by least digit <-> pos == 0
+ * pos of least digit = 0
  * credit : http://stackoverflow.com/a/7438270
  */
 int getDigit (int number, int pos);
@@ -64,15 +64,19 @@ int getDigit (int number, int pos);
 bool checkSorted(int* table, int size);
 
 /*
- * IN DEVELOPMENT
  * start a merge using threads
  */
-void parallelMerge(int* R, int* S, uint sizeR, uint sizeS);
+std::vector<std::vector<std::string>> parallelMerge(int* R, int* S, uint sizeR, uint sizeS);
 
 /*
  * adaptation of SortMergeJoin's function
  */
 void mergeRoutine(int* startR, int* endR, int* startS, int* endS,
            std::vector<std::string>& results, uint rowR, uint rowS);
+
+/*
+ * print a table
+ */
+void printTable(int* table, int size);
 
 #endif //SORTMERGEJOIN_PARALLELSORT_H
