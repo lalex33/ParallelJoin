@@ -28,14 +28,12 @@ void testParallelSort(){
     fillTable(R, TABLE_ROWS_R, MAX_RAND_VALUE);
 
     clock_t start = clock();
-
     parallelSort(R, TABLE_ROWS_R);
-
     cout << (( clock() - start ) / (double) CLOCKS_PER_SEC) << endl;
-    for(int i=0; i<TABLE_ROWS_R; i++){
-        cout << R[i] << "  <  ";
-    }
 
+    /*for(int i=0; i<TABLE_ROWS_R; i++){
+        cout << R[i] << "  <  ";
+    }*/
     cout << endl << "array sorted? " << checkSorted(R, TABLE_ROWS_R) << endl;
 
     delete[] R;
@@ -81,7 +79,6 @@ void parallelSort(int* table, int size){
 
         // put sorted digit values in array
         int* pos = table;
-
         for(uint digit=0; digit < MAX_DIGIT_EXCLUDED; ++digit){
             for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
                 for(auto value : threadArrays[nbThread][digit]){
@@ -97,25 +94,26 @@ void parallelSort(int* table, int size){
                 bucket.clear();
             }
         }
+
+        // delete threads used for process sort
         threads.clear();
     }
 }
 
 void radixSort(int* table, digits_bucket& buckets,
                ulong posDigit, uint start, uint end){
+    // loop over each values of the sub-list
     for(uint n = start; n < end; n++){
+        // put the value in the digit corresponding bucket
         buckets[ getDigit(table[n], posDigit) ].push_back(table[n]);
     }
 }
 
 int max(int* table, int size){
-    int* end = table + size;
-    int* p = table;
-    int* max = p;
+    int *end = table + size, *p = table, *max = p;
     while(p != end){
-        if(*p > *max){
+        if(*p > *max)
             max = p;
-        }
         p++;
     }
     return *max;

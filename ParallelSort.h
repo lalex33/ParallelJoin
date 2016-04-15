@@ -13,7 +13,7 @@ typedef unsigned long ulong;
 typedef std::vector<std::vector<int>> digits_bucket;
 
 // constants
-const size_t TABLE_ROWS_R = 1000000;
+const size_t TABLE_ROWS_R = 10000000;
 const size_t TABLE_ROWS_S = 16;
 const uint MAX_RAND_VALUE = 12300;
 const uint NB_THREAD = 4;
@@ -35,22 +35,25 @@ void testParallelJoin();
 void fillTable(int* table, size_t size, uint maxValue);
 
 /*
- * IN DEVELOPMENT
  * start a radix sort using threads
  */
 void parallelSort(int* table, int size);
 
+/*
+ * sort values in buckets by a digit
+ */
 void radixSort(int* table, digits_bucket& buckets,
                ulong posDigit, uint start, uint end);
 
 /*
  * return the max value of an array
- * can be improved with thread
+ * NOTE : can be improved with thread
  */
 int max(int* table, int size);
 
 /*
- * return the digit at the given position (starting by least digit <-> 0)
+ * return the digit at the given position
+ * starting by least digit <-> pos == 0
  * credit : http://stackoverflow.com/a/7438270
  */
 int getDigit (int number, int pos);
