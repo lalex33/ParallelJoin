@@ -45,9 +45,6 @@ void fillTable(int* table, size_t size, uint maxValue){
     }
 }
 
-/*
- * issue found : it's not stable so we need to keep same places as previous loop
- */
 void parallelSort(int* table, int size){
     // compute size of the max int
     ulong digitLength = to_string(max(table, size)).length();
@@ -55,6 +52,7 @@ void parallelSort(int* table, int size){
     // compute number of int to sort by a thread
     uint sizePerThread = size / NB_THREAD;
 
+    // init a digit_bucket for each thread
     vector<digits_bucket> threadArrays;
     for(int n=0; n<NB_THREAD; n++){
         digits_bucket digitsBucket(MAX_DIGIT_EXCLUDED);
@@ -95,7 +93,7 @@ void parallelSort(int* table, int size){
             }
         }
 
-        // delete threads used for process sort
+        // delete threads used for the sort
         threads.clear();
     }
 }
@@ -104,7 +102,7 @@ void radixSort(int* table, digits_bucket& buckets,
                ulong posDigit, uint start, uint end){
     // loop over each values of the sub-list
     for(uint n = start; n < end; n++){
-        // put the value in the digit corresponding bucket
+        // put the value in the digit bucket
         buckets[ getDigit(table[n], posDigit) ].push_back(table[n]);
     }
 }

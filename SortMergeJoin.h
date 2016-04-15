@@ -7,9 +7,9 @@
 using namespace std;
 
 // constant
-const int R_SIZE = 10; // number of rows in R
-const int S_SIZE = 10; // number of rows in S
-const int MAX_RANDOM_VALUE = 20; // max value for random integer
+const int R_SIZE = 100; // number of rows in R
+const int S_SIZE = 100; // number of rows in S
+const int MAX_RANDOM_VALUE = INT_MAX; // max value for random integer
 
 typedef vector<int> Relation;
 

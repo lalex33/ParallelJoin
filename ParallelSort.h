@@ -13,9 +13,9 @@ typedef unsigned long ulong;
 typedef std::vector<std::vector<int>> digits_bucket;
 
 // constants
-const size_t TABLE_ROWS_R = 10000000;
+const size_t TABLE_ROWS_R = 300000;
 const size_t TABLE_ROWS_S = 16;
-const uint MAX_RAND_VALUE = 12300;
+const uint MAX_RAND_VALUE = INT_MAX;
 const uint NB_THREAD = 4;
 const uint MAX_DIGIT_EXCLUDED = 10;
 

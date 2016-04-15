@@ -22,8 +22,8 @@ void launchPerformanceTest(){
     // check if we have access to the file
     if(!file.fail()){
 
-        // loop each 5000 rows
-        for(int nb_rows = 5000; nb_rows <= NB_ROWS_MAX; nb_rows += 5000){
+        // loop each 10000 rows
+        for(int nb_rows = 10000; nb_rows <= NB_ROWS_MAX; nb_rows += 10000){
             // clear data
             R.clear();
             S.clear();
