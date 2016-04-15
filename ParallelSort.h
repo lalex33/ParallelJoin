@@ -17,7 +17,10 @@ const size_t TABLE_ROWS_S = 16;
 const uint MAX_RAND_VALUE = 12300;
 const uint NB_THREAD = 4;
 
-void test();
+/*
+ * test the parallel sort
+ */
+void testParallelSort();
 
 /*
  * test the parallel version of sort-merge
@@ -38,9 +41,22 @@ void parallelSort(int* table, int size);
 void radixSort(int* table, std::vector<std::vector<int>>& buckets,
                ulong posDigit, uint start, uint end);
 
-// utility function
+/*
+ * return the max value of an array
+ * can be improved with thread
+ */
 int max(int* table, int size);
-int getDigit (int number, int pos); // http://stackoverflow.com/a/7438270
+
+/*
+ * return the digit at the given position (starting by least digit <-> 0)
+ * credit : http://stackoverflow.com/a/7438270
+ */
+int getDigit (int number, int pos);
+
+/*
+ * return true if an array is sorted
+ */
+bool checkSorted(int* table, int size);
 
 /*
  * NOT IMPLEMENTED

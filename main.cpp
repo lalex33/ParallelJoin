@@ -14,9 +14,8 @@ int main(){
     //testTableSortMergeJoin();
 
     // shows example of parallel sort-merge join
+    testParallelSort();
     //testParallelJoin();
-
-    test();
 
     return 0;
 }
