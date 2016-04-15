@@ -3,8 +3,6 @@
 
 using namespace std;
 
-mutex threadLock;
-
 void testParallelJoin(){
     srand(time(NULL));
 
@@ -59,7 +57,12 @@ void parallelSort(int* table, int size){
     // compute number of int to sort by a thread
     uint sizePerThread = size / NB_THREAD;
 
-    vector<vector<int>> buckets(10);
+    vector<digits_bucket> threadArrays;
+    for(int n=0; n<NB_THREAD; n++){
+        digits_bucket digitsBucket(MAX_DIGIT_EXCLUDED);
+        threadArrays.push_back(digitsBucket);
+    }
+
     vector<thread> threads;
 
     // loop on each digit (from the least to the most)
@@ -67,7 +70,7 @@ void parallelSort(int* table, int size){
 
         // create <NB_THREAD> threads which will sort a sublist
         for(uint nbThread = 0 ; nbThread < NB_THREAD ; ++nbThread){
-            threads.push_back( thread(radixSort, table, ref(buckets), nbDigit,
+            threads.push_back( thread(radixSort, table, ref(threadArrays[nbThread]), nbDigit,
                                       nbThread*sizePerThread, nbThread*sizePerThread + sizePerThread ));
         }
 
@@ -78,29 +81,30 @@ void parallelSort(int* table, int size){
 
         // put sorted digit values in array
         int* pos = table;
-        for(auto bucket : buckets){
-            for(auto value : bucket){
-                *pos = value;
-                ++pos;
+
+        for(uint digit=0; digit < MAX_DIGIT_EXCLUDED; ++digit){
+            for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
+                for(auto value : threadArrays[nbThread][digit]){
+                    *pos = value;
+                    ++pos;
+                }
             }
         }
 
         // clear temporary arrays
-        for(auto &bucket : buckets){
-            bucket.clear();
+        for(auto &digitBucket : threadArrays){
+            for(auto &bucket : digitBucket){
+                bucket.clear();
+            }
         }
         threads.clear();
     }
 }
 
-void radixSort(int* table, vector<vector<int>>& buckets,
+void radixSort(int* table, digits_bucket& buckets,
                ulong posDigit, uint start, uint end){
-    int position;
     for(uint n = start; n < end; n++){
-        position = getDigit(table[n], posDigit);
-        threadLock.lock();
-            buckets[ position ].push_back(table[n]);
-        threadLock.unlock();
+        buckets[ getDigit(table[n], posDigit) ].push_back(table[n]);
     }
 }
 

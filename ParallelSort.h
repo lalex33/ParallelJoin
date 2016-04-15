@@ -10,12 +10,14 @@
 
 typedef unsigned int uint;
 typedef unsigned long ulong;
+typedef std::vector<std::vector<int>> digits_bucket;
 
 // constants
-const size_t TABLE_ROWS_R = 10000;
+const size_t TABLE_ROWS_R = 1000000;
 const size_t TABLE_ROWS_S = 16;
 const uint MAX_RAND_VALUE = 12300;
 const uint NB_THREAD = 4;
+const uint MAX_DIGIT_EXCLUDED = 10;
 
 /*
  * test the parallel sort
@@ -38,7 +40,7 @@ void fillTable(int* table, size_t size, uint maxValue);
  */
 void parallelSort(int* table, int size);
 
-void radixSort(int* table, std::vector<std::vector<int>>& buckets,
+void radixSort(int* table, digits_bucket& buckets,
                ulong posDigit, uint start, uint end);
 
 /*
