@@ -1,5 +1,5 @@
 #include <iostream>
-#include "ParallelSort.h"
+#include "ParallelSMJ.h"
 
 using namespace std;
 
@@ -21,7 +21,7 @@ void testParallelJoin(){
     delete[] S;
 }
 
-void testParallelSort(){
+void testParallelSort(bool printSort){
     srand(time(NULL));
 
     int* R = new int[TABLE_ROWS_R];
@@ -31,10 +31,13 @@ void testParallelSort(){
     parallelSort(R, TABLE_ROWS_R);
     cout << (( clock() - start ) / (double) CLOCKS_PER_SEC) << endl;
 
-    /*for(int i=0; i<TABLE_ROWS_R; i++){
-        cout << R[i] << "  <  ";
-    }*/
-    cout << endl << "array sorted? " << checkSorted(R, TABLE_ROWS_R) << endl;
+    cout << "array sorted ? " << (checkSorted(R, TABLE_ROWS_R)?"yes":"no") << endl;
+    if(printSort) {
+        for (int i = 0; i < TABLE_ROWS_R; i++) {
+            cout << R[i] << "  <=  ";
+            if(i%10 == 9) cout << endl;
+        }
+    }
 
     delete[] R;
 }

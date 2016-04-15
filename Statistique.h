@@ -2,7 +2,7 @@
 #define SORTMERGEJOIN_STATISTIQUE_H
 
 #include "SortMergeJoin.h"
-#include "ParallelSort.h"
+#include "ParallelSMJ.h"
 
 #include <fstream>
 #include <cstdio>

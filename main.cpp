@@ -12,7 +12,7 @@ int main(){
     //testTableSortMergeJoin();
 
     // shows example of parallel sort-merge join
-    testParallelSort();
+    testParallelSort(true);
     //testParallelJoin();
 
     return 0;
