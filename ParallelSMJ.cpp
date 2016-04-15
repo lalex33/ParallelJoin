@@ -6,16 +6,16 @@ using namespace std;
 void testParallelJoin(){
     srand(time(NULL));
 
-    int* R = new int[TABLE_ROWS_R];
-    int* S = new int[TABLE_ROWS_S];
+    int* R = new int[SIZE_R];
+    int* S = new int[SIZE_S];
 
-    fillTable(R, TABLE_ROWS_R, MAX_RAND_VALUE);
-    fillTable(S, TABLE_ROWS_S, MAX_RAND_VALUE);
+    fillTable(R, SIZE_R, MAX_RAND_VALUE);
+    fillTable(S, SIZE_S, MAX_RAND_VALUE);
 
-    parallelSort(R, TABLE_ROWS_R);
-    parallelSort(S, TABLE_ROWS_S);
+    parallelSort(R, SIZE_R);
+    parallelSort(S, SIZE_S);
 
-    parallelMerge(R, S);
+    parallelMerge(R, S, SIZE_R, SIZE_S);
 
     delete[] R;
     delete[] S;
@@ -24,16 +24,16 @@ void testParallelJoin(){
 void testParallelSort(bool printSort){
     srand(time(NULL));
 
-    int* R = new int[TABLE_ROWS_R];
-    fillTable(R, TABLE_ROWS_R, MAX_RAND_VALUE);
+    int* R = new int[SIZE_R];
+    fillTable(R, SIZE_R, MAX_RAND_VALUE);
 
     clock_t start = clock();
-    parallelSort(R, TABLE_ROWS_R);
+    parallelSort(R, SIZE_R);
     cout << (( clock() - start ) / (double) CLOCKS_PER_SEC) << endl;
 
-    cout << "array sorted ? " << (checkSorted(R, TABLE_ROWS_R)?"yes":"no") << endl;
+    cout << "array sorted ? " << (checkSorted(R, SIZE_R)?"yes":"no") << endl;
     if(printSort) {
-        for (int i = 0; i < TABLE_ROWS_R; i++) {
+        for (int i = 0; i < SIZE_R; i++) {
             cout << R[i] << "  <=  ";
             if(i%10 == 9) cout << endl;
         }
@@ -136,6 +136,73 @@ bool checkSorted(int* table, int size){
     return true;
 }
 
-void parallelMerge(int* R, int* S){
+void parallelMerge(int* R, int* S, uint sizeR, uint sizeS){
+    vector<vector<string>> results(NB_THREAD);
+    vector<thread> threads;
 
+    uint rowsPerThread = sizeR / NB_THREAD;
+
+    for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
+
+        int* startR = R + nbThread*rowsPerThread;
+        int* endR = R + nbThread*rowsPerThread + rowsPerThread;
+        int* startS = S, *endS = S + sizeS;
+
+        threads.push_back( thread(merge, startR, endR, startS, endS,
+                                  ref(results[nbThread]), nbThread*rowsPerThread, 0) );
+    }
+
+    for(auto& thread : threads){
+        thread.join();
+    }
+}
+
+void merge(int* startR, int* endR, int* startS, int* endS,
+           vector<string>& results, uint rowR, uint rowS){
+    uint row_R = rowR, row_S = rowS;
+    string match;
+
+    // loop until there is no tuples to read in both relation
+    while(startR != endR && startS != endS){
+        if(*startR > *startS){
+            // move to a greater tuple in S
+            startS++;
+            row_S++;
+        } else if(*startR < *startS){
+            // move to a greater tuple in R
+            startR++;
+            row_R++;
+        } else{
+            // two equal tuples found -> record the rows
+            match = to_string(row_R) + "       |    " + to_string(row_S);
+            results.push_back(match);
+
+            // loop on s to find other equal tuples after
+            auto tupleS2 = startS + 1;
+            auto rowS2 = row_S + 1;
+
+            while(tupleS2 != endS && *tupleS2 == *startR){
+                match = to_string(row_R) + "       |    " + to_string(rowS2);
+                results.push_back(match);
+                tupleS2++;
+            }
+
+            // loop on r to find other equal tuples after
+            auto tupleR2 = startR + 1;
+            auto rowR2 = row_R + 1;
+
+            while(tupleR2 != endR && *tupleR2 == *startS){
+                match = to_string(rowR2) + "       |    " + to_string(row_S);
+                results.push_back(match);
+                tupleR2++;
+            }
+
+            // go to higher tuples
+            startR++;
+            row_R++;
+
+            startS++;
+            row_S++;
+        }
+    }
 }

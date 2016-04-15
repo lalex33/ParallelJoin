@@ -13,9 +13,9 @@ typedef unsigned long ulong;
 typedef std::vector<std::vector<int>> digits_bucket;
 
 // constants
-const size_t TABLE_ROWS_R = 16;
-const size_t TABLE_ROWS_S = 16;
-const uint MAX_RAND_VALUE = INT_MAX;
+const size_t SIZE_R = 16;
+const size_t SIZE_S = 16;
+const uint MAX_RAND_VALUE = 5;
 const uint NB_THREAD = 4;
 const uint MAX_DIGIT_EXCLUDED = 10;
 
@@ -64,9 +64,15 @@ int getDigit (int number, int pos);
 bool checkSorted(int* table, int size);
 
 /*
- * NOT IMPLEMENTED
+ * IN DEVELOPMENT
  * start a merge using threads
  */
-void parallelMerge(int* R, int* S);
+void parallelMerge(int* R, int* S, uint sizeR, uint sizeS);
+
+/*
+ * adaptation of SortMergeJoin's function
+ */
+void merge(int* startR, int* endR, int* startS, int* endS,
+           std::vector<std::string>& results, uint rowR, uint rowS);
 
 #endif //SORTMERGEJOIN_PARALLELSORT_H
