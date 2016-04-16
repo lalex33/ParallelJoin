@@ -13,9 +13,9 @@ typedef unsigned long ulong;
 typedef std::vector<std::vector<int>> digits_bucket;
 
 // constants
-const size_t SIZE_R = 4;
-const size_t SIZE_S = 4;
-const uint MAX_RAND_PSMJ = 5;
+const size_t SIZE_R = 20;
+const size_t SIZE_S = 20;
+const uint MAX_RAND_PSMJ = 14;
 const uint NB_THREAD = 4;
 const uint MAX_DIGIT_EXCLUDED = 10;
 
@@ -46,10 +46,14 @@ void radixSort(int* table, digits_bucket& buckets,
                ulong posDigit, uint start, uint end);
 
 /*
- * return the max value of an array
- * NOTE : can be improved with thread
+ * find max value of array using thread
  */
-int max(int* table, int size);
+int parallelMax(int* table, int size);
+
+/*
+ * find the max value of an array and store it in <max>
+ */
+void maxRoutine(int* start, int* end, int* max);
 
 /*
  * return the digit at the given position

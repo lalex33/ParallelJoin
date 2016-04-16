@@ -61,7 +61,7 @@ void fillTable(int* table, size_t size, uint maxValue){
 
 void parallelSort(int* table, int size){
     // compute size of the max int
-    ulong digitLength = to_string(max(table, size)).length();
+    ulong digitLength = to_string(parallelMax(table, size)).length();
 
     // compute number of int to sort by a thread
     uint sizePerThread = size / NB_THREAD;
@@ -121,14 +121,41 @@ void radixSort(int* table, digits_bucket& buckets,
     }
 }
 
-int max(int* table, int size){
-    int *end = table + size, *p = table, *max = p;
-    while(p != end){
-        if(*p > *max)
-            max = p;
-        p++;
+int parallelMax(int* table, int size){
+    vector<thread> threads;
+    uint rowsPerThread = size / NB_THREAD;
+    int* maxFromThreads = new int[NB_THREAD];
+
+    for(int nbThread=0; nbThread < NB_THREAD; ++nbThread){
+        int* start = table + nbThread * rowsPerThread;
+        int* end = start + rowsPerThread;
+
+        threads.push_back( thread(maxRoutine, start, end, maxFromThreads+nbThread) );
     }
-    return *max;
+
+    for(auto& thread : threads){
+        thread.join();
+    }
+    threads.clear();
+
+    int max = maxFromThreads[0];
+    for(int n=1; n<NB_THREAD; ++n){
+        if(maxFromThreads[n] > max){
+            max = maxFromThreads[n];
+        }
+    }
+
+    return max;
+}
+
+void maxRoutine(int* start, int* end, int* max){
+    *max = *(start++);
+    while(start != end){
+        if(*start > *max){
+            *max = *start;
+        }
+        start++;
+    }
 }
 
 int getDigit (int number, int pos)
@@ -224,10 +251,8 @@ void mergeRoutine(int* startR, int* endR, int* startS, int* endS,
 }
 
 void printTable(int* table, int size){
-    int *p = table;
-    int *end = table + size;
+    int *p = table, *end = p + size, row = 0;
     while(p != end){
-        cout << *p << endl;
-        p++;
+        cout << row++ << " : " << *(p++) << endl;
     }
 }
