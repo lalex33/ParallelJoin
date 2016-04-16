@@ -37,7 +37,7 @@ void fillTable(int* table, size_t size, uint maxValue);
 /*
  * start a radix sort using threads
  */
-void parallelSort(int* table, int size);
+void parallelSort(int* table, size_t size);
 
 /*
  * sort values in buckets by a digit
@@ -48,7 +48,7 @@ void radixSort(int* table, digits_bucket& buckets,
 /*
  * find max value of array using thread
  */
-int parallelMax(int* table, int size);
+int parallelMax(int* table, size_t size);
 
 /*
  * find the max value of an array and store it in <max>
@@ -65,7 +65,7 @@ int getDigit (int number, int pos);
 /*
  * return true if an array is sorted
  */
-bool checkSorted(int* table, int size);
+bool checkSorted(int* table, size_t size);
 
 /*
  * start a merge using threads
@@ -81,6 +81,6 @@ void mergeRoutine(int* startR, int* endR, int* startS, int* endS,
 /*
  * print a table
  */
-void printTable(int* table, int size);
+void printTable(int* table, size_t size);
 
 #endif //SORTMERGEJOIN_PARALLELSORT_H

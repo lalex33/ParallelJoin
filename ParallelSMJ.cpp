@@ -59,7 +59,7 @@ void fillTable(int* table, size_t size, uint maxValue){
     }
 }
 
-void parallelSort(int* table, int size){
+void parallelSort(int* table, size_t size){
     // compute size of the max int
     ulong digitLength = to_string(parallelMax(table, size)).length();
 
@@ -121,11 +121,13 @@ void radixSort(int* table, digits_bucket& buckets,
     }
 }
 
-int parallelMax(int* table, int size){
+int parallelMax(int* table, size_t size){
+    // init vars
     vector<thread> threads;
     uint rowsPerThread = size / NB_THREAD;
     int* maxFromThreads = new int[NB_THREAD];
 
+    // compute max by each thread
     for(int nbThread=0; nbThread < NB_THREAD; ++nbThread){
         int* start = table + nbThread * rowsPerThread;
         int* end = start + rowsPerThread;
@@ -133,11 +135,13 @@ int parallelMax(int* table, int size){
         threads.push_back( thread(maxRoutine, start, end, maxFromThreads+nbThread) );
     }
 
+    // wait the end of thread
     for(auto& thread : threads){
         thread.join();
     }
     threads.clear();
 
+    // find max of threads' max
     int max = maxFromThreads[0];
     for(int n=1; n<NB_THREAD; ++n){
         if(maxFromThreads[n] > max){
@@ -158,15 +162,14 @@ void maxRoutine(int* start, int* end, int* max){
     }
 }
 
-int getDigit (int number, int pos)
-{
+int getDigit (int number, int pos) {
     return (pos == 0) ? number % 10 : getDigit (number/10, --pos);
 }
 
-bool checkSorted(int* table, int size){
-    int* p = table;
-    int* end = table + size - 1;
+bool checkSorted(int* table, size_t size){
+    int* p = table, *end = p + size - 1;
     while(p != end){
+        // check that the previous is lower than the next
         if(*p > *(p+1))
             return false;
         p++;
@@ -250,7 +253,7 @@ void mergeRoutine(int* startR, int* endR, int* startS, int* endS,
     }
 }
 
-void printTable(int* table, int size){
+void printTable(int* table, size_t size){
     int *p = table, *end = p + size, row = 0;
     while(p != end){
         cout << row++ << " : " << *(p++) << endl;
