@@ -4,25 +4,31 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
+#include "SMJUtility.h"
 
-// constant
-const int R_SIZE = 100; // number of rows in R
-const int S_SIZE = 100; // number of rows in S
-const int MAX_RAND_SMJ = INT_MAX; // max value for random integer
+namespace SMJ{
 
-typedef vector<int> Relation;
+    // constant
+    const int R_SIZE = 10; // number of rows in R
+    const int S_SIZE = 10; // number of rows in S
+    const int MAX_RAND_SMJ = 20; // max value for random integer
 
-void testSortMergeJoin();
+    /*
+     * launch a join and display result
+     */
+    void testSortMergeJoin();
 
-void printRelation(const Relation &relation);
+    /*
+     * sort a table with STL function
+     */
+    void sortRelation(int *start, int *end);
 
-void printSortMerge(const Relation &r, const Relation &s, const vector<string> &result);
+    /*
+     * implementation of sort-merge-algorithm based on http://www.dcs.ed.ac.uk/home/tz/phd/thesis/node20.htm
+     */
+    void mergeRelations(int *startR, int *endR, int *startS, int *endS,
+                        std::vector<std::string> &results, uint rowR, uint rowS);
 
-void initRandomData(Relation &relation, int maxValue, int nbRows);
-
-void sortRelation(Relation &relation);
-
-vector<string> mergeRelations(const Relation &r, const Relation &s);
+}
 
 #endif //SORTMERGEJOIN_SORTMERGEJOIN_H

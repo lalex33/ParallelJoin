@@ -3,5 +3,5 @@ project(SortMergeJoin)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp Statistique.cpp Statistique.h SortMergeJoin.cpp SortMergeJoin.h Table.cpp Table.h ParallelSMJ.cpp ParallelSMJ.h)
+set(SOURCE_FILES main.cpp Statistique.cpp Statistique.h SortMergeJoin.cpp SortMergeJoin.h Table.cpp Table.h ParallelSMJ.cpp ParallelSMJ.h SMJUtility.h)
 add_executable(SortMergeJoin ${SOURCE_FILES})

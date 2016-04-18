@@ -1,129 +1,80 @@
 #include "SortMergeJoin.h"
 
-// launch a join and display result
-void testSortMergeJoin() {
-    srand(time(NULL)); // generate a seed
+namespace SMJ{
 
-    Relation R;
-    Relation S;
+    void testSortMergeJoin() {
+        srand(time(NULL)); // generate a seed
 
-    // initialize relations with random data
-    initRandomData(R, MAX_RAND_SMJ, R_SIZE);
-    initRandomData(S, MAX_RAND_SMJ, S_SIZE);
+        int* R = new int[R_SIZE];
+        int* S = new int[S_SIZE];
+        vector<string> result;
 
-    // sort the two relations
-    sortRelation(R);
-    sortRelation(S);
+        // initialize relations with random data
+        fillTable(R, R_SIZE, MAX_RAND_SMJ);
+        fillTable(S, S_SIZE, MAX_RAND_SMJ);
 
-    // merge the two relations
-    auto result = mergeRelations(R, S);
+        // sort the two relations
+        sortRelation(R, R + R_SIZE);
+        sortRelation(S, S + S_SIZE);
 
-    // print datas
-    printSortMerge(R, S, result);
-}
+        // merge the two relations
+        mergeRelations(R, R + R_SIZE, S, S + S_SIZE, result, 0, 0);
 
-/*
- * print rows of a table
- */
-void printRelation(const Relation &relation){
-    cout << "Row    | Value" << endl;
-    int row=0;
-    for(auto value : relation){
-        cout << row++ << "      |  " << value << endl;
+        // print datas
+        printSortMerge(R, S, R_SIZE, S_SIZE, result);
+
+        delete[] R;
+        delete[] S;
     }
-}
 
-/*
- * print sorted relations then the result of sort-merge join
- */
-void printSortMerge(const Relation &r, const Relation &s, const vector<string> &result){
-    cout << "Table R sorted" << endl;
-    printRelation(r);
-    cout << endl << endl;
-
-    cout << "Table S sorted" << endl;
-    printRelation(s);
-    cout << endl << endl;
-
-    cout << "-- Results --" << endl << "R rows  |  S rows" << endl;
-    for(auto match : result){
-        cout << match << endl;
+    void sortRelation(int* start, int* end){
+        sort(start, end);
     }
-}
 
-/*
- * fill a table of <nbRows> rows with random integer between 0 and <maxValue>
- */
-void initRandomData(Relation &relation, int maxValue, int nbRows){
-    for(int i=0; i < nbRows; i++){
-        int value = rand() % maxValue;
-        relation.push_back(value);
-    }
-}
+    void mergeRelations(int* startR, int* endR, int* startS, int* endS,
+                        vector<string>& results, uint rowR, uint rowS){
+        uint row_R = rowR, row_S = rowS;
 
-/*
- * sort a table with STL function
- */
-void sortRelation(Relation &relation){
-    sort(relation.begin(), relation.end());
-}
+        // loop until there is no tuples to read in both relation
+        while(startR != endR && startS != endS){
+            if(*startR > *startS){
+                // move to a greater tuple in S
+                startS++;
+                row_S++;
+            } else if(*startR < *startS){
+                // move to a greater tuple in R
+                startR++;
+                row_R++;
+            } else{
+                // two equal tuples found -> record the rows
+                results.push_back(getTuple(row_R, startR, row_S, startS));
 
-// implementation of sort-merge-algorithm based on http://www.dcs.ed.ac.uk/home/tz/phd/thesis/node20.htm
-vector<string> mergeRelations(const Relation &r, const Relation &s){
-    // init vars
-    vector<string> result;
-    string match;
+                // loop on s to find other equal tuples after
+                auto tupleS2 = startS + 1;
+                auto rowS2 = row_S + 1;
 
-    auto tupleR = r.begin();
-    auto tupleS = s.begin();
-    auto endR = r.end();
-    auto endS = s.end();
+                while(tupleS2 != endS && *tupleS2 == *startR){
+                    results.push_back(getTuple(row_R, startR, rowS2, tupleS2));
+                    tupleS2++;
+                }
 
-    int rowR=0, rowS=0;
+                // loop on r to find other equal tuples after
+                auto tupleR2 = startR + 1;
+                auto rowR2 = row_R + 1;
 
-    // loop until there is no tuples to read in both relation
-    while(tupleR != endR && tupleS != endS){
-        if(*tupleR > *tupleS){
-            // move to a greater tuple in S
-            tupleS++;
-            rowS++;
-        } else if(*tupleR < *tupleS){
-            // move to a greater tuple in R
-            tupleR++;
-            rowR++;
-        } else{
-            // two equal tuples found -> record the rows
-            match = to_string(rowR) + "       |    " + to_string(rowS);
-            result.push_back(match);
+                while(tupleR2 != endR && *tupleR2 == *startS){
+                    results.push_back(getTuple(rowR2, tupleR2, row_S, startS));
+                    tupleR2++;
+                }
 
-            // loop on s to find other equal tuples after
-            auto tupleS2 = tupleS + 1;
-            auto rowS2 = rowS + 1;
+                // go to higher tuples
+                startR++;
+                row_R++;
 
-            while(tupleS2 != endS && *tupleS2 == *tupleR){
-                match = to_string(rowR) + "       |    " + to_string(rowS2);
-                result.push_back(match);
-                tupleS2++;
+                startS++;
+                row_S++;
             }
-
-            // loop on r to find other equal tuples after
-            auto tupleR2 = tupleR + 1;
-            auto rowR2 = rowR + 1;
-
-            while(tupleR2 != endR && *tupleR2 == *tupleS){
-                match = to_string(rowR2) + "       |    " + to_string(rowS);
-                result.push_back(match);
-                tupleR2++;
-            }
-
-            // go to higher tuples
-            tupleR++;
-            rowR++;
-
-            tupleS++;
-            rowS++;
         }
     }
 
-    return result;
 }
