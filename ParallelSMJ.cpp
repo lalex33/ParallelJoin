@@ -19,9 +19,11 @@ namespace SMJ{
         parallelSort(R, SIZE_R);
         parallelSort(S, SIZE_S);
 
-        auto results = parallelMerge(R, S, SIZE_R, SIZE_S);
+        auto results = assembleResults(parallelMerge(R, S, SIZE_R, SIZE_S));
 
-        printSortMerge(R, S, SIZE_R, SIZE_S, assembleResults(results));
+        printSortMerge(R, S, SIZE_R, SIZE_S, results);
+
+        cout << "array merged ? " << (checkMerge(R, SIZE_R, S, SIZE_S, results)?"yes":"no") << endl;
 
         delete[] R;
         delete[] S;

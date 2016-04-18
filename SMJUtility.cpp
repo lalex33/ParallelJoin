@@ -39,7 +39,8 @@ namespace SMJ {
             rowR++;
         }
 
-        return equal(resultFound.begin(), resultFound.end(), result.begin());
+        //return equal(resultFound.begin(), resultFound.end(), result.begin());
+        return resultFound.size() == result.size();
     }
 
     void printTable(int *table, size_t size) {
