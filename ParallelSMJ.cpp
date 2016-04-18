@@ -5,6 +5,8 @@ using namespace std;
 
 namespace SMJ{
 
+    uint NB_THREAD;
+
     void testParallelJoin(){
         srand(time(NULL));
 

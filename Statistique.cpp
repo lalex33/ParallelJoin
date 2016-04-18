@@ -91,6 +91,7 @@ namespace SMJ {
                 int* R = new int[nb_rows];
                 int* S = new int[nb_rows];
 
+                // add new random integer into the two relations
                 fillTable(R, nb_rows, INTEGER_MAX);
                 fillTable(S, nb_rows, INTEGER_MAX);
 
@@ -117,6 +118,65 @@ namespace SMJ {
 
                 // save the result in the file
                 string result = to_string(nb_rows) + ";" + to_string(durationSort) + ";" + to_string(durationMerge) + "\r\n";
+                file.write(result.c_str(), result.size());
+
+                // clear tables
+                delete[] R;
+                delete[] S;
+            }
+
+            file.close();
+        }else{
+            cout << "ERROR : opening file failed" << endl;
+        }
+    }
+
+    void benchmarkThreadPSMJ() {
+        // init vars
+        vector<vector<string>> join;
+        clock_t start;
+        double durationSort;
+        double durationMerge;
+
+        // open a file to store results
+        ofstream file(FILE_NAME_THREAD_PJOIN, ofstream::out);
+
+        // check if we have access to the file
+        if(!file.fail()){
+
+            // loop each 10000 rows
+            for(int nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; nbThread += 2){
+                // add new random integer into the two relations
+                int* R = new int[NB_ROWS_MAX];
+                int* S = new int[NB_ROWS_MAX];
+
+                // add new random integer into the two relations
+                fillTable(R, NB_ROWS_MAX, INTEGER_MAX);
+                fillTable(S, NB_ROWS_MAX, INTEGER_MAX);
+
+                cout << "Computing " << NB_ROWS_MAX << " rows with " << to_string(nbThread) << " threads" << endl;
+                // start the chrono
+                start = clock();
+
+                // sort the two relation
+                parallelSort(R, NB_ROWS_MAX);
+                parallelSort(S, NB_ROWS_MAX);
+
+                durationSort = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+                assert(checkSorted(R, NB_ROWS_MAX));
+                assert(checkSorted(S, NB_ROWS_MAX));
+
+                start = clock();
+                // merge both sorted relation
+                join = parallelMerge(R, S, NB_ROWS_MAX, NB_ROWS_MAX);
+
+                durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+                assert(checkMerge(R, NB_ROWS_MAX, S, NB_ROWS_MAX, assembleResults(join)));
+
+                cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
+
+                // save the result in the file
+                string result = to_string(nbThread) + ";" + to_string(durationSort) + ";" + to_string(durationMerge) + "\r\n";
                 file.write(result.c_str(), result.size());
 
                 // clear tables

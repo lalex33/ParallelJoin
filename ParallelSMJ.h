@@ -14,12 +14,14 @@ namespace SMJ{
     typedef unsigned long ulong;
     typedef std::vector<std::vector<int>> digits_bucket;
 
-    // constants
+    // vars
     const size_t SIZE_R = 20;
     const size_t SIZE_S = 20;
     const uint MAX_RAND_PSMJ = 14;
-    const uint NB_THREAD = 4;
+
     const uint MAX_DIGIT_EXCLUDED = 10;
+
+    extern uint NB_THREAD;
 
     /*
      * test the parallel sort

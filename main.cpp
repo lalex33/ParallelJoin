@@ -13,12 +13,16 @@ int main(){
     // possible use of Table when it will be fully implemented
     //testTableSortMergeJoin();
 
+    // set number of thread
+    NB_THREAD = 4;
+
     // shows example of parallel sort-merge join
     //testParallelSort(true);
     //testParallelJoin();
 
     // launch test of parallel sort-merge
-    benchmarkParallelSMJ();
+    //benchmarkParallelSMJ();
+    benchmarkThreadPSMJ();
 
     return 0;
 }
