@@ -5,7 +5,7 @@ using namespace SMJ;
 int main(){
 
     // shows an example of sort-merge join
-    testSortMergeJoin();
+    //testSortMergeJoin();
 
     // launch test of sort-merge between two tables
     //benchmarkSMJ();
@@ -18,7 +18,7 @@ int main(){
     //testParallelJoin();
 
     // launch test of parallel sort-merge
-    //benchmarkParallelSMJ();
+    benchmarkParallelSMJ();
 
     return 0;
 }

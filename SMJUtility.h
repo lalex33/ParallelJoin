@@ -17,6 +17,11 @@ namespace SMJ {
     bool checkSorted(int *table, size_t size);
 
     /*
+     * return true if two arrays are merged
+     */
+    bool checkMerge(int* R, int sizeR, int* S, int sizeS,  std::vector<std::string> resultFound);
+
+    /*
      * print rows of a table
      */
     void printTable(int *table, size_t size);

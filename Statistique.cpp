@@ -1,3 +1,5 @@
+#define NDEBUG
+#include <cassert>
 #include "Statistique.h"
 
 using namespace std;
@@ -38,12 +40,16 @@ namespace SMJ {
                 sortRelation(S, S + nb_rows);
 
                 durationSort = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+                assert(checkSorted(R, nb_rows));
+                assert(checkSorted(S, nb_rows));
 
                 start = clock();
                 // merge both sorted relation
                 mergeRelations(R, R + nb_rows, S, S + nb_rows, join, 0, 0);
 
                 durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+                assert(checkMerge(R, nb_rows, S, nb_rows, join));
+
                 cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
 
                 // save the result in the file
@@ -97,12 +103,16 @@ namespace SMJ {
                 parallelSort(S, nb_rows);
 
                 durationSort = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+                assert(checkSorted(R, nb_rows));
+                assert(checkSorted(S, nb_rows));
 
                 start = clock();
                 // merge both sorted relation
                 join = parallelMerge(R, S, nb_rows, nb_rows);
 
                 durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+                assert(checkMerge(R, nb_rows, S, nb_rows, assembleResults(join)));
+
                 cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
 
                 // save the result in the file

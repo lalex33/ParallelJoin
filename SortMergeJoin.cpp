@@ -25,6 +25,8 @@ namespace SMJ{
         // print datas
         printSortMerge(R, S, R_SIZE, S_SIZE, result);
 
+        //cout << "is merged? -> " << (checkMerge(R, R_SIZE, S, S_SIZE, result)?"yes":"no") << endl;
+
         delete[] R;
         delete[] S;
     }
@@ -56,8 +58,7 @@ namespace SMJ{
                 auto rowS2 = rowS + 1;
 
                 while(tupleS2 != endS && *tupleS2 == *tupleR){
-                    results.push_back(getTuple(rowR, tupleR, rowS2, tupleS2));
-                    tupleS2++;
+                    results.push_back(getTuple(rowR, tupleR, rowS2++, tupleS2++));
                 }
 
                 // loop on r to find other equal tuples after
@@ -65,8 +66,7 @@ namespace SMJ{
                 auto rowR2 = rowR + 1;
 
                 while(tupleR2 != endR && *tupleR2 == *tupleS){
-                    results.push_back(getTuple(rowR2, tupleR2, rowS, tupleS));
-                    tupleR2++;
+                    results.push_back(getTuple(rowR2++, tupleR2++, rowS, tupleS));
                 }
 
                 // go to higher tuples

@@ -4,18 +4,12 @@ using namespace std;
 
 namespace SMJ {
 
-    /*
-     * fill a table of rows with random integer between 0 and <maxValue>
-     */
     void fillTable(int *table, size_t size, uint maxValue) {
         for (int i = 0; i < size; i++) {
             table[i] = rand() % maxValue;
         }
     }
 
-    /*
-     * return true if an array is sorted
-     */
     bool checkSorted(int *table, size_t size) {
         int *p = table, *end = p + size - 1;
         while (p != end) {
@@ -27,9 +21,27 @@ namespace SMJ {
         return true;
     }
 
-    /*
-     * print rows of a table
-     */
+    bool checkMerge(int* R, int sizeR, int* S, int sizeS,  std::vector<std::string> resultFound){
+        // use nested loop merge
+        vector<string> result;
+        int *tupleR = R, *endR = R + sizeR, *endS = S + sizeS, rowR = 0;
+
+        while(tupleR != endR){
+            int* tupleS = S, rowS = 0;
+            while(tupleS != endS){
+                if(*tupleR == *tupleS){
+                    result.push_back(getTuple(rowR, tupleR, rowS, tupleS));
+                }
+                tupleS++;
+                rowS++;
+            }
+            tupleR++;
+            rowR++;
+        }
+
+        return equal(resultFound.begin(), resultFound.end(), result.begin());
+    }
+
     void printTable(int *table, size_t size) {
         int *p = table, *end = p + size, row = 0;
         while (p != end) {
@@ -37,9 +49,6 @@ namespace SMJ {
         }
     }
 
-    /*
-     * print sorted relations then the result of sort-merge join
-     */
     void printSortMerge(int *r, int *s, int sizeR, int sizeS, const vector<string> &result) {
         cout << "Table R sorted" << endl;
         printTable(r, sizeR);
@@ -55,9 +64,6 @@ namespace SMJ {
         }
     }
 
-    /*
-     * print a match
-     */
     string getTuple(int rowR, int *tupleR, int rowsS, int *tupleS) {
         return "[" + to_string(rowR) + "] : " + to_string(*tupleR)
                + "   |   [" + to_string(rowsS) + "] : " + to_string(*tupleS);

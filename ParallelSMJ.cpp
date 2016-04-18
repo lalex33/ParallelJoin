@@ -19,14 +19,7 @@ namespace SMJ{
 
         auto results = parallelMerge(R, S, SIZE_R, SIZE_S);
 
-        vector<string> result;
-        for(auto match : results){
-            for(auto value : match){
-                result.push_back(value);
-            }
-        }
-
-        printSortMerge(R, S, SIZE_R, SIZE_S, result);
+        printSortMerge(R, S, SIZE_R, SIZE_S, assembleResults(results));
 
         delete[] R;
         delete[] S;
@@ -184,6 +177,16 @@ namespace SMJ{
         }
 
         return results;
+    }
+
+    std::vector<std::string> assembleResults(std::vector<std::vector<std::string>> results){
+        vector<string> result;
+        for(auto match : results){
+            for(auto value : match){
+                result.push_back(value);
+            }
+        }
+        return result;
     }
 
 }
