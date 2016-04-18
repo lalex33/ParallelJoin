@@ -1,9 +1,6 @@
 #ifndef SORTMERGEJOIN_SORTMERGEJOIN_H
 #define SORTMERGEJOIN_SORTMERGEJOIN_H
 
-#include <iostream>
-#include <vector>
-
 #include "SMJUtility.h"
 
 namespace SMJ{

@@ -4,7 +4,6 @@
 #include <thread>
 #include <cstdlib>
 #include <time.h>
-#include <vector>
 
 #include "SortMergeJoin.h"
 

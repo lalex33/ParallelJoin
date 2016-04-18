@@ -1,5 +1,7 @@
 #include "SortMergeJoin.h"
 
+using namespace std;
+
 namespace SMJ{
 
     void testSortMergeJoin() {
