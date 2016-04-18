@@ -15,8 +15,8 @@ namespace SMJ{
     typedef std::vector<std::vector<int>> digits_bucket;
 
     // vars
-    const size_t SIZE_R = 20;
-    const size_t SIZE_S = 20;
+    const size_t SIZE_R = 26;
+    const size_t SIZE_S = 26;
     const uint MAX_RAND_PSMJ = 14;
 
     const uint MAX_DIGIT_EXCLUDED = 10;
@@ -36,18 +36,18 @@ namespace SMJ{
     /*
      * start a radix sort using threads
      */
-    void parallelSort(int* table, size_t size);
+    void parallelSort(int *table, uint size);
 
     /*
      * sort values in buckets by a digit
      */
-    void radixSort(int* table, digits_bucket& buckets,
-                   ulong posDigit, uint start, uint end);
+    void radixSort(int *table, digits_bucket &buckets,
+                   uint posDigit, uint start, uint end);
 
     /*
      * find max value of array using thread
      */
-    int parallelMax(int* table, size_t size);
+    int parallelMax(int *table, uint size);
 
     /*
      * find the max value of an array and store it in <max>

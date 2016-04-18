@@ -145,7 +145,10 @@ namespace SMJ {
         if(!file.fail()){
 
             // loop each 10000 rows
-            for(int nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; nbThread += 2){
+            for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
+                // set number of threads
+                NB_THREAD = nbThread;
+
                 // add new random integer into the two relations
                 int* R = new int[NB_ROWS_MAX];
                 int* S = new int[NB_ROWS_MAX];

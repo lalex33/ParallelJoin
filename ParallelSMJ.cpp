@@ -50,7 +50,7 @@ namespace SMJ{
         delete[] R;
     }
 
-    void parallelSort(int* table, size_t size){
+    void parallelSort(int *table, uint size){
         // compute size of the max int
         ulong digitLength = to_string(parallelMax(table, size)).length();
 
@@ -67,12 +67,14 @@ namespace SMJ{
         vector<thread> threads;
 
         // loop on each digit (from the least to the most)
-        for(ulong nbDigit = 0 ; nbDigit < digitLength ; ++nbDigit){
+        for(uint nbDigit = 0 ; nbDigit < digitLength ; ++nbDigit){
 
             // create <NB_THREAD> threads which will sort a sublist
             for(uint nbThread = 0 ; nbThread < NB_THREAD ; ++nbThread){
-                threads.push_back( thread(radixSort, table, ref(threadArrays[nbThread]), nbDigit,
-                                          nbThread*sizePerThread, nbThread*sizePerThread + sizePerThread ));
+                uint start = nbThread * sizePerThread;
+                uint end = start + sizePerThread;
+                end += (nbThread == NB_THREAD-1)? (size%end):0;
+                threads.push_back( thread(radixSort, table, ref(threadArrays[nbThread]), nbDigit, start, end));
             }
 
             // wait end of sort
@@ -103,8 +105,8 @@ namespace SMJ{
         }
     }
 
-    void radixSort(int* table, digits_bucket& buckets,
-                   ulong posDigit, uint start, uint end){
+    void radixSort(int *table, digits_bucket &buckets,
+                   uint posDigit, uint start, uint end){
         // loop over each values of the sub-list
         for(uint n = start; n < end; n++){
             // put the value in the digit bucket
@@ -112,7 +114,7 @@ namespace SMJ{
         }
     }
 
-    int parallelMax(int* table, size_t size){
+    int parallelMax(int *table, uint size){
         // init vars
         vector<thread> threads;
         uint rowsPerThread = size / NB_THREAD;
@@ -122,7 +124,7 @@ namespace SMJ{
         for(int nbThread=0; nbThread < NB_THREAD; ++nbThread){
             int* start = table + nbThread * rowsPerThread;
             int* end = start + rowsPerThread;
-
+            end += (nbThread == NB_THREAD-1)? (size % (nbThread * rowsPerThread + rowsPerThread)):0;
             threads.push_back( thread(maxRoutine, start, end, maxFromThreads+nbThread) );
         }
 
@@ -139,6 +141,9 @@ namespace SMJ{
                 max = maxFromThreads[n];
             }
         }
+
+        // free memory
+        delete[] maxFromThreads;
 
         return max;
     }
@@ -170,6 +175,7 @@ namespace SMJ{
             int* startR = R + nbThread*rowsPerThread;
             int* endR = R + nbThread*rowsPerThread + rowsPerThread;
             int* startS = S, *endS = S + sizeS;
+            endR += (nbThread == NB_THREAD-1)? (sizeR % (nbThread * rowsPerThread + rowsPerThread)):0;
 
             threads.push_back( thread(mergeRelations, startR, endR, startS, endS,
                                       ref(results[nbThread]), nbThread*rowsPerThread, 0) );

@@ -16,7 +16,7 @@ namespace SMJ{
     const std::string FILE_NAME_PARALLEL_JOIN = "parallel_join.csv"; // file for parallel results
     const std::string FILE_NAME_THREAD_PJOIN = "thread_join.csv"; // file for thread results
 
-    const int NB_THREAD_MIN = 2;
+    const int NB_THREAD_MIN = 1;
     const int NB_THREAD_MAX = 10;
 
     /*
