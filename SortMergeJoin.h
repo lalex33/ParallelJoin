@@ -5,11 +5,6 @@
 
 namespace SMJ{
 
-    // constant
-    const int R_SIZE = 20; // number of rows in R
-    const int S_SIZE = 20; // number of rows in S
-    const int MAX_RAND_SMJ = 14; // max value for random integer
-
     /*
      * sort a table with STL function
      */

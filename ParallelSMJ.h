@@ -14,11 +14,6 @@ namespace SMJ{
     typedef unsigned long ulong;
     typedef std::vector<std::vector<int>> digits_bucket;
 
-    // vars
-    const size_t SIZE_R = 26;
-    const size_t SIZE_S = 26;
-    const uint MAX_RAND_PSMJ = 14;
-
     const uint MAX_DIGIT_EXCLUDED = 10;
 
     extern uint NB_THREAD;

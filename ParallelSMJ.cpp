@@ -21,9 +21,12 @@ namespace SMJ{
         }
 
         vector<thread> threads;
+        clock_t start;
 
         // loop on each digit (from the least to the most)
         for(uint nbDigit = 0 ; nbDigit < digitLength ; ++nbDigit){
+            cout << "---- Tour " << nbDigit << " ----" << endl;
+            start = clock();
 
             // create <NB_THREAD> threads which will sort a sublist
             for(uint nbThread = 0 ; nbThread < NB_THREAD ; ++nbThread){
@@ -39,6 +42,9 @@ namespace SMJ{
             }
             threads.clear();
 
+            cout << "radix : " << (( clock() - start ) / (double) CLOCKS_PER_SEC) << endl;
+            start = clock();
+
             // put sorted digit values in array
             int* pos = table;
             for(uint digit=0; digit < MAX_DIGIT_EXCLUDED; ++digit){
@@ -50,6 +56,8 @@ namespace SMJ{
                     threadArrays[nbThread][digit].clear();
                 }
             }
+
+            cout << "put data in array : " << (( clock() - start ) / (double) CLOCKS_PER_SEC) << endl;
         }
     }
 

@@ -14,11 +14,11 @@ int main(){
     //testTableSortMergeJoin();
 
     // set number of thread
-    NB_THREAD = 4;
+    NB_THREAD = 2;
 
     // shows example of parallel sort-merge join
-    //testParallelSort(true);
-    testParallelJoin();
+    testParallelSort(false);
+    //testParallelJoin();
 
     // launch test of parallel sort-merge
     //benchmarkParallelSMJ();

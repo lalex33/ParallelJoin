@@ -9,6 +9,16 @@
 
 namespace SMJ{
 
+    // constant SMJ
+    const int R_SIZE = 20; // number of rows in R
+    const int S_SIZE = 20; // number of rows in S
+    const int MAX_RAND_SMJ = 14; // max value for random integer
+
+    // constant Parallel SMJ
+    const size_t SIZE_R = 1000000;
+    const size_t SIZE_S = 26;
+    const uint MAX_RAND_PSMJ = 123456;
+
     /*
      * launch a join and display result
      */
