@@ -1,4 +1,3 @@
-#include <iostream>
 #include "ParallelSMJ.h"
 
 using namespace std;
@@ -6,49 +5,6 @@ using namespace std;
 namespace SMJ{
 
     uint NB_THREAD;
-
-    void testParallelJoin(){
-        srand(time(NULL));
-
-        int* R = new int[SIZE_R];
-        int* S = new int[SIZE_S];
-
-        fillTable(R, SIZE_R, MAX_RAND_PSMJ);
-        fillTable(S, SIZE_S, MAX_RAND_PSMJ);
-
-        parallelSort(R, SIZE_R);
-        parallelSort(S, SIZE_S);
-
-        auto results = assembleResults(parallelMerge(R, S, SIZE_R, SIZE_S));
-
-        printSortMerge(R, S, SIZE_R, SIZE_S, results);
-
-        cout << "array merged ? " << (checkMerge(R, SIZE_R, S, SIZE_S, results)?"yes":"no") << endl;
-
-        delete[] R;
-        delete[] S;
-    }
-
-    void testParallelSort(bool printSort){
-        srand(time(NULL));
-
-        int* R = new int[SIZE_R];
-        fillTable(R, SIZE_R, MAX_RAND_PSMJ);
-
-        clock_t start = clock();
-        parallelSort(R, SIZE_R);
-        cout << (( clock() - start ) / (double) CLOCKS_PER_SEC) << endl;
-
-        cout << "array sorted ? " << (checkSorted(R, SIZE_R)?"yes":"no") << endl;
-        if(printSort) {
-            for (int i = 0; i < SIZE_R; i++) {
-                cout << R[i] << "  <=  ";
-                if(i%10 == 9) cout << endl;
-            }
-        }
-
-        delete[] R;
-    }
 
     void parallelSort(int *table, uint size){
         // compute size of the max int
@@ -77,31 +33,23 @@ namespace SMJ{
                 threads.push_back( thread(radixSort, table, ref(threadArrays[nbThread]), nbDigit, start, end));
             }
 
-            // wait end of sort
+            // wait end of sort and delete threads
             for(auto& thread : threads){
                 thread.join();
             }
+            threads.clear();
 
             // put sorted digit values in array
             int* pos = table;
             for(uint digit=0; digit < MAX_DIGIT_EXCLUDED; ++digit){
                 for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
                     for(auto value : threadArrays[nbThread][digit]){
-                        *pos = value;
-                        ++pos;
+                        *(pos++) = value;
                     }
+                    // clear data
+                    threadArrays[nbThread][digit].clear();
                 }
             }
-
-            // clear temporary arrays
-            for(auto &digitBucket : threadArrays){
-                for(auto &bucket : digitBucket){
-                    bucket.clear();
-                }
-            }
-
-            // delete threads used for the sort
-            threads.clear();
         }
     }
 
@@ -128,18 +76,18 @@ namespace SMJ{
             threads.push_back( thread(maxRoutine, start, end, maxFromThreads+nbThread) );
         }
 
-        // wait the end of thread
+        // wait the end of threads
         for(auto& thread : threads){
             thread.join();
         }
         threads.clear();
 
         // find max of threads' max
-        int max = maxFromThreads[0];
-        for(int n=1; n<NB_THREAD; ++n){
-            if(maxFromThreads[n] > max){
-                max = maxFromThreads[n];
-            }
+        int* start = maxFromThreads, *end = start + NB_THREAD, max = *(start++);
+        while(start != end){
+            if(*start > max)
+                max = *start;
+            start++;
         }
 
         // free memory
@@ -170,12 +118,13 @@ namespace SMJ{
         // compute the number of rows merge by a thread
         uint rowsPerThread = sizeR / NB_THREAD;
 
-        // start <NB_THREAD> threads to merge
+        // start <NB_THREAD> threads for merge
         for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
             int* startR = R + nbThread*rowsPerThread;
             int* endR = R + nbThread*rowsPerThread + rowsPerThread;
-            int* startS = S, *endS = S + sizeS;
             endR += (nbThread == NB_THREAD-1)? (sizeR % (nbThread * rowsPerThread + rowsPerThread)):0;
+
+            int* startS = S, *endS = S + sizeS;
 
             threads.push_back( thread(mergeRelations, startR, endR, startS, endS,
                                       ref(results[nbThread]), nbThread*rowsPerThread, 0) );

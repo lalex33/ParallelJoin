@@ -4,33 +4,6 @@ using namespace std;
 
 namespace SMJ{
 
-    void testSortMergeJoin() {
-        srand(time(NULL)); // generate a seed
-
-        int* R = new int[R_SIZE];
-        int* S = new int[S_SIZE];
-        vector<string> result;
-
-        // initialize relations with random data
-        fillTable(R, R_SIZE, MAX_RAND_SMJ);
-        fillTable(S, S_SIZE, MAX_RAND_SMJ);
-
-        // sort the two relations
-        sortRelation(R, R + R_SIZE);
-        sortRelation(S, S + S_SIZE);
-
-        // merge the two relations
-        mergeRelations(R, R + R_SIZE, S, S + S_SIZE, result, 0, 0);
-
-        // print datas
-        printSortMerge(R, S, R_SIZE, S_SIZE, result);
-
-        //cout << "is merged? -> " << (checkMerge(R, R_SIZE, S, S_SIZE, result)?"yes":"no") << endl;
-
-        delete[] R;
-        delete[] S;
-    }
-
     void sortRelation(int* start, int* end){
         sort(start, end);
     }

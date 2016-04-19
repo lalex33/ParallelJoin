@@ -18,6 +18,10 @@ namespace SMJ {
         // open a file to store results
         ofstream file(FILE_NAME_JOIN, ofstream::out);
 
+        // write settings
+        string settings = "MAX INT = " + to_string(INTEGER_MAX) + "\r\n";
+        file.write(settings.c_str(), settings.size());
+
         // check if we have access to the file
         if(!file.fail()){
 
@@ -50,7 +54,7 @@ namespace SMJ {
                 durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
                 assert(checkMerge(R, nb_rows, S, nb_rows, join));
 
-                cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
+                cout << " DONE in " << to_string(durationSort + durationMerge) << " seconds" << endl;
 
                 // save the result in the file
                 string result = to_string(nb_rows) + ";" + to_string(durationSort) + ";" + to_string(durationMerge) + "\r\n";
@@ -114,7 +118,7 @@ namespace SMJ {
                 durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
                 assert(checkMerge(R, nb_rows, S, nb_rows, assembleResults(join)));
 
-                cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
+                cout << " DONE in " << to_string(durationSort + durationMerge) << " seconds" << endl;
 
                 // save the result in the file
                 string result = to_string(nb_rows) + ";" + to_string(durationSort) + ";" + to_string(durationMerge) + "\r\n";
@@ -176,7 +180,7 @@ namespace SMJ {
                 durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
                 assert(checkMerge(R, NB_ROWS_MAX, S, NB_ROWS_MAX, assembleResults(join)));
 
-                cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
+                cout << " DONE in " << to_string(durationSort + durationMerge) << " seconds" << endl;
 
                 // save the result in the file
                 string result = to_string(nbThread) + ";" + to_string(durationSort) + ";" + to_string(durationMerge) + "\r\n";

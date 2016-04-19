@@ -1,7 +1,7 @@
 #ifndef SORTMERGEJOIN_STATISTIQUE_H
 #define SORTMERGEJOIN_STATISTIQUE_H
 
-#include "ParallelSMJ.h"
+#include "Test.h"
 
 #include <fstream>
 #include <cstdio>

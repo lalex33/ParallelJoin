@@ -24,16 +24,6 @@ namespace SMJ{
     extern uint NB_THREAD;
 
     /*
-     * test the parallel sort
-     */
-    void testParallelSort(bool printSort);
-
-    /*
-     * test the parallel version of sort-merge
-     */
-    void testParallelJoin();
-
-    /*
      * start a radix sort using threads
      */
     void parallelSort(int *table, uint size);

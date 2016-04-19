@@ -11,11 +11,6 @@ namespace SMJ{
     const int MAX_RAND_SMJ = 14; // max value for random integer
 
     /*
-     * launch a join and display result
-     */
-    void testSortMergeJoin();
-
-    /*
      * sort a table with STL function
      */
     void sortRelation(int *start, int *end);
