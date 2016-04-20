@@ -10,9 +10,7 @@ namespace SMJ {
         // init vars
         vector<string> join;
 
-        clock_t start;
-        double durationSort;
-        double durationMerge;
+        double start, durationSort, durationMerge;
 
         // open a file to store results
         ofstream file(FILE_NAME_JOIN, ofstream::out);
@@ -35,21 +33,21 @@ namespace SMJ {
 
                 cout << "Computing " << nb_rows << " rows" << endl;
                 // start the chrono
-                start = clock();
+                start = sec();
 
                 // sort the two relation
                 sortRelation(R, R + nb_rows);
                 sortRelation(S, S + nb_rows);
 
-                durationSort = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+                durationSort = sec() - start;
                 assert(checkSorted(R, nb_rows));
                 assert(checkSorted(S, nb_rows));
 
-                start = clock();
+                start = sec();
                 // merge both sorted relation
                 mergeRelations(R, R + nb_rows, S, S + nb_rows, join, 0, 0);
 
-                durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+                durationMerge = sec() - start;
                 assert(checkMerge(R, nb_rows, S, nb_rows, join));
 
                 cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
@@ -72,9 +70,7 @@ namespace SMJ {
     void benchmarkParallelSMJ(){
         // init vars
         vector<vector<string>> join;
-        clock_t start;
-        double durationSort;
-        double durationMerge;
+        double start, durationSort, durationMerge;
 
         // open a file to store results
         ofstream file(FILE_NAME_PARALLEL_JOIN, ofstream::out);
@@ -97,23 +93,21 @@ namespace SMJ {
 
                 cout << "Computing " << nb_rows << " rows" << endl;
                 // start the chrono
-                start = clock();
+                start = sec();
 
                 // sort the two relation
                 parallelSort(R, nb_rows);
                 parallelSort(S, nb_rows);
 
-                durationSort = ( clock() - start ) / (double) CLOCKS_PER_SEC;
-                durationSort /= NB_THREAD;
+                durationSort = sec() - start;
                 assert(checkSorted(R, nb_rows));
                 assert(checkSorted(S, nb_rows));
 
-                start = clock();
+                start = sec();
                 // merge both sorted relation
                 join = parallelMerge(R, S, nb_rows, nb_rows);
 
-                durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
-                durationMerge /= NB_THREAD;
+                durationMerge = sec() - start;
                 assert(checkMerge(R, nb_rows, S, nb_rows, assembleResults(join)));
 
                 cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
@@ -135,9 +129,7 @@ namespace SMJ {
     void benchmarkThreadPSMJ() {
         // init vars
         vector<vector<string>> join;
-        clock_t start;
-        double durationSort;
-        double durationMerge;
+        double start, durationSort, durationMerge;
 
         // open a file to store results
         ofstream file(FILE_NAME_THREAD_PJOIN, ofstream::out);
@@ -160,23 +152,21 @@ namespace SMJ {
 
                 cout << "Computing " << NB_ROWS_MAX << " rows with " << nbThread << " threads" << endl;
                 // start the chrono
-                start = clock();
+                start = sec();
 
                 // sort the two relation
                 parallelSort(R, NB_ROWS_MAX);
                 parallelSort(S, NB_ROWS_MAX);
 
-                durationSort = ( clock() - start ) / (double) CLOCKS_PER_SEC;
-                durationSort /= nbThread;
+                durationSort = sec() - start;
                 assert(checkSorted(R, NB_ROWS_MAX));
                 assert(checkSorted(S, NB_ROWS_MAX));
 
-                start = clock();
+                start = sec();
                 // merge both sorted relation
                 join = parallelMerge(R, S, NB_ROWS_MAX, NB_ROWS_MAX);
 
-                durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
-                durationMerge /= nbThread;
+                durationMerge = sec() - start;
                 assert(checkMerge(R, NB_ROWS_MAX, S, NB_ROWS_MAX, assembleResults(join)));
 
                 cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
@@ -193,6 +183,12 @@ namespace SMJ {
         }else{
             cout << "ERROR : opening file failed" << endl;
         }
+    }
+
+    double sec() {
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        return tv.tv_sec + tv.tv_usec * 1e-6;
     }
 
 }

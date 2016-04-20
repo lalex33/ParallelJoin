@@ -15,6 +15,7 @@
 #include <cassert>
 #include <sstream>
 #include <algorithm>
+#include <sys/time.h>
 
 namespace SMJ {
 
