@@ -13,7 +13,7 @@ namespace SMJ{
     const std::string FILE_NAME_THREAD_PJOIN = "thread_join.csv"; // file for thread results
 
     const int NB_THREAD_MIN = 1;
-    const int NB_THREAD_MAX = 10;
+    const int NB_THREAD_MAX = 24;
 
     /*
      * start a benchmark of the implemented algorithm of sort-merge-join

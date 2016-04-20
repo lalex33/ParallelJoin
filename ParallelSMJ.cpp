@@ -52,12 +52,12 @@ namespace SMJ{
             int* pos = table;
             for(uint digit=0; digit < MAX_DIGIT_EXCLUDED; ++digit){
                 for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
-                    auto array = threadArrays[nbThread][digit];
-                    for(auto value = array.begin(); value != array.end(); value++){
+                    auto array = &threadArrays[nbThread][digit];
+                    for(auto value = array->begin(); value != array->end(); value++){
                         *(pos++) = *value;
                     }
                     // clear data
-                    array.clear();
+                    array->clear();
                 }
             }
 
