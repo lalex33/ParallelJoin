@@ -104,6 +104,7 @@ namespace SMJ {
                 parallelSort(S, nb_rows);
 
                 durationSort = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+                durationSort /= NB_THREAD;
                 assert(checkSorted(R, nb_rows));
                 assert(checkSorted(S, nb_rows));
 
@@ -112,6 +113,7 @@ namespace SMJ {
                 join = parallelMerge(R, S, nb_rows, nb_rows);
 
                 durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+                durationMerge /= NB_THREAD;
                 assert(checkMerge(R, nb_rows, S, nb_rows, assembleResults(join)));
 
                 cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
@@ -165,6 +167,7 @@ namespace SMJ {
                 parallelSort(S, NB_ROWS_MAX);
 
                 durationSort = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+                durationSort /= nbThread;
                 assert(checkSorted(R, NB_ROWS_MAX));
                 assert(checkSorted(S, NB_ROWS_MAX));
 
@@ -173,6 +176,7 @@ namespace SMJ {
                 join = parallelMerge(R, S, NB_ROWS_MAX, NB_ROWS_MAX);
 
                 durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
+                durationMerge /= nbThread;
                 assert(checkMerge(R, NB_ROWS_MAX, S, NB_ROWS_MAX, assembleResults(join)));
 
                 cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
