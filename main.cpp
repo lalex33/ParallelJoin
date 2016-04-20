@@ -11,7 +11,7 @@ int main(){
     //benchmarkSMJ();
 
     // set number of thread
-    NB_THREAD = 4;
+    NB_THREAD = 24;
 
     // shows example of parallel sort-merge join
     //testParallelSort(false);

@@ -5,14 +5,14 @@
 
 namespace SMJ{
 
-    const int NB_ROWS_MAX = 100000000; // maximum value of rows to compute
+    const int NB_ROWS_MAX = 200000000; // maximum value of rows to compute
     const int INTEGER_MAX = INT_MAX; // maximum value of random integer generated
 
     const std::string FILE_NAME_JOIN = "join.csv"; // output file for the results
     const std::string FILE_NAME_PARALLEL_JOIN = "parallel_join.csv"; // file for parallel results
     const std::string FILE_NAME_THREAD_PJOIN = "thread_join.csv"; // file for thread results
 
-    const int NB_THREAD_MIN = 16;
+    const int NB_THREAD_MIN = 22;
     const int NB_THREAD_MAX = 24;
 
     /*
