@@ -8,13 +8,10 @@ int main(){
     //testSortMergeJoin();
 
     // launch test of sort-merge between two tables
-    benchmarkSMJ();
-
-    // possible use of Table when it will be fully implemented
-    //testTableSortMergeJoin();
+    //benchmarkSMJ();
 
     // set number of thread
-    NB_THREAD = 10;
+    NB_THREAD = 8;
 
     // shows example of parallel sort-merge join
     //testParallelSort(false);
@@ -22,7 +19,7 @@ int main(){
 
     // launch test of parallel sort-merge
     //benchmarkParallelSMJ();
-    //benchmarkThreadPSMJ();
+    benchmarkThreadPSMJ();
 
     return 0;
 }

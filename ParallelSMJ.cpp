@@ -7,8 +7,11 @@ namespace SMJ{
     uint NB_THREAD;
 
     void parallelSort(int *table, uint size){
+        ostringstream oss;
+        oss << parallelMax(table, size);
+
         // compute size of the max int
-        ulong digitLength = to_string(parallelMax(table, size)).length();
+        ulong digitLength = oss.str().size();
 
         // compute number of int to sort by a thread
         uint sizePerThread = size / NB_THREAD;
@@ -37,8 +40,8 @@ namespace SMJ{
             }
 
             // wait end of sort and delete threads
-            for(auto& thread : threads){
-                thread.join();
+            for(auto thread = threads.begin(); thread != threads.end(); thread++){
+                thread->join();
             }
             threads.clear();
 
@@ -49,11 +52,12 @@ namespace SMJ{
             int* pos = table;
             for(uint digit=0; digit < MAX_DIGIT_EXCLUDED; ++digit){
                 for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
-                    for(auto value : threadArrays[nbThread][digit]){
-                        *(pos++) = value;
+                    auto array = threadArrays[nbThread][digit];
+                    for(auto value = array.begin(); value != array.end(); value++){
+                        *(pos++) = *value;
                     }
                     // clear data
-                    threadArrays[nbThread][digit].clear();
+                    array.clear();
                 }
             }
 
@@ -85,8 +89,8 @@ namespace SMJ{
         }
 
         // wait the end of threads
-        for(auto& thread : threads){
-            thread.join();
+        for(auto thread = threads.begin(); thread != threads.end(); thread++){
+            thread->join();
         }
         threads.clear();
 
@@ -139,18 +143,18 @@ namespace SMJ{
         }
 
         // wait end of all merges
-        for(auto& thread : threads){
-            thread.join();
+        for(auto thread = threads.begin(); thread != threads.end(); thread++){
+            thread->join();
         }
 
         return results;
     }
 
-    std::vector<std::string> assembleResults(std::vector<std::vector<std::string>> results){
+    vector<string> assembleResults(vector<vector<string>> results){
         vector<string> result;
-        for(auto match : results){
-            for(auto value : match){
-                result.push_back(value);
+        for(auto match = results.begin(); match != results.end(); match++){
+            for(auto value = match->begin(); value != match->end(); value++){
+                result.push_back(*value);
             }
         }
         return result;

@@ -1,5 +1,4 @@
 #define NDEBUG
-#include <cassert>
 #include "Statistique.h"
 
 using namespace std;
@@ -19,8 +18,7 @@ namespace SMJ {
         ofstream file(FILE_NAME_JOIN, ofstream::out);
 
         // write settings
-        string settings = "MAX INT = " + to_string(INTEGER_MAX) + "\r\n";
-        file.write(settings.c_str(), settings.size());
+        file << "MAX INT = " << INTEGER_MAX << "\r\n";
 
         // check if we have access to the file
         if(!file.fail()){
@@ -54,11 +52,10 @@ namespace SMJ {
                 durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
                 assert(checkMerge(R, nb_rows, S, nb_rows, join));
 
-                cout << " DONE in " << to_string(durationSort + durationMerge) << " seconds" << endl;
+                cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
 
                 // save the result in the file
-                string result = to_string(nb_rows) + ";" + to_string(durationSort) + ";" + to_string(durationMerge) + "\r\n";
-                file.write(result.c_str(), result.size());
+                file << nb_rows << ";" << durationSort << ";" << durationMerge << "\r\n";
 
                 // clear tables
                 delete[] R;
@@ -83,8 +80,7 @@ namespace SMJ {
         ofstream file(FILE_NAME_PARALLEL_JOIN, ofstream::out);
 
         // write settings
-        string settings = "NB_THREAD = " + to_string(NB_THREAD) + "; MAX INT = " + to_string(INTEGER_MAX) + "\r\n";
-        file.write(settings.c_str(), settings.size());
+        file << "NB_THREAD = " << NB_THREAD << "; MAX INT = " << INTEGER_MAX << "\r\n";
 
         // check if we have access to the file
         if(!file.fail()){
@@ -118,11 +114,10 @@ namespace SMJ {
                 durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
                 assert(checkMerge(R, nb_rows, S, nb_rows, assembleResults(join)));
 
-                cout << " DONE in " << to_string(durationSort + durationMerge) << " seconds" << endl;
+                cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
 
                 // save the result in the file
-                string result = to_string(nb_rows) + ";" + to_string(durationSort) + ";" + to_string(durationMerge) + "\r\n";
-                file.write(result.c_str(), result.size());
+                file << nb_rows << ";" << durationSort << ";" << durationMerge << "\r\n";
 
                 // clear tables
                 delete[] R;
@@ -161,7 +156,7 @@ namespace SMJ {
                 fillTable(R, NB_ROWS_MAX, INTEGER_MAX);
                 fillTable(S, NB_ROWS_MAX, INTEGER_MAX);
 
-                cout << "Computing " << NB_ROWS_MAX << " rows with " << to_string(nbThread) << " threads" << endl;
+                cout << "Computing " << NB_ROWS_MAX << " rows with " << nbThread << " threads" << endl;
                 // start the chrono
                 start = clock();
 
@@ -180,11 +175,10 @@ namespace SMJ {
                 durationMerge = ( clock() - start ) / (double) CLOCKS_PER_SEC;
                 assert(checkMerge(R, NB_ROWS_MAX, S, NB_ROWS_MAX, assembleResults(join)));
 
-                cout << " DONE in " << to_string(durationSort + durationMerge) << " seconds" << endl;
+                cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
 
                 // save the result in the file
-                string result = to_string(nbThread) + ";" + to_string(durationSort) + ";" + to_string(durationMerge) + "\r\n";
-                file.write(result.c_str(), result.size());
+                file << nbThread << ";" << durationSort << ";" << durationMerge << "\r\n";
 
                 // clear tables
                 delete[] R;

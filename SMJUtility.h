@@ -12,6 +12,9 @@
 #include <cstdio>
 #include <ctime>
 #include <limits.h>
+#include <cassert>
+#include <sstream>
+#include <algorithm>
 
 namespace SMJ {
 

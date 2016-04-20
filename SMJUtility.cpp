@@ -60,14 +60,17 @@ namespace SMJ {
         cout << endl << endl;
 
         cout << "----- Results -----" << endl << "R rows  |  S rows" << endl;
-        for (auto match : result) {
-            cout << match << endl;
+        for (auto match = result.begin(); match != result.end(); match++) {
+            cout << (*match) << endl;
         }
     }
 
     string getTuple(int rowR, int *tupleR, int rowsS, int *tupleS) {
-        return "[" + to_string(rowR) + "] : " + to_string(*tupleR)
-               + "   |   [" + to_string(rowsS) + "] : " + to_string(*tupleS);
+        ostringstream oss;
+        oss << "[" << rowR << "] : " << (*tupleR)
+              << "   |   [" << (rowsS) << "] : " << (*tupleS);
+        return oss.str();
     }
+
 }
 
