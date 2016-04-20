@@ -3,8 +3,21 @@
 
 #include <iostream>
 #include <vector>
+#include <thread>
+#include <cstdlib>
+#include <time.h>
+#include <string>
+#include <cstdint>
+#include <fstream>
+#include <cstdio>
+#include <ctime>
+#include <limits.h>
 
 namespace SMJ {
+
+    // typedef
+    typedef unsigned int uint;
+    typedef unsigned long ulong;
 
     /*
      * fill a table of rows with random integer between 0 and <maxValue>

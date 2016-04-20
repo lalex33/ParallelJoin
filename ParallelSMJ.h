@@ -1,21 +1,12 @@
 #ifndef SORTMERGEJOIN_PARALLELSORT_H
 #define SORTMERGEJOIN_PARALLELSORT_H
 
-#include <thread>
-#include <cstdlib>
-#include <time.h>
-
 #include "SortMergeJoin.h"
 
 namespace SMJ{
 
-    // typedef
-    typedef unsigned int uint;
-    typedef unsigned long ulong;
     typedef std::vector<std::vector<int>> digits_bucket;
-
     const uint MAX_DIGIT_EXCLUDED = 10;
-
     extern uint NB_THREAD;
 
     /*

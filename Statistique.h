@@ -3,10 +3,6 @@
 
 #include "Test.h"
 
-#include <fstream>
-#include <cstdio>
-#include <ctime>
-
 namespace SMJ{
 
     const int NB_ROWS_MAX = 1000000; // maximum value of rows to compute
