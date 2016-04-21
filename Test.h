@@ -15,9 +15,9 @@ namespace SMJ{
     const int MAX_RAND_SMJ = 14; // max value for random integer
 
     // constant Parallel SMJ
-    const size_t SIZE_R = 26;
-    const size_t SIZE_S = 26;
-    const uint MAX_RAND_PSMJ = 14;
+    const size_t SIZE_R = 20;
+    const size_t SIZE_S = 20;
+    const uint MAX_RAND_PSMJ = 20;
 
     /*
      * launch a join and display result

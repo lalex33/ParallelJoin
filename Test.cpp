@@ -68,7 +68,7 @@ namespace SMJ{
         // print datas
         printSortMerge(R, S, R_SIZE, S_SIZE, result);
 
-        //cout << "is merged? -> " << (checkMerge(R, R_SIZE, S, S_SIZE, result)?"yes":"no") << endl;
+        cout << "is merged? -> " << (checkMerge(R, R_SIZE, S, S_SIZE, result)?"yes":"no") << endl;
 
         delete[] R;
         delete[] S;
