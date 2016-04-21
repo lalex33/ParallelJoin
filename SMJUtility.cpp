@@ -21,7 +21,7 @@ namespace SMJ {
         return true;
     }
 
-    bool checkMerge(int* R, int sizeR, int* S, int sizeS,  std::vector<std::string> resultFound){
+    bool checkMerge(int* R, int sizeR, int* S, int sizeS, vector<string> resultFound){
         // use nested loop merge
         vector<string> result;
         int *tupleR = R, *endR = R + sizeR, *endS = S + sizeS, rowR = 0;

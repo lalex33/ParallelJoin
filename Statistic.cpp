@@ -185,4 +185,37 @@ namespace SMJ {
         }
     }
 
+    void benchmarkData() {
+        double start, d_stdSort, d_parallelRadix;
+        NB_THREAD = 24;
+        ofstream file(FILE_NAME_DATA, ofstream::out);
+
+        if(!file.fail()){
+            for(uint nbRows = 1000000; nbRows <= 100000000; nbRows += 1000000){
+                cout << "Computing " << nbRows << endl;
+                int* R = new int[nbRows];
+                int* S = new int[nbRows];
+
+                fillTable(R, nbRows, INTEGER_MAX_2);
+                start = sec();
+                sort(R, R + nbRows);
+                d_stdSort = sec() - start;
+
+                fillTable(S, nbRows, INTEGER_MAX_2);
+                start = sec();
+                parallelSort(R, nbRows);
+                d_parallelRadix = sec() - start;
+
+                file << nbRows << ";" << d_stdSort << ";" << d_parallelRadix << "\r\n";
+
+                delete[] R;
+                delete[] S;
+            }
+
+            file.close();
+        }else{
+            cout << "ERROR : opening file failed" << endl;
+        }
+    }
+
 }

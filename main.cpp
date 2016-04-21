@@ -21,7 +21,9 @@ int main(){
     //benchmarkParallelSMJ();
     //benchmarkThreadPSMJ();
 
-    testLotOfData();
+    //testLotOfData();
+
+    benchmarkData();
 
     return 0;
 }
