@@ -19,6 +19,9 @@ namespace SMJ{
     const size_t SIZE_S = 20;
     const uint MAX_RAND_PSMJ = 20;
 
+    const uint MAX_SIZE = 200000000;
+    const int MAX_RAND_TEST = 32767;
+
     /*
      * launch a join and display result
      */
@@ -33,6 +36,11 @@ namespace SMJ{
      * test the parallel version of sort-merge
      */
     void testParallelJoin();
+
+    /*
+     * test on large amount of data
+     */
+    void testLotOfData();
 
 }
 

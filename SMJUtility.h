@@ -52,6 +52,12 @@ namespace SMJ {
      * print a match
      */
     std::string getTuple(int rowR, int *tupleR, int rowsS, int *tupleS);
+
+    /*
+     * get time
+     * https://github.com/iwiwi/parallel-radix-sort/blob/master/measure.cc
+     */
+    double sec();
 }
 
 #endif //SORTMERGEJOIN_SMJUTILITY_H

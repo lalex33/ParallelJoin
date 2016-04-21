@@ -30,12 +30,6 @@ namespace SMJ{
      */
     void benchmarkThreadPSMJ();
 
-    /*
-     * get time
-     * https://github.com/iwiwi/parallel-radix-sort/blob/master/measure.cc
-     */
-    double sec();
-
 }
 
 #endif //SORTMERGEJOIN_STATISTIQUE_H

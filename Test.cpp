@@ -74,5 +74,37 @@ namespace SMJ{
         delete[] S;
     }
 
+    void testLotOfData(){
+        srand(time(NULL));
+
+        int* R = new int[MAX_SIZE];
+        int* S = new int[MAX_SIZE];
+        vector<vector<string>> result;
+
+        double start;
+
+        fillTable(R, MAX_SIZE, MAX_RAND_TEST);
+        fillTable(S, MAX_SIZE, MAX_RAND_TEST);
+
+        cout << "Start sort" << endl;
+        start = sec();
+        parallelSort(R, MAX_SIZE);
+        cout << "Sorting R with parallel radix : " << (sec() - start) << " seconds" << endl;
+        cout << "Sorted : " << checkSorted(R, MAX_SIZE) << endl;
+
+        cout << "Start sort" << endl;
+        start = sec();
+        sort(S, S + MAX_SIZE);
+        cout << "Sorting S with std::sort : " << (sec() - start) << " seconds" << endl;
+        cout << "Sorted : " << checkSorted(S, MAX_SIZE) << endl;
+
+        /*start = sec();
+        result = parallelMerge(R, S, MAX_SIZE, MAX_SIZE);
+        cout << "Merging R and S : " << (sec() - start) << " seconds" << endl;*/
+
+        delete[] R;
+        delete[] S;
+    }
+
 }
 

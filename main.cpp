@@ -1,4 +1,4 @@
-#include "Statistique.h"
+#include "Statistic.h"
 
 using namespace SMJ;
 
@@ -11,7 +11,7 @@ int main(){
     //benchmarkSMJ();
 
     // set number of thread
-    NB_THREAD = 10;
+    NB_THREAD = 24;
 
     // shows example of parallel sort-merge join
     //testParallelSort(false);
@@ -20,6 +20,8 @@ int main(){
     // launch test of parallel sort-merge
     //benchmarkParallelSMJ();
     //benchmarkThreadPSMJ();
+
+    testLotOfData();
 
     return 0;
 }
