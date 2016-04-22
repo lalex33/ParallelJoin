@@ -203,10 +203,55 @@ namespace SMJ {
 
                 fillTable(S, nbRows, INTEGER_MAX_2);
                 start = sec();
-                parallelSort(R, nbRows);
+                parallelSort(S, nbRows);
                 d_parallelRadix = sec() - start;
 
                 file << nbRows << ";" << d_stdSort << ";" << d_parallelRadix << "\r\n";
+
+                delete[] R;
+                delete[] S;
+            }
+
+            file.close();
+        }else{
+            cout << "ERROR : opening file failed" << endl;
+        }
+    }
+
+    void benchmarkData2() {
+        double start, d_stdSort, d_parallelRadix, d_merge, d_parallelMerge;
+        NB_THREAD = 24;
+        vector<string> results;
+        ofstream file(FILE_NAME_DATA2, ofstream::out);
+
+        if(!file.fail()){
+            for(uint nbRows = 1000000; nbRows <= 10000000; nbRows += 1000000){
+                cout << "Computing " << nbRows << endl;
+                int* R = new int[nbRows];
+                int* S = new int[nbRows];
+
+                fillTable(R, nbRows, INTEGER_MAX);
+                start = sec();
+                sort(R, R + nbRows);
+                d_stdSort = sec() - start;
+                cout << checkSorted(R, nbRows) << endl;
+
+                fillTable(S, nbRows, INTEGER_MAX);
+                start = sec();
+                parallelSort(S, nbRows);
+                d_parallelRadix = sec() - start;
+                cout << checkSorted(S, nbRows) << endl;
+
+                start = sec();
+                mergeRelations(R, R + nbRows, S, S + nbRows, results, 0, 0);
+                d_merge = sec() - start;
+                results.clear();
+
+                start = sec();
+                parallelMerge(R, S, nbRows, nbRows);
+                d_parallelMerge = sec() - start;
+
+                file << nbRows << ";" << d_stdSort << ";" << d_merge << ";" << d_parallelRadix << ";" << d_parallelMerge << "\r\n";
 
                 delete[] R;
                 delete[] S;

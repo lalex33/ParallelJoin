@@ -98,10 +98,6 @@ namespace SMJ{
         cout << "Sorting S with std::sort : " << (sec() - start) << " seconds" << endl;
         cout << "Sorted : " << checkSorted(S, MAX_SIZE) << endl;
 
-        /*start = sec();
-        result = parallelMerge(R, S, MAX_SIZE, MAX_SIZE);
-        cout << "Merging R and S : " << (sec() - start) << " seconds" << endl;*/
-
         delete[] R;
         delete[] S;
     }

@@ -23,7 +23,8 @@ int main(){
 
     //testLotOfData();
 
-    benchmarkData();
+    //benchmarkData();
+    benchmarkData2();
 
     return 0;
 }

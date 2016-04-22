@@ -13,6 +13,7 @@ namespace SMJ{
     const std::string FILE_NAME_PARALLEL_JOIN = "parallel_join.csv"; // file for parallel results
     const std::string FILE_NAME_THREAD_PJOIN = "thread_join.csv"; // file for thread results
     const std::string FILE_NAME_DATA = "data.csv"; // file for data results
+    const std::string FILE_NAME_DATA2 = "data2.csv"; // file for data 2 results
 
     const int NB_THREAD_MIN = 1;
     const int NB_THREAD_MAX = 24;
@@ -33,9 +34,14 @@ namespace SMJ{
     void benchmarkThreadPSMJ();
 
     /*
-     * start a benchmark of increasing size of data
+     * start a benchmark of increasing size of data (sort)
      */
     void benchmarkData();
+
+    /*
+     * start a benchmark of increasing size of data (sort and merge)
+     */
+    void benchmarkData2();
 }
 
 #endif //SORTMERGEJOIN_STATISTIQUE_H
