@@ -17,6 +17,7 @@ namespace SMJ{
 
     const int NB_THREAD_MIN = 1;
     const int NB_THREAD_MAX = 24;
+    const int NB_ROWS_THREAD = 1000000;
 
     /*
      * start a benchmark of the implemented algorithm of sort-merge-join

@@ -135,17 +135,18 @@ namespace SMJ{
         }
 
         // wait end of all merges
-        for(auto thread = threads.begin(); thread != threads.end(); thread++){
+        for(auto thread = threads.begin(); thread != threads.end(); ++thread){
             thread->join();
         }
+        threads.clear();
 
         return results;
     }
 
     vector<string> assembleResults(vector<vector<string>> results){
         vector<string> result;
-        for(auto match = results.begin(); match != results.end(); match++){
-            for(auto value = match->begin(); value != match->end(); value++){
+        for(auto match = results.begin(); match != results.end(); ++match){
+            for(auto value = match->begin(); value != match->end(); ++value){
                 result.push_back(*value);
             }
         }

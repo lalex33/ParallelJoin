@@ -143,31 +143,31 @@ namespace SMJ {
                 NB_THREAD = nbThread;
 
                 // add new random integer into the two relations
-                int* R = new int[NB_ROWS_MAX];
-                int* S = new int[NB_ROWS_MAX];
+                int* R = new int[NB_ROWS_THREAD];
+                int* S = new int[NB_ROWS_THREAD];
 
                 // add new random integer into the two relations
-                fillTable(R, NB_ROWS_MAX, INTEGER_MAX);
-                fillTable(S, NB_ROWS_MAX, INTEGER_MAX);
+                fillTable(R, NB_ROWS_THREAD, INTEGER_MAX_2);
+                fillTable(S, NB_ROWS_THREAD, INTEGER_MAX_2);
 
-                cout << "Computing " << NB_ROWS_MAX << " rows with " << nbThread << " threads" << endl;
+                cout << "Computing " << NB_ROWS_THREAD << " rows with " << nbThread << " threads" << endl;
                 // start the chrono
                 start = sec();
 
                 // sort the two relation
-                parallelSort(R, NB_ROWS_MAX);
-                parallelSort(S, NB_ROWS_MAX);
+                parallelSort(R, NB_ROWS_THREAD);
+                parallelSort(S, NB_ROWS_THREAD);
 
                 durationSort = sec() - start;
-                assert(checkSorted(R, NB_ROWS_MAX));
-                assert(checkSorted(S, NB_ROWS_MAX));
+                assert(checkSorted(R, NB_ROWS_THREAD));
+                assert(checkSorted(S, NB_ROWS_THREAD));
 
                 start = sec();
                 // merge both sorted relation
-                join = parallelMerge(R, S, NB_ROWS_MAX, NB_ROWS_MAX);
+                join = parallelMerge(R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
 
                 durationMerge = sec() - start;
-                assert(checkMerge(R, NB_ROWS_MAX, S, NB_ROWS_MAX, assembleResults(join)));
+                assert(checkMerge(R, NB_ROWS_THREAD, S, NB_ROWS_THREAD, assembleResults(join)));
 
                 cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
 
