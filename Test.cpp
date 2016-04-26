@@ -101,14 +101,14 @@ namespace SMJ{
         start = sec();
         auto result = parallelMerge(R, S, MAX_SIZE, MAX_SIZE);
         cout << "Merging R with parallel merge : " << (sec() - start) << " seconds" << endl;
-        //cout << "Merged? -> " << checkMerge(R, MAX_SIZE, S, MAX_SIZE, assembleResults(result)) << endl;
+        cout << "Merged? -> " << checkMerge(R, MAX_SIZE, S, MAX_SIZE, assembleResults(result)) << endl;
 
         cout << "Start merge" << endl;
         vector<string> join;
         start = sec();
         mergeRelations(R, R + MAX_SIZE, S, S + MAX_SIZE, join, 0, 0);
         cout << "Merging R with merge : " << (sec() - start) << " seconds" << endl;
-        //cout << "Merged? -> " << checkMerge(R, MAX_SIZE, S, MAX_SIZE, join) << endl;
+        cout << "Merged? -> " << checkMerge(R, MAX_SIZE, S, MAX_SIZE, join) << endl;
 
         delete[] R;
         delete[] S;

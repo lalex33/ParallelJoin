@@ -20,7 +20,7 @@ namespace SMJ {
 
         // check if we have access to the file
         if(!file.fail()){
-
+            file << "Number of rows;Sort;Merge;Integer range : 0-" << INTEGER_MAX << endl;
             // loop each 10000 rows
             for(int nb_rows = 10000; nb_rows <= NB_ROWS_MAX; nb_rows += 10000){
                 // add new random integer into the two relations
@@ -75,12 +75,9 @@ namespace SMJ {
         // open a file to store results
         ofstream file(FILE_NAME_PARALLEL_JOIN, ofstream::out);
 
-        // write settings
-        file << "NB_THREAD = " << NB_THREAD << "; MAX INT = " << INTEGER_MAX << "\r\n";
-
         // check if we have access to the file
         if(!file.fail()){
-
+            file << "Number of rows;Parallel sort;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
             // loop each 10000 rows
             for(int nb_rows = 10000; nb_rows <= NB_ROWS_MAX; nb_rows += 10000){
                 // add new random integer into the two relations
@@ -136,7 +133,7 @@ namespace SMJ {
 
         // check if we have access to the file
         if(!file.fail()){
-
+            file << "Number of thread;Parallel sort;Parallel merge;Number of rows : " << NB_ROWS_THREAD << "Integer range : 0-" << INTEGER_MAX_2 << endl;
             // loop each 10000 rows
             for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
                 // set number of threads
@@ -191,6 +188,7 @@ namespace SMJ {
         ofstream file(FILE_NAME_DATA, ofstream::out);
 
         if(!file.fail()){
+            file << "Number of rows;std::sort;Radix sort;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX_2 << endl;
             for(uint nbRows = 1000000; nbRows <= 100000000; nbRows += 1000000){
                 cout << "Computing " << nbRows << endl;
                 int* R = new int[nbRows];
@@ -225,6 +223,7 @@ namespace SMJ {
         ofstream file(FILE_NAME_DATA2, ofstream::out);
 
         if(!file.fail()){
+            file << "Number of rows;std::sort;Simple merge;Radix sort;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
             for(uint nbRows = 1000000; nbRows <= 10000000; nbRows += 1000000){
                 cout << "Computing " << nbRows << endl;
                 int* R = new int[nbRows];
@@ -252,6 +251,44 @@ namespace SMJ {
                 d_parallelMerge = sec() - start;
 
                 file << nbRows << ";" << d_stdSort << ";" << d_merge << ";" << d_parallelRadix << ";" << d_parallelMerge << "\r\n";
+
+                delete[] R;
+                delete[] S;
+            }
+
+            file.close();
+        }else{
+            cout << "ERROR : opening file failed" << endl;
+        }
+    }
+
+    void benchmarkMerge() {
+        double start, d_merge, d_parallelMerge;
+        NB_THREAD = 10;
+        vector<string> results;
+        ofstream file(FILE_NAME_MERGE, ofstream::out);
+
+        if(!file.fail()){
+            file << "Number of rows;Simple merge;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX_2 << endl;
+            for(uint nbRows = 10000; nbRows <= 300000; nbRows += 10000){
+                cout << "Computing " << nbRows << endl;
+                int* R = new int[nbRows];
+                int* S = new int[nbRows];
+                fillTable(R, nbRows, INTEGER_MAX_2);
+                fillTable(S, nbRows, INTEGER_MAX_2);
+                parallelSort(R, nbRows);
+                parallelSort(S, nbRows);
+
+                start = sec();
+                mergeRelations(R, R + nbRows, S, S + nbRows, results, 0, 0);
+                d_merge = sec() - start;
+                results.clear();
+
+                start = sec();
+                parallelMerge(R, S, nbRows, nbRows);
+                d_parallelMerge = sec() - start;
+
+                file << nbRows << ";" << d_merge << ";" << d_parallelMerge << "\r\n";
 
                 delete[] R;
                 delete[] S;

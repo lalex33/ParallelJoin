@@ -119,13 +119,13 @@ namespace SMJ{
         vector<vector<string>> results(NB_THREAD);
         vector<thread> threads;
 
-        // compute the number of rows merge by a thread
+        // compute the number of rows merged by a thread
         uint rowsPerThread = sizeR / NB_THREAD;
 
         // start <NB_THREAD> threads for merge
         for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
             int* startR = R + nbThread*rowsPerThread;
-            int* endR = R + nbThread*rowsPerThread + rowsPerThread;
+            int* endR = startR + rowsPerThread;
             endR += (nbThread == NB_THREAD-1)? (sizeR % (nbThread * rowsPerThread + rowsPerThread)):0;
 
             int* startS = S, *endS = S + sizeS;
