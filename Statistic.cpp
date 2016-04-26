@@ -194,12 +194,12 @@ namespace SMJ {
                 int* R = new int[nbRows];
                 int* S = new int[nbRows];
 
-                fillTable(R, nbRows, INTEGER_MAX_2);
+                fillTable(R, nbRows, INTEGER_MAX);
                 start = sec();
                 sort(R, R + nbRows);
                 d_stdSort = sec() - start;
 
-                fillTable(S, nbRows, INTEGER_MAX_2);
+                fillTable(S, nbRows, INTEGER_MAX);
                 start = sec();
                 parallelSort(S, nbRows);
                 d_parallelRadix = sec() - start;
@@ -229,26 +229,27 @@ namespace SMJ {
                 int* R = new int[nbRows];
                 int* S = new int[nbRows];
 
-                fillTable(R, nbRows, INTEGER_MAX);
+                fillTable(R, nbRows, nbRows);
                 start = sec();
                 sort(R, R + nbRows);
                 d_stdSort = sec() - start;
-                cout << checkSorted(R, nbRows) << endl;
 
-                fillTable(S, nbRows, INTEGER_MAX);
+                fillTable(S, nbRows, nbRows);
                 start = sec();
                 parallelSort(S, nbRows);
                 d_parallelRadix = sec() - start;
-                cout << checkSorted(S, nbRows) << endl;
 
                 start = sec();
                 mergeRelations(R, R + nbRows, S, S + nbRows, results, 0, 0);
                 d_merge = sec() - start;
+                cout << "Simple merge results size : " << results.size() << endl;
                 results.clear();
 
                 start = sec();
-                parallelMerge(R, S, nbRows, nbRows);
+                auto join = parallelMerge(R, S, nbRows, nbRows);
                 d_parallelMerge = sec() - start;
+                cout << "Parallel merge results size : " << assembleResults(join).size() << endl;
+                join.clear();
 
                 file << nbRows << ";" << d_stdSort << ";" << d_merge << ";" << d_parallelRadix << ";" << d_parallelMerge << "\r\n";
 
@@ -274,8 +275,8 @@ namespace SMJ {
                 cout << "Computing " << nbRows << endl;
                 int* R = new int[nbRows];
                 int* S = new int[nbRows];
-                fillTable(R, nbRows, INTEGER_MAX_2);
-                fillTable(S, nbRows, INTEGER_MAX_2);
+                fillTable(R, nbRows, nbRows);
+                fillTable(S, nbRows, nbRows);
                 parallelSort(R, nbRows);
                 parallelSort(S, nbRows);
 
