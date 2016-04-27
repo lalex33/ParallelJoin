@@ -6,8 +6,10 @@
 namespace SMJ{
 
     const int NB_ROWS_MAX = 2000000; // maximum value of rows to compute
-    const int INTEGER_MAX = INT_MAX; // maximum value of random integer generated
+    // some maximum values of random integer generated
+    const int INTEGER_MAX = INT_MAX;
     const int INTEGER_MAX_2 = 32767;
+    const int INTEGER_MAX_3 = 20000000;
 
     const std::string FILE_NAME_JOIN = "join.csv"; // output file for the results
     const std::string FILE_NAME_PARALLEL_JOIN = "parallel_join.csv"; // file for parallel results
