@@ -122,8 +122,12 @@ namespace SMJ{
         // compute the number of rows merged by a thread
         uint rowsPerThread = sizeR / NB_THREAD;
 
+        //test time
+        double start;
+
         // start <NB_THREAD> threads for merge
         for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
+            start = sec();
             int* startR = R + nbThread*rowsPerThread;
             int* endR = startR + rowsPerThread;
             endR += (nbThread == NB_THREAD-1)? (sizeR % (nbThread * rowsPerThread + rowsPerThread)):0;
@@ -132,6 +136,7 @@ namespace SMJ{
 
             threads.push_back( thread(mergeRelations, startR, endR, startS, endS,
                                       ref(results[nbThread]), nbThread*rowsPerThread, 0) );
+            cout << "Thread launch in " << (sec() - start) << endl;
         }
 
         // wait end of all merges

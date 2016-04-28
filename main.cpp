@@ -12,7 +12,7 @@ int main(){
 
     // set number of thread
     // NB_THREAD < NB_ROWS
-    NB_THREAD = 10;
+    NB_THREAD = 4;
 
     // shows example of parallel sort-merge join
     //testParallelSort(false);
@@ -20,13 +20,13 @@ int main(){
 
     // launch test of parallel sort-merge
     //benchmarkParallelSMJ();
-    benchmarkThreadPSMJ();
+    //benchmarkThreadPSMJ();
 
     //testLotOfData();
 
     //benchmarkData();
     //benchmarkData2();
-    //benchmarkMerge();
+    benchmarkMerge();
 
     return 0;
 }
