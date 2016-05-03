@@ -13,8 +13,6 @@ namespace SMJ{
         int *tupleR = startR, *tupleS = startS;
         int *tupleR2, rowR2, *tupleS2, rowS2;
 
-        double start = sec();
-
         // loop until there is no tuples to read in both relation
         while(tupleR != endR && tupleS != endS){
             if(*tupleR > *tupleS){
@@ -53,8 +51,6 @@ namespace SMJ{
                 rowS++;
             }
         }
-
-        cout << "Merge finished in " << (sec() - start) << endl;
     }
 
 }

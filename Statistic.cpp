@@ -112,7 +112,7 @@ namespace SMJ {
         ofstream file(FILE_NAME_THREAD_PJOIN, ofstream::out);
 
         if(!file.fail()){
-            file << "Number of thread;Parallel sort;Parallel merge;Number of rows : " << NB_ROWS_THREAD << "Integer range : 0-" << INTEGER_MAX_2 << endl;
+            file << "Number of thread;Parallel sort;Parallel merge;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX_3 << endl;
 
             for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
                 NB_THREAD = nbThread;

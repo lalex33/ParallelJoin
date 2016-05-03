@@ -20,13 +20,13 @@ int main(){
 
     // launch test of parallel sort-merge
     //benchmarkParallelSMJ();
-    //benchmarkThreadPSMJ();
+    benchmarkThreadPSMJ();
 
     //testLotOfData();
 
     //benchmarkData();
     //benchmarkData2();
-    benchmarkMerge();
+    //benchmarkMerge();
 
     return 0;
 }

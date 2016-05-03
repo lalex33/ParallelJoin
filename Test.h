@@ -19,8 +19,8 @@ namespace SMJ{
     const size_t P_SIZE_S = 20;
     const uint MAX_RAND_PSMJ = 20;
 
-    const uint MAX_SIZE = 100000;
-    const int MAX_RAND_TEST = 32767;
+    const uint MAX_SIZE = 50000000;
+    const int MAX_RAND_TEST = 200000000;
 
     /*
      * launch a join and display result

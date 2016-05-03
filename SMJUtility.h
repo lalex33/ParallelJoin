@@ -57,7 +57,11 @@ namespace SMJ {
      * get time
      * https://github.com/iwiwi/parallel-radix-sort/blob/master/measure.cc
      */
-    double sec();
+    inline double sec() {
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        return tv.tv_sec + tv.tv_usec * 1e-6;
+    }
 }
 
 #endif //SORTMERGEJOIN_SMJUTILITY_H

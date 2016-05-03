@@ -9,7 +9,7 @@ namespace SMJ{
     // some maximum values of random integer generated
     const int INTEGER_MAX = INT_MAX;
     const int INTEGER_MAX_2 = 32767;
-    const int INTEGER_MAX_3 = 20000000;
+    const int INTEGER_MAX_3 = 200000000;
 
     const std::string FILE_NAME_JOIN = "join.csv"; // output file for the results
     const std::string FILE_NAME_PARALLEL_JOIN = "parallel_join.csv"; // file for parallel results
@@ -19,8 +19,8 @@ namespace SMJ{
     const std::string FILE_NAME_MERGE = "merge.csv"; // file for merge results
 
     const int NB_THREAD_MIN = 1;
-    const int NB_THREAD_MAX = 10;
-    const int NB_ROWS_THREAD = 1000000;
+    const int NB_THREAD_MAX = 24;
+    const int NB_ROWS_THREAD = 10000000;
 
     /*
      * start a benchmark of the implemented algorithm of sort-merge-join
