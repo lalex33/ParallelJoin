@@ -18,15 +18,15 @@ int main(){
     //testParallelSort(false);
     //testParallelJoin();
 
-    // launch test of parallel sort-merge
-    //benchmarkParallelSMJ();
-    benchmarkThreadPSMJ();
-
     //testLotOfData();
 
     //benchmarkData();
     //benchmarkData2();
     //benchmarkMerge();
+
+    // launch test of parallel sort-merge
+    //benchmarkParallelSMJ();
+    benchmarkThreadPSMJ();
 
     return 0;
 }

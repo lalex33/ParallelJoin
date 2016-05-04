@@ -33,6 +33,7 @@ namespace SMJ{
 
                 while(tupleR2 != endR && *tupleR2 == *tupleS){
                     results.push_back(getTuple(rowR2++, tupleR2++, rowS, tupleS));
+                    //rowR2++;tupleR2++;
                 }
 
                 // loop on s to find other equal tuples after
@@ -41,6 +42,7 @@ namespace SMJ{
 
                 while(tupleS2 != endS && *tupleS2 == *tupleR){
                     results.push_back(getTuple(rowR, tupleR, rowS2++, tupleS2++));
+                    //rowS2++;tupleS2++;
                 }
 
                 // go to higher tuples
