@@ -143,6 +143,43 @@ namespace SMJ{
         return results;
     }
 
+    vector<vector<string>> parallelMerge2(int* R, int* S, uint sizeR, uint sizeS){
+        // allocate merge result for each thread
+        vector<vector<string>> results(NB_THREAD);
+        vector<thread> threads;
+
+        // compute the number of rows merged by a thread
+        uint rowsPerThread = sizeR / NB_THREAD;
+        uint partitionS = sizeS / NB_THREAD;
+
+        // non-blocking way to scan S
+        for(uint rotation=0; rotation < NB_THREAD; ++rotation) {
+
+            // start <NB_THREAD> threads for merge
+            for (uint nbThread = 0; nbThread < NB_THREAD; ++nbThread) {
+                int *startR = R + nbThread * rowsPerThread;
+                int *endR = startR + rowsPerThread;
+                endR += (nbThread == NB_THREAD - 1) ? (sizeR % (nbThread * rowsPerThread + rowsPerThread)) : 0;
+
+                int* startS = S + partitionS * ((nbThread + rotation)%NB_THREAD);
+                int* endS = startS + partitionS;
+                endS += (nbThread + rotation == NB_THREAD - 1)?
+                        (sizeS % (nbThread * partitionS + partitionS)) : 0;
+
+                threads.push_back(thread(mergeRelations, startR, endR, startS, endS,
+                                         ref(results[nbThread]), nbThread * rowsPerThread, 0));
+            }
+
+            // wait end of all merges
+            for (auto thread = threads.begin(); thread != threads.end(); ++thread) {
+                thread->join();
+            }
+            threads.clear();
+        }
+
+        return results;
+    }
+
     vector<string> assembleResults(vector<vector<string>> results){
         vector<string> result;
         for(auto match = results.begin(); match != results.end(); ++match){

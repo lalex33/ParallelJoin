@@ -43,6 +43,11 @@ namespace SMJ{
     std::vector<std::vector<std::string>> parallelMerge(int* R, int* S, uint sizeR, uint sizeS);
 
     /*
+     * start other merge using threads
+     */
+    std::vector<std::vector<std::string>> parallelMerge2(int* R, int* S, uint sizeR, uint sizeS);
+
+    /*
      * return the final merge list
      */
     std::vector<std::string> assembleResults(std::vector<std::vector<std::string>> results);
