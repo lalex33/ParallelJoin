@@ -56,8 +56,10 @@ void ThreadPool::Invoke() {
         }
 
         // Execute the task.
+        ++running;
         task();
         --running;
+        wait_var.notify_one();
     }
 }
 
@@ -112,6 +114,9 @@ void ThreadPool::Resize(uint8_t threads) {
     running = 0;
 }
 
-bool ThreadPool::IsWorkFinished() {
-    return (running == 0) && tasks.empty();
+void ThreadPool::WaitEndOfWork(){
+    //while( !((running == 0) && tasks.empty()) ){}
+    unique_lock<mutex> lock(wait_mutex);
+    wait_var.wait(lock, [this]{ return (running == 0) && tasks.empty();});
+    lock.unlock();
 }

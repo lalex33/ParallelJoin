@@ -200,7 +200,7 @@ namespace SMJ{
         }
 
         // wait end of all merges
-        while( !threadPool.IsWorkFinished() ){}
+        threadPool.WaitEndOfWork();
 
         return results;
     }

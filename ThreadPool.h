@@ -33,7 +33,7 @@ public:
 
     void Resize(uint8_t threads);
 
-    bool IsWorkFinished();
+    void WaitEndOfWork();
 
 private:
     // Thread pool storage.
@@ -45,11 +45,17 @@ private:
     // Task queue mutex.
     mutex tasksMutex;
 
-    // Number of tasks running
-    uint running;
-
     // Condition variable.
     condition_variable condition;
+
+    // Number of tasks running
+    atomic_uint running;
+
+    // Condition variable for waiting end of all tasks
+    condition_variable wait_var;
+
+    // Waiting mutex
+    mutex wait_mutex;
 
     // Indicates that pool needs to be shut down.
     bool terminate;
