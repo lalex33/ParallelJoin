@@ -135,7 +135,7 @@ namespace SMJ {
                     parallelSort(R, NB_ROWS_THREAD);
                     parallelSort(S, NB_ROWS_THREAD);
                     avg_sort += sec() - start;
-                    
+
                     start = sec();
                     join = parallelMerge3(threadPool, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
                     avg_merge += sec() - start;

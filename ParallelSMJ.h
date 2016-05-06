@@ -1,7 +1,6 @@
 #ifndef SORTMERGEJOIN_PARALLELSORT_H
 #define SORTMERGEJOIN_PARALLELSORT_H
 
-#include "SortMergeJoin.h"
 #include "ThreadPool.h"
 
 namespace SMJ{

@@ -111,6 +111,12 @@ namespace SMJ{
         cout << "Merging R with parallel merge 2: " << (sec() - start) << " seconds" << endl;
         //cout << "Merged? -> " << checkMerge(R, MAX_SIZE, S, MAX_SIZE, assembleResults(result)) << endl;
 
+        ThreadPool threadPool(NB_THREAD);
+        cout << "Start merge" << endl;
+        start = sec();
+        result = parallelMerge3(threadPool, R, S, MAX_SIZE, MAX_SIZE);
+        cout << "Merging R with parallel merge 3: " << (sec() - start) << " seconds" << endl;
+
         cout << "Start merge" << endl;
         vector<string> join;
         start = sec();

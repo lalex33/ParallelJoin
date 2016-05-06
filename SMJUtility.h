@@ -16,6 +16,11 @@
 #include <sstream>
 #include <algorithm>
 #include <sys/time.h>
+#include <queue>
+#include <atomic>
+#include <mutex>
+#include <condition_variable>
+#include <unistd.h>
 
 namespace SMJ {
 

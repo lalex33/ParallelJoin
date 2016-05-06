@@ -3,15 +3,7 @@
 
 // https://gist.github.com/alagafonov
 
-#pragma once
-
-#include <vector>
-#include <queue>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-#include <iostream>
-#include <unistd.h>
+#include "SortMergeJoin.h"
 
 using namespace std;
 
