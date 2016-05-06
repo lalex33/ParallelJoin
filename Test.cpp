@@ -16,7 +16,7 @@ namespace SMJ{
         parallelSort(R, P_SIZE_R);
         parallelSort(S, P_SIZE_S);
 
-        auto results = assembleResults(parallelMerge(R, S, P_SIZE_R, P_SIZE_S));
+        auto results = assembleResults(parallelMerge2(R, S, P_SIZE_R, P_SIZE_S));
 
         printSortMerge(R, S, P_SIZE_R, P_SIZE_S, results);
 
@@ -100,7 +100,13 @@ namespace SMJ{
         cout << "Start merge" << endl;
         start = sec();
         auto result = parallelMerge(R, S, MAX_SIZE, MAX_SIZE);
-        cout << "Merging R with parallel merge : " << (sec() - start) << " seconds" << endl;
+        cout << "Merging R with parallel merge 1: " << (sec() - start) << " seconds" << endl;
+        //cout << "Merged? -> " << checkMerge(R, MAX_SIZE, S, MAX_SIZE, assembleResults(result)) << endl;
+
+        cout << "Start merge" << endl;
+        start = sec();
+        result = parallelMerge2(R, S, MAX_SIZE, MAX_SIZE);
+        cout << "Merging R with parallel merge 2: " << (sec() - start) << " seconds" << endl;
         //cout << "Merged? -> " << checkMerge(R, MAX_SIZE, S, MAX_SIZE, assembleResults(result)) << endl;
 
         cout << "Start merge" << endl;

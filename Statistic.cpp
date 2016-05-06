@@ -112,7 +112,7 @@ namespace SMJ {
         ofstream file(FILE_NAME_THREAD_PJOIN, ofstream::out);
 
         if(!file.fail()){
-            file << "Number of thread;Parallel sort;Parallel merge;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX_3 << endl;
+            file << "Number of thread;Parallel sort;Parallel merge;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
 
             for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
                 NB_THREAD = nbThread;
@@ -124,8 +124,8 @@ namespace SMJ {
                     int* R = new int[NB_ROWS_THREAD];
                     int* S = new int[NB_ROWS_THREAD];
 
-                    fillTable(R, NB_ROWS_THREAD, INTEGER_MAX_3);
-                    fillTable(S, NB_ROWS_THREAD, INTEGER_MAX_3);
+                    fillTable(R, NB_ROWS_THREAD, INTEGER_MAX);
+                    fillTable(S, NB_ROWS_THREAD, INTEGER_MAX);
 
                     start = sec();
                     parallelSort(R, NB_ROWS_THREAD);
@@ -133,7 +133,7 @@ namespace SMJ {
                     avg_sort += sec() - start;
 
                     start = sec();
-                    join = parallelMerge2(R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
+                    join = parallelMerge(R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
                     avg_merge += sec() - start;
 
                     delete[] R;
@@ -185,44 +185,47 @@ namespace SMJ {
     }
 
     void benchmarkData2() {
-        double start, d_stdSort, d_parallelRadix, d_merge, d_parallelMerge;
-        NB_THREAD = 24;
+        double start;
+        NB_THREAD = 48;
         vector<string> results;
         ofstream file(FILE_NAME_DATA2, ofstream::out);
 
         if(!file.fail()){
             file << "Number of rows;std::sort;Simple merge;Radix sort;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
-            for(uint nbRows = 1000000; nbRows <= 10000000; nbRows += 1000000){
+            for(uint nbRows = 1000000; nbRows <= 20000000; nbRows += 1000000){
                 cout << "Computing " << nbRows << endl;
-                int* R = new int[nbRows];
-                int* S = new int[nbRows];
+                double d_stdSort = 0.0, d_parallelRadix = 0.0, d_merge = 0.0, d_parallelMerge = 0.0;
 
-                fillTable(R, nbRows, nbRows);
-                start = sec();
-                sort(R, R + nbRows);
-                d_stdSort = sec() - start;
+                for(int i=0; i < NB_TRY; i++){
+                    int *R = new int[nbRows];
+                    int *S = new int[nbRows];
 
-                fillTable(S, nbRows, nbRows);
-                start = sec();
-                parallelSort(S, nbRows);
-                d_parallelRadix = sec() - start;
+                    fillTable(R, nbRows, INTEGER_MAX_3);
+                    start = sec();
+                    sort(R, R + nbRows);
+                    d_stdSort += sec() - start;
 
-                start = sec();
-                mergeRelations(R, R + nbRows, S, S + nbRows, results, 0, 0);
-                d_merge = sec() - start;
-                cout << "Simple merge results size : " << results.size() << endl;
-                results.clear();
+                    fillTable(S, nbRows, INTEGER_MAX_3);
+                    start = sec();
+                    parallelSort(S, nbRows);
+                    d_parallelRadix += sec() - start;
 
-                start = sec();
-                auto join = parallelMerge(R, S, nbRows, nbRows);
-                d_parallelMerge = sec() - start;
-                cout << "Parallel merge results size : " << assembleResults(join).size() << endl;
-                join.clear();
+                    start = sec();
+                    mergeRelations(R, R + nbRows, S, S + nbRows, results, 0, 0);
+                    d_merge += sec() - start;
+                    results.clear();
 
-                file << nbRows << ";" << d_stdSort << ";" << d_merge << ";" << d_parallelRadix << ";" << d_parallelMerge << "\r\n";
+                    start = sec();
+                    auto join = parallelMerge(R, S, nbRows, nbRows);
+                    d_parallelMerge += sec() - start;
+                    join.clear();
 
-                delete[] R;
-                delete[] S;
+                    delete[] R;
+                    delete[] S;
+                }
+
+                file << nbRows << ";" << (d_stdSort/NB_TRY) << ";" << (d_merge/NB_TRY) <<
+                        ";" << (d_parallelRadix/NB_TRY) << ";" << (d_parallelMerge/NB_TRY) << "\r\n";
             }
 
             file.close();

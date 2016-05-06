@@ -167,7 +167,8 @@ namespace SMJ{
                         (sizeS % (nbThread * partitionS + partitionS)) : 0;
 
                 threads.push_back(thread(mergeRelations, startR, endR, startS, endS,
-                                         ref(results[nbThread]), nbThread * rowsPerThread, 0));
+                                         ref(results[nbThread]), nbThread * rowsPerThread,
+                                         partitionS * ((nbThread + rotation)%NB_THREAD)));
             }
 
             // wait end of all merges
