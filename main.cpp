@@ -12,7 +12,7 @@ int main(){
 
     // set number of thread
     // NB_THREAD < NB_ROWS
-    NB_THREAD = 4;
+    NB_THREAD = 1;
 
     // shows example of parallel sort-merge join
     //testParallelSort(false);

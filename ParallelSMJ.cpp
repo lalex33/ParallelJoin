@@ -201,7 +201,6 @@ namespace SMJ{
 
         // wait end of all merges
         while( !threadPool.IsWorkFinished() ){}
-        threadPool.ShutDown();
 
         return results;
     }

@@ -38,7 +38,6 @@ void ThreadPool::Invoke() {
         {
             // Put unique lock on task mutex.
             unique_lock<mutex> lock(tasksMutex);
-            cout << this_thread::get_id() << endl;
 
             // Wait until queue is not empty or termination signal is sent.
             condition.wait(lock, [this]{ return !tasks.empty() || terminate; });
@@ -57,7 +56,6 @@ void ThreadPool::Invoke() {
         }
 
         // Execute the task.
-        ++running;
         task();
         --running;
     }
@@ -84,7 +82,7 @@ void ThreadPool::ShutDown()
     }
 
     // Empty workers vector.
-    threadPool.empty();
+    threadPool.clear();
 
     // Indicate that the pool has been shut down.
     stopped = true;
@@ -115,7 +113,5 @@ void ThreadPool::Resize(uint8_t threads) {
 }
 
 bool ThreadPool::IsWorkFinished() {
-    //cout << "Running : " << running << endl;
-    //cout << "Tasks : " << tasks.size() << endl;
     return (running == 0) && tasks.empty();
 }

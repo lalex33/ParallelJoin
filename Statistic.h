@@ -19,10 +19,10 @@ namespace SMJ{
     const std::string FILE_NAME_MERGE = "merge.csv"; // file for merge results
 
     const int NB_THREAD_MIN = 1;
-    const int NB_THREAD_MAX = 48;
-    const int NB_ROWS_THREAD = 1000000;
+    const int NB_THREAD_MAX = 4;
+    const int NB_ROWS_THREAD = 10000000;
 
-    const int NB_TRY = 8;
+    const int NB_TRY = 6;
     const int NB_TRY_2 = 4;
 
     /*
