@@ -181,6 +181,31 @@ namespace SMJ{
         return results;
     }
 
+    vector<vector<string>> parallelMerge3(ThreadPool& threadPool, int* R, int* S, uint sizeR, uint sizeS){
+        // allocate merge result for each thread
+        vector<vector<string>> results(NB_THREAD);
+
+        // compute the number of rows merged by a thread
+        uint rowsPerThread = sizeR / NB_THREAD;
+
+        // start <NB_THREAD> threads for merge
+        for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
+            int* startR = R + nbThread*rowsPerThread;
+            int* endR = startR + rowsPerThread;
+            endR += (nbThread == NB_THREAD-1)? (sizeR % (nbThread * rowsPerThread + rowsPerThread)):0;
+
+            int* startS = S, *endS = S + sizeS;
+            threadPool.Enqueue( bind(mergeRelations, startR, endR, startS, endS,
+                                     ref(results[nbThread]), nbThread*rowsPerThread, 0) );
+        }
+
+        // wait end of all merges
+        while( !threadPool.IsWorkFinished() ){}
+        threadPool.ShutDown();
+
+        return results;
+    }
+
     vector<string> assembleResults(vector<vector<string>> results){
         vector<string> result;
         for(auto match = results.begin(); match != results.end(); ++match){
