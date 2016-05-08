@@ -30,7 +30,6 @@ void ThreadPool::Enqueue(function<void()> f)
 }
 
 void ThreadPool::Invoke() {
-
     function<void()> task;
     while(true)
     {
@@ -59,6 +58,7 @@ void ThreadPool::Invoke() {
         ++running;
         task();
         --running;
+        //lock_guard<mutex> lock(wait_mutex); -> stackoverflow
         wait_var.notify_one();
     }
 }
@@ -104,19 +104,20 @@ void ThreadPool::Resize(uint8_t threads) {
         ShutDown();
     }
 
+    terminate = false;
+    stopped = false;
+    running = 0;
+
     for(int i = 0; i < threads; i++)
     {
         threadPool.emplace_back(thread(&ThreadPool::Invoke, this));
     }
-
-    terminate = false;
-    stopped = false;
-    running = 0;
 }
 
 void ThreadPool::WaitEndOfWork(){
-    //while( !((running == 0) && tasks.empty()) ){}
     unique_lock<mutex> lock(wait_mutex);
-    wait_var.wait(lock, [this]{ return (running == 0) && tasks.empty();});
+    wait_var.wait(lock, [this]{
+        return (running == 0) && tasks.empty();
+    });
     lock.unlock();
 }
