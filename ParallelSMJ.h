@@ -1,7 +1,7 @@
 #ifndef SORTMERGEJOIN_PARALLELSORT_H
 #define SORTMERGEJOIN_PARALLELSORT_H
 
-#include "ThreadPool.h"
+#include "ThreadWork.h"
 
 namespace SMJ{
 
@@ -53,9 +53,9 @@ namespace SMJ{
     std::vector<std::vector<std::string>> parallelMerge3(ThreadPool& threadPool, int* R, int* S, uint sizeR, uint sizeS);
 
     /*
-     * return the final merge list
+     * parallel merge using threads without mutex
      */
-    std::vector<std::string> assembleResults(std::vector<std::vector<std::string>> results);
+    std::vector<std::vector<std::string>> parallelMerge4(ThreadWork& threadWork, int* R, int* S, uint sizeR, uint sizeS);
 
 }
 

@@ -72,5 +72,15 @@ namespace SMJ {
         return oss.str();
     }
 
+    vector<string> assembleResults(vector<vector<string>> results){
+        vector<string> result;
+        for(auto match = results.begin(); match != results.end(); ++match){
+            for(auto value = match->begin(); value != match->end(); ++value){
+                result.push_back(*value);
+            }
+        }
+        return result;
+    }
+
 }
 

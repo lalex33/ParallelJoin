@@ -16,9 +16,11 @@ namespace SMJ{
         parallelSort(R, P_SIZE_R);
         parallelSort(S, P_SIZE_S);
 
-        ThreadPool threadPool(NB_THREAD);
+        /*ThreadPool threadPool(NB_THREAD);
+        auto results = assembleResults(parallelMerge3(threadPool, R, S, P_SIZE_R, P_SIZE_S));*/
 
-        auto results = assembleResults(parallelMerge3(threadPool, R, S, P_SIZE_R, P_SIZE_S));
+        ThreadWork threadWork(NB_THREAD);
+        auto results = assembleResults(parallelMerge4(threadWork, R, S, P_SIZE_R, P_SIZE_S));
 
         printSortMerge(R, S, P_SIZE_R, P_SIZE_S, results);
 

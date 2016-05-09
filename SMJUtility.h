@@ -70,6 +70,11 @@ namespace SMJ {
         gettimeofday(&tv, NULL);
         return tv.tv_sec + tv.tv_usec * 1e-6;
     }
+
+    /*
+     * return the final merge list
+     */
+    std::vector<std::string> assembleResults(std::vector<std::vector<std::string>> results);
 }
 
 #endif //SORTMERGEJOIN_SMJUTILITY_H
