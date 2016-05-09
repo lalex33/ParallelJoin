@@ -114,6 +114,11 @@ namespace SMJ {
         if(!file.fail()){
             file << "Number of thread;Parallel sort;Parallel merge;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
 
+            int* R1 = new int[NB_ROWS_THREAD];
+            int* S1 = new int[NB_ROWS_THREAD];
+            fillTable(R1, NB_ROWS_THREAD, INTEGER_MAX);
+            fillTable(S1, NB_ROWS_THREAD, INTEGER_MAX);
+
             for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
                 NB_THREAD = nbThread;
 
@@ -122,12 +127,10 @@ namespace SMJ {
                 double avg_sort = 0.0, avg_merge = 0.0;
 
                 for(int i = 0; i < NB_TRY; ++i){
-
                     int* R = new int[NB_ROWS_THREAD];
                     int* S = new int[NB_ROWS_THREAD];
-
-                    fillTable(R, NB_ROWS_THREAD, INTEGER_MAX);
-                    fillTable(S, NB_ROWS_THREAD, INTEGER_MAX);
+                    copy(R1, R1 + NB_ROWS_THREAD, R);
+                    copy(S1, S1 + NB_ROWS_THREAD, S);
 
                     start = sec();
                     parallelSort(R, NB_ROWS_THREAD);
@@ -148,6 +151,8 @@ namespace SMJ {
                 file << nbThread << ";" << (avg_sort/NB_TRY) << ";" << (avg_merge/NB_TRY) << "\r\n";
             }
 
+            delete[] R1;
+            delete[] S1;
             file.close();
         }else{
             cout << "ERROR : opening file failed" << endl;

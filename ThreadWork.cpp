@@ -26,7 +26,7 @@ namespace SMJ {
             thread->join();
         }
     }
-    
+
     void ThreadWork::Routine(int id) {
         unique_lock<mutex> lock(wait_mutex);
         condition.wait(lock, [this]{ return workStarted; });
