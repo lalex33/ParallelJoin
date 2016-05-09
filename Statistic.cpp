@@ -110,7 +110,6 @@ namespace SMJ {
         vector<vector<string>> join;
         double start;
         ofstream file(FILE_NAME_THREAD_PJOIN, ofstream::out);
-        ThreadPool threadPool(NB_THREAD);
 
         if(!file.fail()){
             file << "Number of thread;Parallel sort;Parallel merge;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
@@ -122,8 +121,8 @@ namespace SMJ {
 
                 double avg_sort = 0.0, avg_merge = 0.0;
 
-                threadPool.Resize(nbThread);
                 for(int i = 0; i < NB_TRY; ++i){
+                    ThreadWork threadWork(nbThread);
 
                     int* R = new int[NB_ROWS_THREAD];
                     int* S = new int[NB_ROWS_THREAD];
@@ -137,7 +136,7 @@ namespace SMJ {
                     avg_sort += sec() - start;
 
                     start = sec();
-                    join = parallelMerge3(threadPool, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
+                    join = parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
                     avg_merge += sec() - start;
 
                     join.clear();
