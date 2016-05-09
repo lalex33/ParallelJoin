@@ -140,6 +140,7 @@ namespace SMJ {
                     join = parallelMerge3(threadPool, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
                     avg_merge += sec() - start;
 
+                    join.clear();
                     delete[] R;
                     delete[] S;
                 }

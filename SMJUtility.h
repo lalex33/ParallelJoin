@@ -2,25 +2,28 @@
 #define SORTMERGEJOIN_SMJUTILITY_H
 
 #include <iostream>
-#include <vector>
-#include <thread>
 #include <cstdlib>
-#include <time.h>
 #include <string>
-#include <cstdint>
 #include <fstream>
 #include <cstdio>
+#include <sstream>
+
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+#include <time.h>
+#include <sys/time.h>
 #include <ctime>
 #include <limits.h>
+#include <cstdint>
+#include <unistd.h>
 #include <cassert>
-#include <sstream>
-#include <algorithm>
-#include <sys/time.h>
-#include <queue>
+
+#include <thread>
 #include <atomic>
 #include <mutex>
 #include <condition_variable>
-#include <unistd.h>
 
 namespace SMJ {
 

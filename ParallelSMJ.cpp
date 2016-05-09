@@ -195,8 +195,10 @@ namespace SMJ{
             endR += (nbThread == NB_THREAD-1)? (sizeR % (nbThread * rowsPerThread + rowsPerThread)):0;
 
             int* startS = S, *endS = S + sizeS;
+            double start = sec();
             threadPool.Enqueue( bind(mergeRelations, startR, endR, startS, endS,
                                      ref(results[nbThread]), nbThread*rowsPerThread, 0) );
+            cout << "creation : " << (sec() - start) << endl;
         }
 
         // wait end of all merges

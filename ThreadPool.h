@@ -2,62 +2,61 @@
 #define SORTMERGEJOIN_THREADPOOL_H
 
 // https://gist.github.com/alagafonov
+// https://github.com/nbsdx/ThreadPool/blob/master/ThreadPool.h
 
 #include "SortMergeJoin.h"
 
-using namespace std;
+namespace SMJ {
+    class ThreadPool {
+    public:
 
-class ThreadPool
-{
-public:
+        // Constructor.
+        ThreadPool(int threads);
 
-    // Constructor.
-    ThreadPool(int threads);
+        // Destructor.
+        ~ThreadPool();
 
-    // Destructor.
-    ~ThreadPool();
+        // Adds task to a task queue.
+        void Enqueue(std::function<void()> f);
 
-    // Adds task to a task queue.
-    void Enqueue(function<void()> f);
+        // Shut down the pool.
+        void ShutDown();
 
-    // Shut down the pool.
-    void ShutDown();
+        void Resize(uint8_t threads);
 
-    void Resize(uint8_t threads);
+        void WaitEndOfWork();
 
-    void WaitEndOfWork();
+    private:
+        // Thread pool storage.
+        std::vector<std::thread> threadPool;
 
-private:
-    // Thread pool storage.
-    vector<thread> threadPool;
+        // Queue to keep track of incoming tasks.
+        std::queue<std::function<void()>> tasks;
 
-    // Queue to keep track of incoming tasks.
-    queue<function<void()>> tasks;
+        // Task queue mutex.
+        std::mutex tasksMutex;
 
-    // Task queue mutex.
-    mutex tasksMutex;
+        // Condition variable.
+        std::condition_variable condition;
 
-    // Condition variable.
-    condition_variable condition;
+        // Number of tasks running
+        std::atomic_uint running;
 
-    // Number of tasks running
-    atomic_uint running;
+        // Condition variable for waiting end of all tasks
+        std::condition_variable wait_var;
 
-    // Condition variable for waiting end of all tasks
-    condition_variable wait_var;
+        // Waiting mutex
+        std::mutex wait_mutex;
 
-    // Waiting mutex
-    mutex wait_mutex;
+        // Indicates that pool needs to be shut down.
+        bool terminate;
 
-    // Indicates that pool needs to be shut down.
-    bool terminate;
+        // Indicates that pool has been terminated.
+        bool stopped;
 
-    // Indicates that pool has been terminated.
-    bool stopped;
-
-    // Function that will be invoked by our threads.
-    void Invoke();
-};
-
+        // Function that will be invoked by our threads.
+        void Invoke();
+    };
+}
 
 #endif //SORTMERGEJOIN_THREADPOOL_H

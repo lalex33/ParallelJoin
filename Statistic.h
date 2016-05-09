@@ -5,8 +5,8 @@
 
 namespace SMJ{
 
-    const int NB_ROWS_MAX = 2000000; // maximum value of rows to compute
-    // some maximum values of random integer generated
+    const int NB_ROWS_MAX = 2000000;
+
     const int INTEGER_MAX = INT_MAX;
     const int INTEGER_MAX_2 = 32767;
     const int INTEGER_MAX_3 = 200000000;
@@ -22,7 +22,7 @@ namespace SMJ{
     const int NB_THREAD_MAX = 10;
     const int NB_ROWS_THREAD = 10000000;
 
-    const int NB_TRY = 5;
+    const int NB_TRY = 1;
     const int NB_TRY_2 = 4;
 
     /*
