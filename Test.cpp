@@ -19,7 +19,7 @@ namespace SMJ{
         /*ThreadPool threadPool(NB_THREAD);
         auto results = assembleResults(parallelMerge3(threadPool, R, S, P_SIZE_R, P_SIZE_S));*/
 
-        ThreadWork threadWork(NB_THREAD);
+        ThreadWork threadWork((uint8_t) NB_THREAD);
         auto results = assembleResults(parallelMerge4(threadWork, R, S, P_SIZE_R, P_SIZE_S));
 
         printSortMerge(R, S, P_SIZE_R, P_SIZE_S, results);

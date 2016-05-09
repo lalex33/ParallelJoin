@@ -122,7 +122,6 @@ namespace SMJ {
                 double avg_sort = 0.0, avg_merge = 0.0;
 
                 for(int i = 0; i < NB_TRY; ++i){
-                    ThreadWork threadWork(nbThread);
 
                     int* R = new int[NB_ROWS_THREAD];
                     int* S = new int[NB_ROWS_THREAD];
@@ -135,6 +134,7 @@ namespace SMJ {
                     parallelSort(S, NB_ROWS_THREAD);
                     avg_sort += sec() - start;
 
+                    ThreadWork threadWork(nbThread);
                     start = sec();
                     join = parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
                     avg_merge += sec() - start;

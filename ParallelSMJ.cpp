@@ -210,23 +210,21 @@ namespace SMJ{
         // allocate merge result for each thread
         vector<vector<string>> results(NB_THREAD);
 
-        vector<function<void()>> tasks;
-
         // compute the number of rows merged by a thread
         uint rowsPerThread = sizeR / NB_THREAD;
 
-        // start <NB_THREAD> threads for merge
+        // add <NB_THREAD> tasks for merge
         for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
             int* startR = R + nbThread*rowsPerThread;
             int* endR = startR + rowsPerThread;
             endR += (nbThread == NB_THREAD-1)? (sizeR % (nbThread * rowsPerThread + rowsPerThread)):0;
 
             int* startS = S, *endS = S + sizeS;
-            tasks.push_back( bind(mergeRelations, startR, endR, startS, endS,
+            threadWork.AddTask( bind(mergeRelations, startR, endR, startS, endS,
                                   ref(results[nbThread]), nbThread*rowsPerThread, 0) );
         }
 
-        threadWork.setTasks(tasks);
+        // launch all merge
         threadWork.LaunchWork();
 
         // wait end of all merges
@@ -234,6 +232,5 @@ namespace SMJ{
 
         return results;
     }
-
 
 }

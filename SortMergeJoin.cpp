@@ -19,7 +19,6 @@ namespace SMJ{
                 // move to a greater tuple in S
                 tupleS++;
                 rowS++;
-                cout << "azerty" << endl;
             } else if(*tupleR < *tupleS){
                 // move to a greater tuple in R
                 tupleR++;

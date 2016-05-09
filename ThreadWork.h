@@ -15,11 +15,12 @@ namespace SMJ {
         ~ThreadWork();
 
         inline void LaunchWork(){
+            workStarted = true;
             condition.notify_all();
         }
 
-        inline void setTasks(std::vector<std::function<void()>>& functions){
-            tasks = move(functions);
+        inline void AddTask(std::function<void()> task){
+            tasks.push_back(task);
         }
 
         void WaitEndOfWork();
@@ -32,6 +33,8 @@ namespace SMJ {
         std::condition_variable condition;
 
         std::mutex wait_mutex;
+
+        bool workStarted;
 
         void Routine(int id);
     };
