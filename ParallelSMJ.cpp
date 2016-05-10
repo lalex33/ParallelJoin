@@ -233,4 +233,67 @@ namespace SMJ{
         return results;
     }
 
+    void parallelSort(int *table, uint size, ThreadWork& maxWork){
+        ostringstream oss;
+        oss << parallelMax(table, size, maxWork);
+        ulong digitLength = oss.str().size();
+
+        uint sizePerThread = size / NB_THREAD;
+
+        vector<digits_bucket> threadArrays;
+        for(int n=0; n<NB_THREAD; n++){
+            digits_bucket digitsBucket(MAX_DIGIT_EXCLUDED);
+            threadArrays.push_back(digitsBucket);
+        }
+
+        for(uint nbDigit = 0 ; nbDigit < digitLength ; ++nbDigit){
+            ThreadWork sortWork(NB_THREAD);
+            for(uint nbThread = 0 ; nbThread < NB_THREAD ; ++nbThread){
+                uint start = nbThread * sizePerThread;
+                uint end = start + sizePerThread;
+                end += (nbThread == NB_THREAD-1)? (size%end):0;
+                sortWork.AddTask( bind(radixSort, table, ref(threadArrays[nbThread]), nbDigit, start, end));
+            }
+
+            sortWork.LaunchWork();
+            sortWork.WaitEndOfWork();
+
+            int* pos = table;
+            for(uint digit=0; digit < MAX_DIGIT_EXCLUDED; ++digit){
+                for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
+                    auto array = &threadArrays[nbThread][digit];
+                    for(auto value = array->begin(); value != array->end(); value++){
+                        *(pos++) = *value;
+                    }
+                    array->clear();
+                }
+            }
+        }
+    }
+
+    int parallelMax(int *table, uint size, ThreadWork& threadWork){
+        uint rowsPerThread = size / NB_THREAD;
+        int* maxFromThreads = new int[NB_THREAD];
+
+        for(int nbThread=0; nbThread < NB_THREAD; ++nbThread){
+            int* start = table + nbThread * rowsPerThread;
+            int* end = start + rowsPerThread;
+            end += (nbThread == NB_THREAD-1)? (size % (nbThread * rowsPerThread + rowsPerThread)):0;
+            threadWork.AddTask( bind(maxRoutine, start, end, maxFromThreads+nbThread));
+        }
+
+        threadWork.LaunchWork();
+        threadWork.WaitEndOfWork();
+
+        int* start = maxFromThreads, *end = start + NB_THREAD, max = *(start++);
+        while(start != end){
+            if(*start > max)
+                max = *start;
+            start++;
+        }
+
+        delete[] maxFromThreads;
+        return max;
+    }
+
 }
