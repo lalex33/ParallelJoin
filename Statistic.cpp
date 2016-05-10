@@ -132,11 +132,9 @@ namespace SMJ {
                     copy(R1, R1 + NB_ROWS_THREAD, R);
                     copy(S1, S1 + NB_ROWS_THREAD, S);
 
-                    ThreadWork max1(NB_THREAD);
-                    ThreadWork max2(NB_THREAD);
                     start = sec();
-                    parallelSort(R, NB_ROWS_THREAD, max1);
-                    parallelSort(S, NB_ROWS_THREAD, max2);
+                    parallelSort(R, NB_ROWS_THREAD);
+                    parallelSort(S, NB_ROWS_THREAD);
                     avg_sort += sec() - start;
 
                     ThreadWork threadWork((uint8_t) nbThread);

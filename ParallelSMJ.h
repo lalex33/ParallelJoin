@@ -57,14 +57,6 @@ namespace SMJ{
      */
     std::vector<std::vector<std::string>> parallelMerge4(ThreadWork& threadWork, int* R, int* S, uint sizeR, uint sizeS);
 
-
-
-
-
-    void parallelSort(int *table, uint size, ThreadWork& maxWork);
-
-    int parallelMax(int *table, uint size, ThreadWork& threadWork);
-
 }
 
 #endif //SORTMERGEJOIN_PARALLELSORT_H
