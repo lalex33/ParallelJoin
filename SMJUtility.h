@@ -25,6 +25,9 @@
 #include <mutex>
 #include <condition_variable>
 
+#include <sched.h>
+#include <pthread.h>
+
 namespace SMJ {
 
     // typedef

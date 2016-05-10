@@ -81,7 +81,7 @@ namespace SMJ{
         }
 
         // wait the end of threads
-        for(auto thread = threads.begin(); thread != threads.end(); thread++){
+        for(auto thread = threads.begin(); thread != threads.end(); ++thread){
             thread->join();
         }
         threads.clear();

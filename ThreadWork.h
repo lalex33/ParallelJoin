@@ -24,7 +24,11 @@ namespace SMJ {
             tasks.push_back(task);
         }
 
-        void WaitEndOfWork();
+        inline void WaitEndOfWork(){
+            for(auto thread = workers.begin(); thread != workers.end(); ++thread){
+                thread->join();
+            }
+        }
 
     private:
         std::vector<std::thread> workers;
@@ -36,6 +40,8 @@ namespace SMJ {
         std::mutex wait_mutex;
 
         bool workStarted;
+
+        long numberOfProcessors;
 
         void Routine(int id);
     };

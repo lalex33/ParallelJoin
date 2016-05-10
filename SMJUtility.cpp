@@ -39,7 +39,6 @@ namespace SMJ {
             rowR++;
         }
 
-        //return equal(resultFound.begin(), resultFound.end(), result.begin());
         return resultFound.size() == result.size();
     }
 
