@@ -15,6 +15,7 @@ namespace SMJ {
         ~ThreadWork();
 
         inline void LaunchWork(){
+            std::lock_guard<std::mutex> lock(wait_mutex);
             workStarted = true;
             condition.notify_all();
         }

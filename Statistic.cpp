@@ -137,7 +137,7 @@ namespace SMJ {
                     parallelSort(S, NB_ROWS_THREAD);
                     avg_sort += sec() - start;
 
-                    ThreadWork threadWork(nbThread);
+                    ThreadWork threadWork((uint8_t) nbThread);
                     start = sec();
                     join = parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
                     avg_merge += sec() - start;
