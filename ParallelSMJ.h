@@ -60,7 +60,7 @@ namespace SMJ{
     /*
      * parallel merge using threads without mutex
      */
-    std::vector<std::vector<std::string>> parallelMerge5(ThreadWork *threadWorks, int* R, int* S, uint sizeR, uint sizeS);
+    std::vector<std::vector<std::string>> parallelMerge5(int* R, int* S, uint sizeR, uint sizeS);
 
 }
 

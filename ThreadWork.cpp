@@ -24,10 +24,6 @@ namespace SMJ {
         }
     }
 
-    ThreadWork::ThreadWork(const ThreadWork &obj):
-        ThreadWork((u_int8_t) obj.workers.size())
-    { }
-
     ThreadWork::~ThreadWork() {
         for(auto thread = workers.begin(); thread != workers.end(); ++thread){
             if(thread->joinable()){
@@ -38,9 +34,9 @@ namespace SMJ {
     }
 
     void ThreadWork::Routine(int id) {
-#ifdef __linux__
-        printf("ID: %lu, CPU: %d\n", pthread_self(), sched_getcpu());
-#endif
+        #ifdef __linux__
+            cout << "ID : " << pthread_self() << ", CPU : " << sched_getcpu() << endl;
+        #endif
         unique_lock<mutex> lock(wait_mutex);
         condition.wait(lock, [this]{ return workStarted; });
         lock.unlock();
