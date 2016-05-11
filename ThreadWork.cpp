@@ -24,6 +24,10 @@ namespace SMJ {
         }
     }
 
+    ThreadWork::ThreadWork(const ThreadWork &obj):
+        ThreadWork((u_int8_t) obj.workers.size())
+    { }
+
     ThreadWork::~ThreadWork() {
         for(auto thread = workers.begin(); thread != workers.end(); ++thread){
             if(thread->joinable()){

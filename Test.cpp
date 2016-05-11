@@ -19,8 +19,17 @@ namespace SMJ{
         /*ThreadPool threadPool(NB_THREAD);
         auto results = assembleResults(parallelMerge3(threadPool, R, S, P_SIZE_R, P_SIZE_S));*/
 
-        ThreadWork threadWork((uint8_t) NB_THREAD);
-        auto results = assembleResults(parallelMerge4(threadWork, R, S, P_SIZE_R, P_SIZE_S));
+        /*ThreadWork threadWork((uint8_t) NB_THREAD);
+        auto results = assembleResults(parallelMerge4(threadWork, R, S, P_SIZE_R, P_SIZE_S));*/
+
+        ThreadWork *threadWorks[NB_THREAD];
+        for(int i=0; i < (P_SIZE_S/NB_THREAD); ++i){
+            threadWorks[i] = new ThreadWork((uint8_t) NB_THREAD);
+        }
+        auto results = assembleResults(parallelMerge5(threadWorks[0], R, S, P_SIZE_R, P_SIZE_S));
+        for(int i=0; i < (P_SIZE_S/NB_THREAD); ++i){
+            delete threadWorks[i];
+        }
 
         printSortMerge(R, S, P_SIZE_R, P_SIZE_S, results);
 

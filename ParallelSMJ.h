@@ -57,6 +57,11 @@ namespace SMJ{
      */
     std::vector<std::vector<std::string>> parallelMerge4(ThreadWork& threadWork, int* R, int* S, uint sizeR, uint sizeS);
 
+    /*
+     * parallel merge using threads without mutex
+     */
+    std::vector<std::vector<std::string>> parallelMerge5(ThreadWork *threadWorks, int* R, int* S, uint sizeR, uint sizeS);
+
 }
 
 #endif //SORTMERGEJOIN_PARALLELSORT_H

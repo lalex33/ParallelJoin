@@ -11,6 +11,7 @@ namespace SMJ {
     class ThreadWork {
     public:
         ThreadWork(uint8_t threads);
+        ThreadWork(const ThreadWork &obj);
 
         ~ThreadWork();
 

@@ -233,4 +233,35 @@ namespace SMJ{
         return results;
     }
 
+    vector<vector<string>> parallelMerge5(ThreadWork *threadWorks, int *R, int *S,
+                                                         uint sizeR, uint sizeS) {
+        vector<vector<string>> results(NB_THREAD);
+
+        uint rowsPerThread = sizeR / NB_THREAD;
+        uint partitionS = sizeS / NB_THREAD;
+
+        for(uint rotation=0; rotation < NB_THREAD; ++rotation) {
+
+            for (uint nbThread = 0; nbThread < NB_THREAD; ++nbThread) {
+                int *startR = R + nbThread * rowsPerThread;
+                int *endR = startR + rowsPerThread;
+                endR += (nbThread == NB_THREAD - 1) ? (sizeR % (nbThread * rowsPerThread + rowsPerThread)) : 0;
+
+                int* startS = S + partitionS * ((nbThread + rotation)%NB_THREAD);
+                int* endS = startS + partitionS;
+                endS += (nbThread + rotation == NB_THREAD - 1)?
+                        (sizeS % (nbThread * partitionS + partitionS)) : 0;
+
+                threadWorks[rotation].AddTask( bind(mergeRelations, startR, endR, startS, endS,
+                                                    ref(results[nbThread]), nbThread * rowsPerThread,
+                                                    partitionS * ((nbThread + rotation)%NB_THREAD)));
+            }
+
+            threadWorks[rotation].LaunchWork();
+            threadWorks[rotation].WaitEndOfWork();
+        }
+
+        return results;
+    }
+
 }
