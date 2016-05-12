@@ -122,7 +122,7 @@ namespace SMJ {
             for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
                 NB_THREAD = nbThread;
 
-                cout << "Computing " << NB_ROWS_THREAD << " rows with " << nbThread << " threads" << endl;
+                cout << "--> Computing " << NB_ROWS_THREAD << " rows with " << nbThread << " threads" << endl;
 
                 double avg_sort = 0.0, avg_merge = 0.0;
 
@@ -147,7 +147,7 @@ namespace SMJ {
                     delete[] S;
                 }
 
-                cout << " DONE in " << (avg_sort/NB_TRY) << " and " << (avg_merge/NB_TRY) << " seconds" << endl;
+                cout << "  DONE in " << (avg_sort/NB_TRY) << " and " << (avg_merge/NB_TRY) << " seconds" << endl;
                 file << nbThread << ";" << (avg_sort/NB_TRY) << ";" << (avg_merge/NB_TRY) << "\r\n";
             }
 

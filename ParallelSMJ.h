@@ -38,27 +38,27 @@ namespace SMJ{
     int getDigit (int number, int pos);
 
     /*
-     * start a merge using threads
+     * start a merge using threads, partitions of R
      */
     std::vector<std::vector<std::string>> parallelMerge(int* R, int* S, uint sizeR, uint sizeS);
 
     /*
-     * start other merge using threads
+     * start a merge using threads, partitions of R and S
      */
     std::vector<std::vector<std::string>> parallelMerge2(int* R, int* S, uint sizeR, uint sizeS);
 
     /*
-     * parallel merge using ThreadPool
+     * parallel merge using ThreadPool, partitions of R
      */
     std::vector<std::vector<std::string>> parallelMerge3(ThreadPool& threadPool, int* R, int* S, uint sizeR, uint sizeS);
 
     /*
-     * parallel merge using threads without mutex
+     * parallel merge using WorkThread, partitions of R
      */
     std::vector<std::vector<std::string>> parallelMerge4(ThreadWork& threadWork, int* R, int* S, uint sizeR, uint sizeS);
 
     /*
-     * parallel merge using threads without mutex
+     * parallel merge using Workthread, partitions of R and S
      */
     std::vector<std::vector<std::string>> parallelMerge5(int* R, int* S, uint sizeR, uint sizeS);
 

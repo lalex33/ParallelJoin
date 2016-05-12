@@ -130,6 +130,7 @@ namespace SMJ{
 
             int* startS = S, *endS = S + sizeS;
 
+            double start = sec();
             threads.push_back( thread(mergeRelations, startR, endR, startS, endS,
                                       ref(results[nbThread]), nbThread*rowsPerThread, 0) );
         }
@@ -242,7 +243,6 @@ namespace SMJ{
         for(uint rotation=0; rotation < NB_THREAD; ++rotation) {
             ThreadWork threadWork((u_int8_t) NB_THREAD);
 
-            double start = sec();
             for (uint nbThread = 0; nbThread < NB_THREAD; ++nbThread) {
                 int *startR = R + nbThread * rowsPerThread;
                 int *endR = startR + rowsPerThread;
@@ -258,9 +258,10 @@ namespace SMJ{
                                                     partitionS * ((nbThread + rotation)%NB_THREAD)));
             }
 
+            double start = sec();
             threadWork.LaunchWork();
             threadWork.WaitEndOfWork();
-            cout << "time (rotation=" << rotation << ") : " << (sec() - start) << endl;
+            cout << "       compute (rotation=" << rotation << ") : " << (sec() - start) << endl;
         }
 
         return results;

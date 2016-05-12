@@ -56,7 +56,7 @@ namespace SMJ{
             }
         }
 
-        //cout << "merge " << (sec() - start) << " on " << this_thread::get_id() << endl;
+        //cout << "      " << this_thread::get_id() << " : " << (sec() - start) << endl;
     }
 
 }
