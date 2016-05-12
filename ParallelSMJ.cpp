@@ -37,7 +37,7 @@ namespace SMJ{
             }
 
             // wait end of sort and delete threads
-            for(auto thread = threads.begin(); thread != threads.end(); thread++){
+            for(auto thread = threads.begin(); thread != threads.end(); ++thread){
                 thread->join();
             }
             threads.clear();
@@ -47,7 +47,7 @@ namespace SMJ{
             for(uint digit=0; digit < MAX_DIGIT_EXCLUDED; ++digit){
                 for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
                     auto array = &threadArrays[nbThread][digit];
-                    for(auto value = array->begin(); value != array->end(); value++){
+                    for(auto value = array->begin(); value != array->end(); ++value){
                         *(pos++) = *value;
                     }
                     // clear data
@@ -60,7 +60,7 @@ namespace SMJ{
     void radixSort(int *table, digits_bucket &buckets,
                    uint posDigit, uint start, uint end){
         // loop over each values of the sub-list
-        for(uint n = start; n < end; n++){
+        for(uint n = start; n < end; ++n){
             // put the value in the digit bucket
             buckets[ getDigit(table[n], posDigit) ].push_back(table[n]);
         }
@@ -91,7 +91,7 @@ namespace SMJ{
         while(start != end){
             if(*start > max)
                 max = *start;
-            start++;
+            ++start;
         }
 
         // free memory
@@ -206,8 +206,10 @@ namespace SMJ{
         return results;
     }
 
-    std::vector<std::vector<std::string>> parallelMerge4(ThreadWork& threadWork, int *R, int *S, uint sizeR,
+    vector<vector<string>> parallelMerge4(ThreadWork& threadWork, int *R, int *S, uint sizeR,
                                                          uint sizeS) {
+        double start = sec();
+
         // allocate merge result for each thread
         vector<vector<string>> results(NB_THREAD);
 
@@ -225,12 +227,16 @@ namespace SMJ{
                                   ref(results[nbThread]), nbThread*rowsPerThread, 0) );
         }
 
+        cout << "      prepare : " << (sec() - start) << endl;
+        start = sec();
+
         // launch all merge
         threadWork.LaunchWork();
 
         // wait end of all merges
         threadWork.WaitEndOfWork();
 
+        cout << "      compute : " << (sec() - start) << endl;
         return results;
     }
 

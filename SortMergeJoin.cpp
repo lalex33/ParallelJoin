@@ -13,7 +13,7 @@ namespace SMJ{
         int *tupleR = startR, *tupleS = startS;
         int *tupleR2, rowR2, *tupleS2, rowS2;
 
-        //double start = sec();
+        double start = sec();
 
         // loop until there is no tuples to read in both relation
         while(tupleR != endR && tupleS != endS){
@@ -56,7 +56,7 @@ namespace SMJ{
             }
         }
 
-        //cout << "      " << this_thread::get_id() << " : " << (sec() - start) << endl;
+        cout << "       " << this_thread::get_id() << " : " << (sec() - start) << endl;
     }
 
 }

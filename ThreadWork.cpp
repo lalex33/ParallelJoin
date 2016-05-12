@@ -34,11 +34,13 @@ namespace SMJ {
     }
 
     void ThreadWork::Routine(int id) {
+        double start = sec();
         #ifdef __linux__
             cout << "ID : " << pthread_self() << ", CPU : " << sched_getcpu() << endl;
         #endif
         unique_lock<mutex> lock(wait_mutex);
         condition.wait(lock, [this]{ return workStarted; });
+        cout << "       " << this_thread::get_id() << " : " << (sec() - start) << endl;
         lock.unlock();
         tasks[id]();
     }
