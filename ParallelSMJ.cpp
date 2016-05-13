@@ -208,7 +208,7 @@ namespace SMJ{
 
     vector<vector<string>> parallelMerge4(ThreadWork& threadWork, int *R, int *S, uint sizeR,
                                                          uint sizeS) {
-        double start = sec();
+        //double start = sec();
 
         // allocate merge result for each thread
         vector<vector<string>> results(NB_THREAD);
@@ -227,8 +227,8 @@ namespace SMJ{
                                   ref(results[nbThread]), nbThread*rowsPerThread, 0) );
         }
 
-        cout << "      prepare : " << (sec() - start) << endl;
-        start = sec();
+        /*cout << "      prepare : " << (sec() - start) << endl;
+        start = sec();*/
 
         // launch all merge
         threadWork.LaunchWork();
@@ -236,7 +236,7 @@ namespace SMJ{
         // wait end of all merges
         threadWork.WaitEndOfWork();
 
-        cout << "      compute : " << (sec() - start) << endl;
+        //cout << "      compute : " << (sec() - start) << endl;
         return results;
     }
 

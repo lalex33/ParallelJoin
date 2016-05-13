@@ -13,18 +13,18 @@ namespace SMJ{
         int *tupleR = startR, *tupleS = startS;
         int *tupleR2, rowR2, *tupleS2, rowS2;
 
-        double start = sec();
+        //double start = sec();
 
         // loop until there is no tuples to read in both relation
         while(tupleR != endR && tupleS != endS){
             if(*tupleR > *tupleS){
                 // move to a greater tuple in S
-                tupleS++;
-                rowS++;
+                ++tupleS;
+                ++rowS;
             } else if(*tupleR < *tupleS){
                 // move to a greater tuple in R
-                tupleR++;
-                rowR++;
+                ++tupleR;
+                ++rowR;
             } else{
                 // two equal tuples found -> record the rows
                 results.push_back(getTuple(rowR, tupleR, rowS, tupleS));
@@ -48,15 +48,23 @@ namespace SMJ{
                 }
 
                 // go to higher tuples
-                tupleR++;
-                rowR++;
+                ++tupleR;
+                ++rowR;
 
-                tupleS++;
-                rowS++;
+                ++tupleS;
+                ++rowS;
             }
         }
 
-        cout << "       " << this_thread::get_id() << " : " << (sec() - start) << endl;
+        //cout << "       " << this_thread::get_id() << " , merge : " << (sec() - start) << endl;
     }
 
+    void mergeRelations2(int *startR, int sizeR, int rowR, int *startS, int sizeS, int rowS,
+                         std::vector<std::string> &results) {
+        int* R = new int[sizeR];
+        int* S = new int[sizeS];
+
+        delete[] R;
+        delete[] S;
+    }
 }

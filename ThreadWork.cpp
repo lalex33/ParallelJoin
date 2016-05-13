@@ -18,7 +18,7 @@ namespace SMJ {
 
             #ifdef __linux__
                 CPU_ZERO(&cpuset);
-                CPU_SET( i % numberOfProcessors, &cpuset);
+                CPU_SET( (i+1) % numberOfProcessors, &cpuset);
                 pthread_setaffinity_np(workers[i].native_handle(), sizeof(cpu_set_t), &cpuset);
             #endif
         }
@@ -36,11 +36,11 @@ namespace SMJ {
     void ThreadWork::Routine(int id) {
         double start = sec();
         #ifdef __linux__
-            cout << "ID : " << pthread_self() << ", CPU : " << sched_getcpu() << endl;
+            //cout << "ID : " << pthread_self() << ", CPU : " << sched_getcpu() << endl;
         #endif
         unique_lock<mutex> lock(wait_mutex);
         condition.wait(lock, [this]{ return workStarted; });
-        cout << "       " << this_thread::get_id() << " : " << (sec() - start) << endl;
+        //cout << "       " << this_thread::get_id() << " wait : " << (sec() - start) << endl;
         lock.unlock();
         tasks[id]();
     }
