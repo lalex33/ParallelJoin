@@ -9,14 +9,16 @@ using namespace SMJ;
 int main(){
 
     #ifdef __linux__
-        int events[1] = {PAPI_L1_DCM}, ret;
-        long_long values[1];
+        const int NB_EVENTS = 1;
+        int events[NB_EVENTS] = {PAPI_L1_DCM};
+        int ret;
+        long_long values[NB_EVENTS];
 
-        if (PAPI_num_counters() < 2) {
+        if (PAPI_num_counters() < NB_EVENTS) {
             fprintf(stderr, "No hardware counters here, or PAPI not supported.\n");
             exit(1);
         }
-        if ((ret = PAPI_start_counters(events, 1)) != PAPI_OK) {
+        if ((ret = PAPI_start_counters(events, NB_EVENTS)) != PAPI_OK) {
             fprintf(stderr, "PAPI failed to start counters: %s\n", PAPI_strerror(ret));
             exit(1);
         }
@@ -47,12 +49,14 @@ int main(){
     benchmarkThreadPSMJ();
 
     #ifdef __linux__
-        if ((ret = PAPI_read_counters(values, 1)) != PAPI_OK) {
+        using namespace std;
+        if ((ret = PAPI_read_counters(values, NB_EVENTS)) != PAPI_OK) {
             fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
             exit(1);
         }
-
-        printf("L2 data cache misses is %lld\n", values[0]);
+        for(int i=0; i<NB_EVENTS; ++i){
+            cout << "values[" << i << "] = " << values[i] << endl;
+        }
     #endif
 
     return 0;
