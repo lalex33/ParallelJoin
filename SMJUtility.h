@@ -28,6 +28,10 @@
 #include <sched.h>
 #include <pthread.h>
 
+#ifdef __linux__
+#include "/home/bayle/papi/include/papi.h"
+#endif
+
 namespace SMJ {
 
     // typedef
@@ -62,7 +66,7 @@ namespace SMJ {
     /*
      * print a match
      */
-    std::string getTuple(int rowR, int *tupleR, int rowsS, int *tupleS);
+    std::string getTuple(int rowR, int tupleR, int rowsS, int tupleS);
 
     /*
      * get time

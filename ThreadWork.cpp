@@ -34,7 +34,7 @@ namespace SMJ {
     }
 
     void ThreadWork::Routine(int id) {
-        double start = sec();
+        //double start = sec();
         #ifdef __linux__
             //cout << "ID : " << pthread_self() << ", CPU : " << sched_getcpu() << endl;
         #endif

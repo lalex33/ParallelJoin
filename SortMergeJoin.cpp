@@ -12,30 +12,35 @@ namespace SMJ{
                         vector<string>& results, uint rowR, uint rowS){
         int *tupleR = startR, *tupleS = startS;
         int *tupleR2, rowR2, *tupleS2, rowS2;
+        int valueR, valueS, valueR2, valueS2;
 
         //double start = sec();
 
         // loop until there is no tuples to read in both relation
         while(tupleR != endR && tupleS != endS){
-            if(*tupleR > *tupleS){
+            valueR = *tupleR;
+            valueS = *tupleS;
+
+            if(valueR > valueS){
                 // move to a greater tuple in S
                 ++tupleS;
                 ++rowS;
-            } else if(*tupleR < *tupleS){
+            } else if(valueR < valueS){
                 // move to a greater tuple in R
                 ++tupleR;
                 ++rowR;
             } else{
                 // two equal tuples found -> record the rows
-                results.push_back(getTuple(rowR, tupleR, rowS, tupleS));
+                results.push_back(getTuple(rowR, valueR, rowS, valueS));
 
                 // loop on r to find other equal tuples after
                 tupleR2 = tupleR + 1;
                 rowR2 = rowR + 1;
 
                 while(tupleR2 != endR && *tupleR2 == *tupleS){
-                    results.push_back(getTuple(rowR2++, tupleR2++, rowS, tupleS));
-                    //rowR2++;tupleR2++;
+                    valueR2 = *tupleR2;
+                    results.push_back(getTuple(rowR2++, valueR2, rowS, valueS));
+                    ++tupleR2;
                 }
 
                 // loop on s to find other equal tuples after
@@ -43,8 +48,9 @@ namespace SMJ{
                 rowS2 = rowS + 1;
 
                 while(tupleS2 != endS && *tupleS2 == *tupleR){
-                    results.push_back(getTuple(rowR, tupleR, rowS2++, tupleS2++));
-                    //rowS2++;tupleS2++;
+                    valueS2 = *tupleS2;
+                    results.push_back(getTuple(rowR, valueR, rowS2++, valueS2));
+                    ++tupleS2;
                 }
 
                 // go to higher tuples

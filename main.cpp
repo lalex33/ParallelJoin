@@ -1,16 +1,12 @@
 #include "Statistic.h"
 
-#ifdef __linux__
-#include "/home/bayle/papi/include/papi.h"
-#endif
-
 using namespace SMJ;
 
 int main(){
 
-    #ifdef __linux__
-        const int NB_EVENTS = 2;
-        int events[NB_EVENTS] = {PAPI_L1_DCM, PAPI_L2_DCA};
+#ifdef __linux__
+    const int NB_EVENTS = 3;
+        int events[NB_EVENTS] = {PAPI_L1_TCM, PAPI_L2_TCM, PAPI_L3_TCM};
         int ret;
         long_long values[NB_EVENTS];
 
@@ -22,7 +18,9 @@ int main(){
             fprintf(stderr, "PAPI failed to start counters: %s\n", PAPI_strerror(ret));
             exit(1);
         }
-    #endif
+#endif
+
+    srand(time(NULL));
 
     // shows an example of sort-merge join
     //testSortMergeJoin();
@@ -48,8 +46,8 @@ int main(){
     //benchmarkParallelSMJ();
     benchmarkThreadPSMJ();
 
-    #ifdef __linux__
-        using namespace std;
+#ifdef __linux__
+    using namespace std;
         if ((ret = PAPI_read_counters(values, NB_EVENTS)) != PAPI_OK) {
             fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
             exit(1);
@@ -57,7 +55,7 @@ int main(){
         for(int i=0; i<NB_EVENTS; ++i){
             cout << "values[" << i << "] = " << values[i] << endl;
         }
-    #endif
+#endif
 
     return 0;
 }

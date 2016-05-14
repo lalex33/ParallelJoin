@@ -30,7 +30,7 @@ namespace SMJ {
             int* tupleS = S, rowS = 0;
             while(tupleS != endS){
                 if(*tupleR == *tupleS){
-                    result.push_back(getTuple(rowR, tupleR, rowS, tupleS));
+                    result.push_back(getTuple(rowR, *tupleR, rowS, *tupleS));
                 }
                 tupleS++;
                 rowS++;
@@ -64,10 +64,10 @@ namespace SMJ {
         }
     }
 
-    string getTuple(int rowR, int *tupleR, int rowsS, int *tupleS) {
+    string getTuple(int rowR, int tupleR, int rowsS, int tupleS) {
         ostringstream oss;
-        oss << "[" << rowR << "] : " << (*tupleR)
-              << "   |   [" << (rowsS) << "] : " << (*tupleS);
+        oss << "[" << rowR << "] : " << tupleR
+              << "   |   [" << rowsS << "] : " << tupleS;
         return oss.str();
     }
 
