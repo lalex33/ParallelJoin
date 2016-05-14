@@ -9,8 +9,8 @@ using namespace SMJ;
 int main(){
 
     #ifdef __linux__
-        const int NB_EVENTS = 1;
-        int events[NB_EVENTS] = {PAPI_L1_DCM};
+        const int NB_EVENTS = 2;
+        int events[NB_EVENTS] = {PAPI_L1_DCM, PAPI_L2_DCA};
         int ret;
         long_long values[NB_EVENTS];
 

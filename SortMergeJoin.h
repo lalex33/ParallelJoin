@@ -16,8 +16,6 @@ namespace SMJ{
     void mergeRelations(int *startR, int *endR, int *startS, int *endS,
                         std::vector<std::string> &results, uint rowR, uint rowS);
 
-    void mergeRelations2(int *startR, int sizeR, int rowR, int *startS, int sizeS, int rowS, std::vector<std::string> &results);
-
 }
 
 #endif //SORTMERGEJOIN_SORTMERGEJOIN_H

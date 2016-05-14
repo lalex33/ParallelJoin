@@ -59,12 +59,4 @@ namespace SMJ{
         //cout << "       " << this_thread::get_id() << " , merge : " << (sec() - start) << endl;
     }
 
-    void mergeRelations2(int *startR, int sizeR, int rowR, int *startS, int sizeS, int rowS,
-                         std::vector<std::string> &results) {
-        int* R = new int[sizeR];
-        int* S = new int[sizeS];
-
-        delete[] R;
-        delete[] S;
-    }
 }
