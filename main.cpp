@@ -4,22 +4,6 @@ using namespace SMJ;
 
 int main(){
 
-#ifdef __linux__
-    const int NB_EVENTS = 3;
-        int events[NB_EVENTS] = {PAPI_L1_TCM, PAPI_L2_TCM, PAPI_L3_TCM};
-        int ret;
-        long_long values[NB_EVENTS];
-
-        if (PAPI_num_counters() < NB_EVENTS) {
-            fprintf(stderr, "No hardware counters here, or PAPI not supported.\n");
-            exit(1);
-        }
-        if ((ret = PAPI_start_counters(events, NB_EVENTS)) != PAPI_OK) {
-            fprintf(stderr, "PAPI failed to start counters: %s\n", PAPI_strerror(ret));
-            exit(1);
-        }
-#endif
-
     srand(time(NULL));
 
     // shows an example of sort-merge join
@@ -45,17 +29,6 @@ int main(){
     // launch test of parallel sort-merge
     //benchmarkParallelSMJ();
     benchmarkThreadPSMJ();
-
-#ifdef __linux__
-    using namespace std;
-        if ((ret = PAPI_read_counters(values, NB_EVENTS)) != PAPI_OK) {
-            fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
-            exit(1);
-        }
-        for(int i=0; i<NB_EVENTS; ++i){
-            cout << "values[" << i << "] = " << values[i] << endl;
-        }
-#endif
 
     return 0;
 }

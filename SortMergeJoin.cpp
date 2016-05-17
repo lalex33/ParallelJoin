@@ -62,7 +62,7 @@ namespace SMJ{
             }
         }
 
-        //cout << "       " << this_thread::get_id() << " , merge : " << (sec() - start) << endl;
+        //cout << "       " << this_thread::get_id() << " -> merge : " << (sec() - start) << endl;
     }
 
 }

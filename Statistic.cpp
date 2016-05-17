@@ -1,4 +1,5 @@
 #define NDEBUG
+
 #include "Statistic.h"
 
 using namespace std;
@@ -127,8 +128,9 @@ namespace SMJ {
                 double avg_sort = 0.0, avg_merge = 0.0;
 
                 for(int i = 0; i < NB_TRY; ++i){
-                    int* R = new int[NB_ROWS_THREAD];
-                    int* S = new int[NB_ROWS_THREAD];
+                    int* R = (int*) _mm_malloc(NB_ROWS_THREAD * sizeof(int), 64);
+                    int* S = (int*) _mm_malloc(NB_ROWS_THREAD * sizeof(int), 64);
+
                     copy(R1, R1 + NB_ROWS_THREAD, R);
                     copy(S1, S1 + NB_ROWS_THREAD, S);
 
@@ -138,13 +140,41 @@ namespace SMJ {
                     avg_sort += sec() - start;
 
                     ThreadWork threadWork((uint8_t) nbThread);
+
+                    #ifdef __linux__
+                        /*const int NB_EVENTS = 3;
+                        int events[NB_EVENTS] = {PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L2_DCA};
+                        int ret;
+                        long_long values[NB_EVENTS];
+
+                        if (PAPI_num_counters() < NB_EVENTS) {
+                            fprintf(stderr, "No hardware counters here, or PAPI not supported.\n");
+                            exit(1);
+                        }
+                        if ((ret = PAPI_start_counters(events, NB_EVENTS)) != PAPI_OK) {
+                            fprintf(stderr, "PAPI failed to start counters: %s\n", PAPI_strerror(ret));
+                            exit(1);
+                        }*/
+                    #endif
+
                     start = sec();
                     join = parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
                     avg_merge += sec() - start;
 
+                    #ifdef __linux__
+                        /*if ((ret = PAPI_read_counters(values, NB_EVENTS)) != PAPI_OK) {
+                            fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
+                            exit(1);
+                        }
+                        for(int i=0; i<NB_EVENTS; ++i){
+                            cout << "values[" << i << "] = " << values[i] << endl;
+                        }
+                        cout << "Miss rate : " << (((double)values[1]/values[2])*100) << endl;*/
+                    #endif
+
                     join.clear();
-                    delete[] R;
-                    delete[] S;
+                    _mm_free(R);
+                    _mm_free(S);
                 }
 
                 cout << "  DONE in " << (avg_sort/NB_TRY) << " and " << (avg_merge/NB_TRY) << " seconds" << endl;

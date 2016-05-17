@@ -208,7 +208,7 @@ namespace SMJ{
 
     vector<vector<string>> parallelMerge4(ThreadWork& threadWork, int *R, int *S, uint sizeR,
                                                          uint sizeS) {
-        //double start = sec();
+        double start = sec();
 
         // allocate merge result for each thread
         vector<vector<string>> results(NB_THREAD);

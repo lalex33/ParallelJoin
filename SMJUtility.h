@@ -8,6 +8,8 @@
 #include <cstdio>
 #include <sstream>
 
+#include <mm_malloc.h>
+
 #include <vector>
 #include <queue>
 #include <algorithm>
