@@ -12,16 +12,15 @@ namespace SMJ {
         ~PartitionedArray();
 
         inline T* GetPartition(int partition_number){
-            return partitions_[partition_number];
+            return &partitions_[partition_number][0];
         }
 
-        inline size_t GetPartitionSize(int partition_number){
-            return partitions_size_[partition_number];
+        inline int GetPartitionSize(int partition_number){
+            return partitions_[partition_number].size();
         }
 
     private:
-        std::vector<T*> partitions_;
-        std::vector<size_t> partitions_size_;
+        std::vector<std::vector<T>> partitions_;
         int num_partitions_;
     };
 
@@ -29,7 +28,6 @@ namespace SMJ {
     PartitionedArray<T>::PartitionedArray(std::vector<T> array, int num_partition):
         PartitionedArray<T>(&array[0], array.size(), num_partition)
     {
-        // error with vector (freed object...)
     }
 
     template<typename T>
@@ -45,25 +43,17 @@ namespace SMJ {
                 end += array_size % end;
             }
 
-            int size = end - start;
-            T* data = new T[size];
-
-            partitions_.push_back(data);
-            partitions_size_.push_back( (size_t) (end - start) );
+            partitions_.push_back(std::vector<T>());
 
             for(int* p = array + start; p != array + start + end; ++p){
-                *(data++) = *p;
+                partitions_[partition].push_back(*p);
             }
         }
     }
 
     template<typename T>
     PartitionedArray<T>::~PartitionedArray() {
-        for(int partition = 0; partition < num_partitions_; ++partition){
-            delete[] partitions_[partition];
-        }
         partitions_.clear();
-        partitions_size_.clear();
     }
 
 }

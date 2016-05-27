@@ -5,7 +5,7 @@ using namespace std;
 namespace SMJ{
 
     void testParallelJoin(){
-        srand(time(NULL));
+        NB_THREAD = 2;
 
         int* R = new int[P_SIZE_R];
         int* S = new int[P_SIZE_S];

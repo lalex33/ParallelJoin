@@ -282,8 +282,8 @@ namespace SMJ{
                 int* startR = R.GetPartition(nbThread);
                 int* endR = startR + R.GetPartitionSize(nbThread);
 
-                int* startS = R.GetPartition((nbThread + rotation) % NB_THREAD);
-                int* endS = startR + R.GetPartitionSize((nbThread + rotation) % NB_THREAD);
+                int* startS = S.GetPartition((nbThread + rotation) % NB_THREAD);
+                int* endS = startS + S.GetPartitionSize((nbThread + rotation) % NB_THREAD);
 
                 threadPool.Enqueue( bind(mergeRelations, startR, endR, startS, endS,
                                          ref(results[nbThread]), nbThread * R.GetPartitionSize(0),
