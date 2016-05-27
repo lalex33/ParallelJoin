@@ -1,5 +1,4 @@
 #include "Statistic.h"
-#include "PartitionedArray.hpp"
 
 using namespace SMJ;
 
@@ -19,7 +18,7 @@ int main(){
 
     // shows example of parallel sort-merge join
     //testParallelSort(false);
-    //testParallelJoin();
+    testParallelJoin();
 
     //testLotOfData();
 
@@ -30,6 +29,8 @@ int main(){
     // launch test of parallel sort-merge
     //benchmarkParallelSMJ();
     //benchmarkThreadPSMJ();
+
+    //benchmarkMergeThread();
 
     return 0;
 }

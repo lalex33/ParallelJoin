@@ -273,4 +273,29 @@ namespace SMJ{
         return results;
     }
 
+    vector<vector<string>> parallelMerge6(ThreadPool &threadPool, PartitionedArray<int>& R,
+                                          PartitionedArray<int>& S) {
+        vector<vector<string>> results(NB_THREAD);
+
+        for(uint rotation=0; rotation < NB_THREAD; ++rotation) {
+            for (uint nbThread = 0; nbThread < NB_THREAD; ++nbThread) {
+                int* startR = R.GetPartition(nbThread);
+                int* endR = startR + R.GetPartitionSize(nbThread);
+
+                int* startS = R.GetPartition((nbThread + rotation) % NB_THREAD);
+                int* endS = startR + R.GetPartitionSize((nbThread + rotation) % NB_THREAD);
+
+                threadPool.Enqueue( bind(mergeRelations, startR, endR, startS, endS,
+                                         ref(results[nbThread]), nbThread * R.GetPartitionSize(0),
+                                         S.GetPartitionSize(0) * ((nbThread + rotation)%NB_THREAD)));
+            }
+
+            double start = sec();
+            threadPool.WaitEndOfWork();
+            cout << "       compute (rotation=" << rotation << ") : " << (sec() - start) << endl;
+        }
+
+        return results;
+    }
+
 }

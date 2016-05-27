@@ -54,6 +54,11 @@ namespace SMJ{
      * start a benchmark : comparison between simple and parallel merge
      */
     void benchmarkMerge();
+
+    /*
+     * start a benchmark : merge speed with threads
+     */
+    void benchmarkMergeThread();
 }
 
 #endif //SORTMERGEJOIN_STATISTIQUE_H

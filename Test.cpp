@@ -22,7 +22,12 @@ namespace SMJ{
         /*ThreadWork threadWork((uint8_t) NB_THREAD);
         auto results = assembleResults(parallelMerge4(threadWork, R, S, P_SIZE_R, P_SIZE_S));*/
 
-        auto results = assembleResults(parallelMerge5(R, S, P_SIZE_R, P_SIZE_S));
+        //auto results = assembleResults(parallelMerge5(R, S, P_SIZE_R, P_SIZE_S));
+
+        ThreadPool threadPool(NB_THREAD);
+        PartitionedArray<int> R1(R, P_SIZE_R, NB_THREAD);
+        PartitionedArray<int> S1(S, P_SIZE_S, NB_THREAD);
+        auto results = assembleResults(parallelMerge6(threadPool, R1, S1));
 
         printSortMerge(R, S, P_SIZE_R, P_SIZE_S, results);
 
