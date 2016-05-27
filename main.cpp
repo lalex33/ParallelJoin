@@ -31,13 +31,5 @@ int main(){
     //benchmarkParallelSMJ();
     //benchmarkThreadPSMJ();
 
-    std::vector<int> array{1,2,3,4,5,6,7,8,9,10};
-
-    PartitionedArray<int> partitionedArray(array, 3);
-
-    printTable(partitionedArray.GetPartition(0), partitionedArray.GetPartitionSize(0));
-    printTable(partitionedArray.GetPartition(1), partitionedArray.GetPartitionSize(1));
-    printTable(partitionedArray.GetPartition(2), partitionedArray.GetPartitionSize(2));
-
     return 0;
 }

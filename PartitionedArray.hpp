@@ -4,11 +4,11 @@
 #include <vector>
 
 namespace SMJ {
-    template<typename T>
+    template<typename T, int P>
     class PartitionedArray{
     public:
-        PartitionedArray<T>(std::vector<T> array, int num_partitions);
-        PartitionedArray<T>(T* array, size_t array_size, int num_partitions);
+        PartitionedArray<T,P>(std::vector<T> array);
+        PartitionedArray<T,P>(T* array, size_t array_size);
         ~PartitionedArray();
 
         inline T* GetPartition(int partition_number){
@@ -20,42 +20,44 @@ namespace SMJ {
         }
 
     private:
-        std::vector<T*> partitions_;
-        std::vector<size_t> partitions_size_;
+        int* partitions_[P];
+        size_t partitions_size_[P];
     };
 
-    template<typename T>
-    PartitionedArray<T>::PartitionedArray(std::vector<T> array, int num_partitions):
-        PartitionedArray<T>(&array[0], array.size(), num_partitions)
+    template<typename T, int P>
+    PartitionedArray<T,P>::PartitionedArray(std::vector<T> array):
+        PartitionedArray<T,P>(&array[0], array.size())
     {
+        // error with vector (memory error)
     }
 
-    template<typename T>
-    PartitionedArray<T>::PartitionedArray(T *array, size_t array_size, int num_partitions) {
-        int partition_size = array_size / num_partitions;
+    template<typename T, int P>
+    PartitionedArray<T,P>::PartitionedArray(T *array, size_t array_size) {
+        int partition_size = (int) (array_size / P);
 
-        for(int partition = 0; partition < num_partitions; ++partition){
+        for(int partition = 0; partition < P; ++partition){
             int start = partition * partition_size;
             int end = start + partition_size;
-            if(partition == num_partitions-1){
+            if(partition == P-1){
                 end += array_size % end;
             }
 
-            T* datas = new T[end - start];
-            std::copy(array + start, array + start + end, datas);
+            T* data = new T[end - start];
 
-            partitions_.push_back(datas);
-            partitions_size_.push_back(end - start);
+            partitions_[partition] = data;
+            partitions_size_[partition] = (size_t) (end - start);
+
+            for(int* p = array + start; p != array + start + end; ++p){
+                *(data++) = *p;
+            }
         }
     }
 
-    template<typename T>
-    PartitionedArray<T>::~PartitionedArray() {
-        for(T* partition : partitions_){
-            delete[] partition;
+    template<typename T, int P>
+    PartitionedArray<T,P>::~PartitionedArray() {
+        for(int partition = 0; partition < P; ++partition){
+            delete[] partitions_[partition];
         }
-        partitions_.clear();
-        partitions_size_.clear();
     }
 
 }
