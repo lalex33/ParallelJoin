@@ -3,8 +3,6 @@
 using namespace SMJ;
 
 int main(){
-    int* i = new (std::nothrow) int[10000];
-    delete[] i;
 
     srand(time(NULL));
 
@@ -30,9 +28,9 @@ int main(){
 
     // launch test of parallel sort-merge
     //benchmarkParallelSMJ();
-    //benchmarkThreadPSMJ();
+    benchmarkThreadPSMJ();
 
-    benchmarkMergeThread();
+    //benchmarkMergeThread();
 
     return 0;
 }

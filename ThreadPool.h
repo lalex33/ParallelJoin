@@ -6,9 +6,8 @@
 
 #include "SortMergeJoin.h"
 
-namespace SMJ {
-    class ThreadPool {
-    public:
+class ThreadPool {
+public:
 
         // Constructor.
         ThreadPool(int threads);
@@ -26,7 +25,7 @@ namespace SMJ {
 
         void WaitEndOfWork();
 
-    private:
+private:
         // Thread pool storage.
         std::vector<std::thread> threadPool;
 
@@ -56,7 +55,7 @@ namespace SMJ {
 
         // Function that will be invoked by our threads.
         void Invoke();
-    };
-}
+};
+
 
 #endif //SORTMERGEJOIN_THREADPOOL_H

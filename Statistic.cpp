@@ -155,11 +155,10 @@ namespace SMJ {
                     parallelSort(S, NB_ROWS_THREAD);
                     avg_sort += sec() - start;
 
-                    //ThreadWork threadWork((uint8_t) nbThread);
+                    ThreadWork threadWork((uint8_t) nbThread);
 
                     start = sec();
-                    //join = parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
-                    join = parallelMerge5(R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
+                    join = parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
                     avg_merge += sec() - start;
 
                     #ifdef __linux__
@@ -338,7 +337,6 @@ namespace SMJ {
 
                 for(int i = 0; i < NB_TRY; ++i){
                     ThreadPool threadPool(nbThread);
-
                     PartitionedArray<int> R(R1, NB_ROWS_THREAD, nbThread);
                     PartitionedArray<int> S(S1, NB_ROWS_THREAD, nbThread);
 
