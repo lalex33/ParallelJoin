@@ -1,7 +1,8 @@
 #include "ParallelHashJoin.hpp"
 
-ParallelHashJoin::ParallelHashJoin(uint num_rows_r, uint num_rows_s, uint num_buckets):
-    size_r_(num_rows_r), size_s_(num_rows_s), num_buckets_(num_buckets)
+ParallelHashJoin::ParallelHashJoin(uint num_rows_r, uint num_rows_s, uint num_buckets, uint num_threads):
+    size_r_(num_rows_r), size_s_(num_rows_s), num_buckets_(num_buckets), num_threads_(num_threads),
+    threadpool_(num_threads)
 { }
 
 ParallelHashJoin::~ParallelHashJoin() {
@@ -9,38 +10,19 @@ ParallelHashJoin::~ParallelHashJoin() {
     delete[] S;
 }
 
-void ParallelHashJoin::HashJoinOnS(uint max_values) {
+void ParallelHashJoin::ComputeHashJoin(int *r, size_t size_R, int *s, size_t size_S) {
     double start = sec();
-    InitTables(max_values);
-    HashTable(S, size_s_);
-    HashJoin(R, size_r_);
+    HashTable(r, size_R);
+    HashJoin(s, size_S);
     time_hash_join_ = sec() - start;
 }
 
-void ParallelHashJoin::HashJoinOnR(uint max_values) {
+void ParallelHashJoin::ComputeParallelHashJoin(int *r, size_t size_R, int *s, size_t size_S) {
     double start = sec();
-    InitTables(max_values);
-    HashTable(R, size_r_);
-    HashJoin(S, size_s_);
+    ParallelHashTable(r, size_R);
+    ParallelHashjoin(s, size_S);
     time_hash_join_ = sec() - start;
 }
-
-void ParallelHashJoin::ParallelHashJoinOnR(uint max_values) {
-    double start = sec();
-    InitTables(max_values);
-    ParallelHashTable(R, size_r_);
-    ParallelHashjoin(S, size_s_);
-    time_hash_join_ = sec() - start;
-}
-
-void ParallelHashJoin::ParallelHashJoinOnS(uint max_values) {
-    double start = sec();
-    InitTables(max_values);
-    ParallelHashTable(S, size_s_);
-    ParallelHashjoin(R, size_r_);
-    time_hash_join_ = sec() - start;
-}
-
 
 /*
  * Simple Hash Join
@@ -111,9 +93,3 @@ void ParallelHashJoin::PrintResult(bool verbose) {
         }
     }
 }
-
-
-
-
-
-

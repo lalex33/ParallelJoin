@@ -4,14 +4,23 @@
 
 using namespace std;
 
-
 // Constructor.
 ThreadPool::ThreadPool(int threads) :
         terminate(false),
         stopped(false), running(0) {
+    #ifdef __linux__
+        cpu_set_t cpuset;
+    #endif
+
     // Create number of required threads and add them to the thread pool vector.
-    for (int i = 0; i < threads; i++) {
+    for (int i = 0; i < threads; ++i) {
         threadPool.emplace_back(thread(&ThreadPool::Invoke, this));
+
+        #ifdef __linux__
+            CPU_ZERO(&cpuset);
+            CPU_SET( (i+1) % numberOfProcessors, &cpuset);
+            pthread_setaffinity_np(workers[i].native_handle(), sizeof(cpu_set_t), &cpuset);
+        #endif
     }
 }
 
