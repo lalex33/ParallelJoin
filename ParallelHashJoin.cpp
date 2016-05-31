@@ -13,15 +13,17 @@ ParallelHashJoin::~ParallelHashJoin() {
 void ParallelHashJoin::ComputeHashJoin(int *r, size_t size_R, int *s, size_t size_S) {
     double start = sec();
     HashTable(r, size_R);
-    HashJoin(s, size_S);
+    HashJoin(s, size_S, results_);
     time_hash_join_ = sec() - start;
 }
 
 void ParallelHashJoin::ComputeParallelHashJoin(int *r, size_t size_R, int *s, size_t size_S) {
     double start = sec();
     ParallelHashTable(r, size_R);
-    ParallelHashjoin(s, size_S);
+    auto results = ParallelHashjoin(s, size_S);
     time_hash_join_ = sec() - start;
+
+    results_ = assembleResults(results);
 }
 
 /*
@@ -32,12 +34,14 @@ void ParallelHashJoin::HashTable(int *table, size_t size) {
     int* end = table + size;
 
     while (table != end){
+        hash_lock.lock();
         hash_buckets_[ Hash(table) ].push_back( *table );
+        hash_lock.unlock();
         ++table;
     }
 }
 
-void ParallelHashJoin::HashJoin(int *table, size_t size) {
+void ParallelHashJoin::HashJoin(int *table, size_t size, std::vector<std::string> &results) {
     int* end = table + size;
 
     while(table != end){
@@ -46,7 +50,7 @@ void ParallelHashJoin::HashJoin(int *table, size_t size) {
 
         for(auto tuple : bucket){
             if(tuple == value){
-                results_.push_back(" [" + std::to_string(tuple) + " == " + std::to_string(value) + "]");
+                results.push_back(" [" + std::to_string(tuple) + " == " + std::to_string(value) + "]");
             }
         }
 
@@ -59,11 +63,42 @@ void ParallelHashJoin::HashJoin(int *table, size_t size) {
  */
 
 void ParallelHashJoin::ParallelHashTable(int *table, size_t size) {
+    size_t num_rows = size / num_threads_;
 
+    for(int thread = 0; thread < num_threads_; ++thread){
+        int* start = table + thread * num_rows;
+        size_t end_size = num_rows;
+
+        if(thread == num_threads_ - 1){
+            end_size += size % end_size;
+        }
+
+        threadpool_.Enqueue( std::bind(&ParallelHashJoin::HashTable, this, start, end_size ) );
+    }
+
+    threadpool_.WaitEndOfWork();
 }
 
-void ParallelHashJoin::ParallelHashjoin(int *table, size_t size) {
+std::vector<std::vector<std::string>> ParallelHashJoin::ParallelHashjoin(int *table, size_t size) {
+    size_t num_rows = size / num_threads_;
 
+    std::vector<std::vector<std::string>> results(num_threads_);
+
+    for(int thread = 0; thread < num_threads_; ++thread){
+        int* start = table + thread * num_rows;
+        size_t end_size = num_rows;
+
+        if(thread == num_threads_ - 1){
+            end_size += size % end_size;
+        }
+
+        threadpool_.Enqueue( std::bind(&ParallelHashJoin::HashJoin, this, start, end_size,
+                                       std::ref(results[thread]) ) );
+    }
+
+    threadpool_.WaitEndOfWork();
+
+    return results;
 }
 
 /*

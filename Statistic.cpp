@@ -3,359 +3,357 @@
 #include "Statistic.h"
 
 using namespace std;
+using namespace SMJ;
 
-namespace SMJ {
+void benchmarkSMJ(){
+    // init vars
+    vector<string> join;
+    double start, durationSort, durationMerge;
 
-    void benchmarkSMJ(){
-        // init vars
-        vector<string> join;
-        double start, durationSort, durationMerge;
+    // open a file to store results
+    ofstream file(FILE_NAME_JOIN, ofstream::out);
 
-        // open a file to store results
-        ofstream file(FILE_NAME_JOIN, ofstream::out);
+    // write settings
+    file << "MAX INT = " << INTEGER_MAX << "\r\n";
 
-        // write settings
-        file << "MAX INT = " << INTEGER_MAX << "\r\n";
+    // check if we have access to the file
+    if(!file.fail()){
+        file << "Number of rows;Sort;Merge;Integer range : 0-" << INTEGER_MAX << endl;
+        // loop each 10000 rows
+        for(int nb_rows = 10000; nb_rows <= NB_ROWS_MAX; nb_rows += 10000){
+            // add new random integer into the two relations
+            int* R = new int[nb_rows];
+            int* S = new int[nb_rows];
 
-        // check if we have access to the file
-        if(!file.fail()){
-            file << "Number of rows;Sort;Merge;Integer range : 0-" << INTEGER_MAX << endl;
-            // loop each 10000 rows
-            for(int nb_rows = 10000; nb_rows <= NB_ROWS_MAX; nb_rows += 10000){
-                // add new random integer into the two relations
-                int* R = new int[nb_rows];
-                int* S = new int[nb_rows];
+            // add new random integer into the two relations
+            fillTable(R, nb_rows, INTEGER_MAX);
+            fillTable(S, nb_rows, INTEGER_MAX);
 
-                // add new random integer into the two relations
-                fillTable(R, nb_rows, INTEGER_MAX);
-                fillTable(S, nb_rows, INTEGER_MAX);
+            cout << "Computing " << nb_rows << " rows" << endl;
+            // start the chrono
+            start = sec();
 
-                cout << "Computing " << nb_rows << " rows" << endl;
-                // start the chrono
+            // sort the two relation
+            sortRelation(R, R + nb_rows);
+            sortRelation(S, S + nb_rows);
+
+            durationSort = sec() - start;
+            assert(checkSorted(R, nb_rows));
+            assert(checkSorted(S, nb_rows));
+
+            start = sec();
+            // merge both sorted relation
+            mergeRelations(R, R + nb_rows, S, S + nb_rows, join, 0, 0);
+
+            durationMerge = sec() - start;
+            assert(checkMerge(R, nb_rows, S, nb_rows, join));
+
+            cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
+
+            // save the result in the file
+            file << nb_rows << ";" << durationSort << ";" << durationMerge << "\r\n";
+
+            // clear tables
+            delete[] R;
+            delete[] S;
+        }
+
+        // close the file
+        file.close();
+    }else{
+        cout << "ERROR : opening file failed" << endl;
+    }
+}
+
+void benchmarkParallelSMJ(){
+    vector<vector<string>> join;
+    double start, durationSort, durationMerge;
+    ofstream file(FILE_NAME_PARALLEL_JOIN, ofstream::out);
+
+    if(!file.fail()){
+        file << "Number of rows;Parallel sort;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
+
+        for(int nb_rows = 10000; nb_rows <= NB_ROWS_MAX; nb_rows += 10000){
+            int* R = new int[nb_rows];
+            int* S = new int[nb_rows];
+
+            fillTable(R, nb_rows, INTEGER_MAX);
+            fillTable(S, nb_rows, INTEGER_MAX);
+
+            cout << "Computing " << nb_rows << " rows" << endl;
+            start = sec();
+            parallelSort(R, nb_rows);
+            parallelSort(S, nb_rows);
+            durationSort = sec() - start;
+            assert(checkSorted(R, nb_rows));
+            assert(checkSorted(S, nb_rows));
+
+            start = sec();
+            join = parallelMerge(R, S, nb_rows, nb_rows);
+            durationMerge = sec() - start;
+            assert(checkMerge(R, nb_rows, S, nb_rows, assembleResults(join)));
+
+            cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
+            file << nb_rows << ";" << durationSort << ";" << durationMerge << "\r\n";
+
+            delete[] R;
+            delete[] S;
+        }
+
+        file.close();
+    }else{
+        cout << "ERROR : opening file failed" << endl;
+    }
+}
+
+void benchmarkThreadPSMJ() {
+    vector<vector<string>> join;
+    double start;
+    ofstream file(FILE_NAME_THREAD_PJOIN, ofstream::out);
+
+    if(!file.fail()){
+        file << "Number of thread;Parallel sort;Parallel merge;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
+
+        int* R1 = new int[NB_ROWS_THREAD];
+        int* S1 = new int[NB_ROWS_THREAD];
+        fillTable(R1, NB_ROWS_THREAD, INTEGER_MAX);
+        fillTable(S1, NB_ROWS_THREAD, INTEGER_MAX);
+
+        #ifdef __linux__
+            const int NB_EVENTS = 4;
+            int events[NB_EVENTS] = {PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L2_DCA, PAPI_L1_LDM};
+            int ret;
+            long_long values[NB_EVENTS];
+
+            if (PAPI_num_counters() < NB_EVENTS) {
+                fprintf(stderr, "No hardware counters here, or PAPI not supported.\n");
+                exit(1);
+            }
+            if ((ret = PAPI_start_counters(events, NB_EVENTS)) != PAPI_OK) {
+                fprintf(stderr, "PAPI failed to start counters: %s\n", PAPI_strerror(ret));
+                exit(1);
+            }
+        #endif
+
+        for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
+            NB_THREAD = nbThread;
+
+            cout << "--> Computing " << NB_ROWS_THREAD << " rows with " << nbThread << " threads" << endl;
+
+            double avg_sort = 0.0, avg_merge = 0.0;
+
+            for(int i = 0; i < NB_TRY; ++i){
+                int* R = new int[NB_ROWS_THREAD];
+                int* S = new int[NB_ROWS_THREAD];
+
+                copy(R1, R1 + NB_ROWS_THREAD, R);
+                copy(S1, S1 + NB_ROWS_THREAD, S);
+
                 start = sec();
+                parallelSort(R, NB_ROWS_THREAD);
+                parallelSort(S, NB_ROWS_THREAD);
+                avg_sort += sec() - start;
 
-                // sort the two relation
-                sortRelation(R, R + nb_rows);
-                sortRelation(S, S + nb_rows);
-
-                durationSort = sec() - start;
-                assert(checkSorted(R, nb_rows));
-                assert(checkSorted(S, nb_rows));
+                ThreadWork threadWork((uint8_t) nbThread);
 
                 start = sec();
-                // merge both sorted relation
-                mergeRelations(R, R + nb_rows, S, S + nb_rows, join, 0, 0);
+                join = parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
+                avg_merge += sec() - start;
 
-                durationMerge = sec() - start;
-                assert(checkMerge(R, nb_rows, S, nb_rows, join));
+                #ifdef __linux__
+                    if ((ret = PAPI_read_counters(values, NB_EVENTS)) != PAPI_OK) {
+                        fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
+                        exit(1);
+                    }
+                    for(int i=0; i<NB_EVENTS; ++i){
+                        cout << "values[" << i << "] = " << values[i] << endl;
+                    }
+                    cout << "Miss rate : " << (((double)values[1]/values[2])*100) << endl;
+                #endif
 
-                cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
-
-                // save the result in the file
-                file << nb_rows << ";" << durationSort << ";" << durationMerge << "\r\n";
-
-                // clear tables
+                join.clear();
                 delete[] R;
                 delete[] S;
             }
 
-            // close the file
-            file.close();
-        }else{
-            cout << "ERROR : opening file failed" << endl;
+            cout << "  DONE in " << (avg_sort/NB_TRY) << " and " << (avg_merge/NB_TRY) << " seconds" << endl;
+            file << nbThread << ";" << (avg_sort/NB_TRY) << ";" << (avg_merge/NB_TRY) << "\r\n";
         }
+
+        delete[] R1;
+        delete[] S1;
+        file.close();
+    }else{
+        cout << "ERROR : opening file failed" << endl;
     }
+}
 
-    void benchmarkParallelSMJ(){
-        vector<vector<string>> join;
-        double start, durationSort, durationMerge;
-        ofstream file(FILE_NAME_PARALLEL_JOIN, ofstream::out);
+void benchmarkData() {
+    double start, d_stdSort, d_parallelRadix;
+    NB_THREAD = 24;
+    ofstream file(FILE_NAME_DATA, ofstream::out);
 
-        if(!file.fail()){
-            file << "Number of rows;Parallel sort;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
+    if(!file.fail()){
+        file << "Number of rows;std::sort;Radix sort;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX_2 << endl;
+        for(uint nbRows = 1000000; nbRows <= 100000000; nbRows += 1000000){
+            cout << "Computing " << nbRows << endl;
+            int* R = new int[nbRows];
+            int* S = new int[nbRows];
 
-            for(int nb_rows = 10000; nb_rows <= NB_ROWS_MAX; nb_rows += 10000){
-                int* R = new int[nb_rows];
-                int* S = new int[nb_rows];
+            fillTable(R, nbRows, INTEGER_MAX);
+            start = sec();
+            sort(R, R + nbRows);
+            d_stdSort = sec() - start;
 
-                fillTable(R, nb_rows, INTEGER_MAX);
-                fillTable(S, nb_rows, INTEGER_MAX);
+            fillTable(S, nbRows, INTEGER_MAX);
+            start = sec();
+            parallelSort(S, nbRows);
+            d_parallelRadix = sec() - start;
 
-                cout << "Computing " << nb_rows << " rows" << endl;
-                start = sec();
-                parallelSort(R, nb_rows);
-                parallelSort(S, nb_rows);
-                durationSort = sec() - start;
-                assert(checkSorted(R, nb_rows));
-                assert(checkSorted(S, nb_rows));
+            file << nbRows << ";" << d_stdSort << ";" << d_parallelRadix << "\r\n";
 
-                start = sec();
-                join = parallelMerge(R, S, nb_rows, nb_rows);
-                durationMerge = sec() - start;
-                assert(checkMerge(R, nb_rows, S, nb_rows, assembleResults(join)));
-
-                cout << " DONE in " << (durationSort + durationMerge) << " seconds" << endl;
-                file << nb_rows << ";" << durationSort << ";" << durationMerge << "\r\n";
-
-                delete[] R;
-                delete[] S;
-            }
-
-            file.close();
-        }else{
-            cout << "ERROR : opening file failed" << endl;
+            delete[] R;
+            delete[] S;
         }
+
+        file.close();
+    }else{
+        cout << "ERROR : opening file failed" << endl;
     }
+}
 
-    void benchmarkThreadPSMJ() {
-        vector<vector<string>> join;
-        double start;
-        ofstream file(FILE_NAME_THREAD_PJOIN, ofstream::out);
+void benchmarkData2() {
+    double start;
+    NB_THREAD = 48;
+    vector<string> results;
+    ofstream file(FILE_NAME_DATA2, ofstream::out);
 
-        if(!file.fail()){
-            file << "Number of thread;Parallel sort;Parallel merge;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
+    if(!file.fail()){
+        file << "Number of rows;std::sort;Simple merge;Radix sort;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
+        for(uint nbRows = 1000000; nbRows <= 20000000; nbRows += 1000000){
+            cout << "Computing " << nbRows << endl;
+            double d_stdSort = 0.0, d_parallelRadix = 0.0, d_merge = 0.0, d_parallelMerge = 0.0;
 
-            int* R1 = new int[NB_ROWS_THREAD];
-            int* S1 = new int[NB_ROWS_THREAD];
-            fillTable(R1, NB_ROWS_THREAD, INTEGER_MAX);
-            fillTable(S1, NB_ROWS_THREAD, INTEGER_MAX);
+            for(int i=0; i < NB_TRY; i++){
+                int *R = new int[nbRows];
+                int *S = new int[nbRows];
 
-            #ifdef __linux__
-                const int NB_EVENTS = 4;
-                int events[NB_EVENTS] = {PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L2_DCA, PAPI_L1_LDM};
-                int ret;
-                long_long values[NB_EVENTS];
-
-                if (PAPI_num_counters() < NB_EVENTS) {
-                    fprintf(stderr, "No hardware counters here, or PAPI not supported.\n");
-                    exit(1);
-                }
-                if ((ret = PAPI_start_counters(events, NB_EVENTS)) != PAPI_OK) {
-                    fprintf(stderr, "PAPI failed to start counters: %s\n", PAPI_strerror(ret));
-                    exit(1);
-                }
-            #endif
-
-            for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
-                NB_THREAD = nbThread;
-
-                cout << "--> Computing " << NB_ROWS_THREAD << " rows with " << nbThread << " threads" << endl;
-
-                double avg_sort = 0.0, avg_merge = 0.0;
-
-                for(int i = 0; i < NB_TRY; ++i){
-                    int* R = new int[NB_ROWS_THREAD];
-                    int* S = new int[NB_ROWS_THREAD];
-
-                    copy(R1, R1 + NB_ROWS_THREAD, R);
-                    copy(S1, S1 + NB_ROWS_THREAD, S);
-
-                    start = sec();
-                    parallelSort(R, NB_ROWS_THREAD);
-                    parallelSort(S, NB_ROWS_THREAD);
-                    avg_sort += sec() - start;
-
-                    ThreadWork threadWork((uint8_t) nbThread);
-
-                    start = sec();
-                    join = parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
-                    avg_merge += sec() - start;
-
-                    #ifdef __linux__
-                        if ((ret = PAPI_read_counters(values, NB_EVENTS)) != PAPI_OK) {
-                            fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
-                            exit(1);
-                        }
-                        for(int i=0; i<NB_EVENTS; ++i){
-                            cout << "values[" << i << "] = " << values[i] << endl;
-                        }
-                        cout << "Miss rate : " << (((double)values[1]/values[2])*100) << endl;
-                    #endif
-
-                    join.clear();
-                    delete[] R;
-                    delete[] S;
-                }
-
-                cout << "  DONE in " << (avg_sort/NB_TRY) << " and " << (avg_merge/NB_TRY) << " seconds" << endl;
-                file << nbThread << ";" << (avg_sort/NB_TRY) << ";" << (avg_merge/NB_TRY) << "\r\n";
-            }
-
-            delete[] R1;
-            delete[] S1;
-            file.close();
-        }else{
-            cout << "ERROR : opening file failed" << endl;
-        }
-    }
-
-    void benchmarkData() {
-        double start, d_stdSort, d_parallelRadix;
-        NB_THREAD = 24;
-        ofstream file(FILE_NAME_DATA, ofstream::out);
-
-        if(!file.fail()){
-            file << "Number of rows;std::sort;Radix sort;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX_2 << endl;
-            for(uint nbRows = 1000000; nbRows <= 100000000; nbRows += 1000000){
-                cout << "Computing " << nbRows << endl;
-                int* R = new int[nbRows];
-                int* S = new int[nbRows];
-
-                fillTable(R, nbRows, INTEGER_MAX);
+                fillTable(R, nbRows, INTEGER_MAX_3);
                 start = sec();
                 sort(R, R + nbRows);
-                d_stdSort = sec() - start;
+                d_stdSort += sec() - start;
 
-                fillTable(S, nbRows, INTEGER_MAX);
+                fillTable(S, nbRows, INTEGER_MAX_3);
                 start = sec();
                 parallelSort(S, nbRows);
-                d_parallelRadix = sec() - start;
+                d_parallelRadix += sec() - start;
 
-                file << nbRows << ";" << d_stdSort << ";" << d_parallelRadix << "\r\n";
+                start = sec();
+                mergeRelations(R, R + nbRows, S, S + nbRows, results, 0, 0);
+                d_merge += sec() - start;
+                results.clear();
+
+                start = sec();
+                auto join = parallelMerge(R, S, nbRows, nbRows);
+                d_parallelMerge += sec() - start;
+                join.clear();
 
                 delete[] R;
                 delete[] S;
             }
 
-            file.close();
-        }else{
-            cout << "ERROR : opening file failed" << endl;
+            file << nbRows << ";" << (d_stdSort/NB_TRY) << ";" << (d_merge/NB_TRY) <<
+                    ";" << (d_parallelRadix/NB_TRY) << ";" << (d_parallelMerge/NB_TRY) << "\r\n";
         }
+
+        file.close();
+    }else{
+        cout << "ERROR : opening file failed" << endl;
     }
+}
 
-    void benchmarkData2() {
-        double start;
-        NB_THREAD = 48;
-        vector<string> results;
-        ofstream file(FILE_NAME_DATA2, ofstream::out);
+void benchmarkMerge() {
+    double start;
+    vector<string> results;
+    ofstream file(FILE_NAME_MERGE, ofstream::out);
 
-        if(!file.fail()){
-            file << "Number of rows;std::sort;Simple merge;Radix sort;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
-            for(uint nbRows = 1000000; nbRows <= 20000000; nbRows += 1000000){
-                cout << "Computing " << nbRows << endl;
-                double d_stdSort = 0.0, d_parallelRadix = 0.0, d_merge = 0.0, d_parallelMerge = 0.0;
+    if(!file.fail()){
+        file << "Number of rows;Simple merge;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX_3 << endl;
+        for(uint nbRows = 1000000; nbRows <= 20000000; nbRows += 1000000){
+            cout << "Computing " << nbRows << endl;
 
-                for(int i=0; i < NB_TRY; i++){
-                    int *R = new int[nbRows];
-                    int *S = new int[nbRows];
+            double avg_merge = 0.0, avg_pmerge = 0.0;
+            for(int i = 0; i < NB_TRY_2; ++i){
+                int* R = new int[nbRows];
+                int* S = new int[nbRows];
+                fillTable(R, nbRows, INTEGER_MAX_3);
+                fillTable(S, nbRows, INTEGER_MAX_3);
+                parallelSort(R, nbRows);
+                parallelSort(S, nbRows);
 
-                    fillTable(R, nbRows, INTEGER_MAX_3);
-                    start = sec();
-                    sort(R, R + nbRows);
-                    d_stdSort += sec() - start;
+                start = sec();
+                mergeRelations(R, R + nbRows, S, S + nbRows, results, 0, 0);
+                avg_merge += sec() - start;
+                results.clear();
 
-                    fillTable(S, nbRows, INTEGER_MAX_3);
-                    start = sec();
-                    parallelSort(S, nbRows);
-                    d_parallelRadix += sec() - start;
+                start = sec();
+                auto join = parallelMerge(R, S, nbRows, nbRows);
+                avg_pmerge += sec() - start;
 
-                    start = sec();
-                    mergeRelations(R, R + nbRows, S, S + nbRows, results, 0, 0);
-                    d_merge += sec() - start;
-                    results.clear();
-
-                    start = sec();
-                    auto join = parallelMerge(R, S, nbRows, nbRows);
-                    d_parallelMerge += sec() - start;
-                    join.clear();
-
-                    delete[] R;
-                    delete[] S;
-                }
-
-                file << nbRows << ";" << (d_stdSort/NB_TRY) << ";" << (d_merge/NB_TRY) <<
-                        ";" << (d_parallelRadix/NB_TRY) << ";" << (d_parallelMerge/NB_TRY) << "\r\n";
+                delete[] R;
+                delete[] S;
             }
 
-            file.close();
-        }else{
-            cout << "ERROR : opening file failed" << endl;
+            file << nbRows << ";" << (avg_merge/NB_TRY_2) << ";" << (avg_pmerge/NB_TRY_2) << "\r\n";
         }
+        file.close();
+    }else{
+        cout << "ERROR : opening file failed" << endl;
     }
+}
 
-    void benchmarkMerge() {
-        double start;
-        vector<string> results;
-        ofstream file(FILE_NAME_MERGE, ofstream::out);
+void benchmarkMergeThread() {
+    vector<vector<string>> join;
+    double start;
+    ofstream file(FILE_NAME_THREAD_PJOIN, ofstream::out);
 
-        if(!file.fail()){
-            file << "Number of rows;Simple merge;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX_3 << endl;
-            for(uint nbRows = 1000000; nbRows <= 20000000; nbRows += 1000000){
-                cout << "Computing " << nbRows << endl;
+    if(!file.fail()){
+        file << "Number of thread;Parallel merge;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
 
-                double avg_merge = 0.0, avg_pmerge = 0.0;
-                for(int i = 0; i < NB_TRY_2; ++i){
-                    int* R = new int[nbRows];
-                    int* S = new int[nbRows];
-                    fillTable(R, nbRows, INTEGER_MAX_3);
-                    fillTable(S, nbRows, INTEGER_MAX_3);
-                    parallelSort(R, nbRows);
-                    parallelSort(S, nbRows);
+        int* R1 = new int[NB_ROWS_THREAD];
+        int* S1 = new int[NB_ROWS_THREAD];
+        fillTable(R1, NB_ROWS_THREAD, INTEGER_MAX);
+        fillTable(S1, NB_ROWS_THREAD, INTEGER_MAX);
+        parallelSort(R1, NB_ROWS_THREAD);
+        parallelSort(S1, NB_ROWS_THREAD);
 
-                    start = sec();
-                    mergeRelations(R, R + nbRows, S, S + nbRows, results, 0, 0);
-                    avg_merge += sec() - start;
-                    results.clear();
+        for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
+            NB_THREAD = nbThread;
 
-                    start = sec();
-                    auto join = parallelMerge(R, S, nbRows, nbRows);
-                    avg_pmerge += sec() - start;
+            cout << "--> Computing " << NB_ROWS_THREAD << " rows with " << nbThread << " threads" << endl;
 
-                    delete[] R;
-                    delete[] S;
-                }
+            double avg_merge = 0.0;
 
-                file << nbRows << ";" << (avg_merge/NB_TRY_2) << ";" << (avg_pmerge/NB_TRY_2) << "\r\n";
-            }
-            file.close();
-        }else{
-            cout << "ERROR : opening file failed" << endl;
-        }
-    }
+            for(int i = 0; i < NB_TRY; ++i){
+                ThreadPool threadPool(nbThread);
+                PartitionedArray<int> R(R1, NB_ROWS_THREAD, nbThread);
+                PartitionedArray<int> S(S1, NB_ROWS_THREAD, nbThread);
 
-    void benchmarkMergeThread() {
-        vector<vector<string>> join;
-        double start;
-        ofstream file(FILE_NAME_THREAD_PJOIN, ofstream::out);
+                start = sec();
+                join = parallelMerge6(threadPool, R, S);
+                avg_merge += sec() - start;
 
-        if(!file.fail()){
-            file << "Number of thread;Parallel merge;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
-
-            int* R1 = new int[NB_ROWS_THREAD];
-            int* S1 = new int[NB_ROWS_THREAD];
-            fillTable(R1, NB_ROWS_THREAD, INTEGER_MAX);
-            fillTable(S1, NB_ROWS_THREAD, INTEGER_MAX);
-            parallelSort(R1, NB_ROWS_THREAD);
-            parallelSort(S1, NB_ROWS_THREAD);
-
-            for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
-                NB_THREAD = nbThread;
-
-                cout << "--> Computing " << NB_ROWS_THREAD << " rows with " << nbThread << " threads" << endl;
-
-                double avg_merge = 0.0;
-
-                for(int i = 0; i < NB_TRY; ++i){
-                    ThreadPool threadPool(nbThread);
-                    PartitionedArray<int> R(R1, NB_ROWS_THREAD, nbThread);
-                    PartitionedArray<int> S(S1, NB_ROWS_THREAD, nbThread);
-
-                    start = sec();
-                    join = parallelMerge6(threadPool, R, S);
-                    avg_merge += sec() - start;
-
-                    join.clear();
-                }
-
-                cout << "  DONE in " << (avg_merge/NB_TRY) << " seconds" << endl;
-                file << nbThread << ";" << (avg_merge/NB_TRY) << "\r\n";
+                join.clear();
             }
 
-            delete[] R1;
-            delete[] S1;
-            file.close();
-        }else{
-            cout << "ERROR : opening file failed" << endl;
+            cout << "  DONE in " << (avg_merge/NB_TRY) << " seconds" << endl;
+            file << nbThread << ";" << (avg_merge/NB_TRY) << "\r\n";
         }
+
+        delete[] R1;
+        delete[] S1;
+        file.close();
+    }else{
+        cout << "ERROR : opening file failed" << endl;
     }
 }

@@ -39,9 +39,13 @@ int main(){
     /*
      * Hash Join
      */
-    ParallelHashJoin parallelHashJoin(100000, 100000, 5000);
-    parallelHashJoin.HashJoinOnR(INT_MAX);
-    parallelHashJoin.PrintResult();
+    /*ParallelHashJoin parallelHashJoin(10000, 10000, 100);
+    parallelHashJoin.HashJoinOnR(100000);
+    parallelHashJoin.PrintResult();*/
+
+    ParallelHashJoin parallelHashJoin1(10000, 10000, 100, 2);
+    parallelHashJoin1.ParallelHashJoinOnR(100000);
+    parallelHashJoin1.PrintResult();
 
     return 0;
 }

@@ -61,6 +61,8 @@ private:
     uint num_threads_;
     ThreadPool threadpool_;
 
+    std::mutex hash_lock;
+
 private:
     inline void InitTables(uint max_values){
         R = new int[size_r_];
@@ -69,7 +71,7 @@ private:
         fillTable(S, size_r_, max_values);
     }
 
-    inline size_t Hash(int* value){
+    inline int Hash(int* value){
         //return ( hash_fn_(*value) % num_buckets_); // useful with template
         return (*value) % num_buckets_;
     }
@@ -80,11 +82,11 @@ private:
 
     void HashTable(int* table, size_t size);
 
-    void HashJoin(int* table, size_t size);
+    void HashJoin(int* table, size_t size, std::vector<std::string> &results);
 
     void ParallelHashTable(int* table, size_t size);
 
-    void ParallelHashjoin(int* table, size_t size);
+    std::vector<std::vector<std::string>> ParallelHashjoin(int* table, size_t size);
 
 };
 
