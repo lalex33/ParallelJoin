@@ -1,5 +1,4 @@
-#include "Statistic.h"
-#include "ParallelHashJoin.hpp"
+#include "Statistic1.h"
 
 using namespace SMJ;
 

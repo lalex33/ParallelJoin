@@ -26,39 +26,9 @@ const int NB_TRY = 1;
 const int NB_TRY_2 = 1;
 
 /*
- * start a benchmark of the implemented algorithm of sort-merge-join
- */
-void benchmarkSMJ();
-
-/*
- * start a benchmark of the parallel SMJ
- */
-void benchmarkParallelSMJ();
-
-/*
  * start a benchmark (number of threads) of PSMJ
  */
 void benchmarkThreadPSMJ();
-
-/*
- * start a benchmark of increasing size of data (sort)
- */
-void benchmarkData();
-
-/*
- * start a benchmark of increasing size of data (sort and merge)
- */
-void benchmarkData2();
-
-/*
- * start a benchmark : comparison between simple and parallel merge
- */
-void benchmarkMerge();
-
-/*
- * start a benchmark : merge speed with threads
- */
-void benchmarkMergeThread();
 
 /*
  * start a benchmark : parallel hash join

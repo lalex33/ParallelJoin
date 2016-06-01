@@ -13,18 +13,17 @@ namespace SMJ{
     /*
      * start a radix sort using threads
      */
-    void parallelSort(int *table, uint size);
+    void parallelSort(int *table, uint size, ThreadPool& threadPool);
 
     /*
      * sort values in buckets by a digit
      */
-    void radixSort(int *table, digits_bucket &buckets,
-                   uint posDigit, uint start, uint end);
+    void radixSort(int *start, int *end, digits_bucket &buckets, uint posDigit);
 
     /*
      * find max value of array using thread
      */
-    int parallelMax(int *table, uint size);
+    int parallelMax(int *table, uint size, ThreadPool& threadPool);
 
     /*
      * find the max value of an array and store it in <max>

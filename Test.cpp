@@ -13,8 +13,9 @@ namespace SMJ{
         fillTable(R, P_SIZE_R, MAX_RAND_PSMJ);
         fillTable(S, P_SIZE_S, MAX_RAND_PSMJ);
 
-        parallelSort(R, P_SIZE_R);
-        parallelSort(S, P_SIZE_S);
+        ThreadPool threadPool(NB_THREAD);
+        parallelSort(R, P_SIZE_R, threadPool);
+        parallelSort(S, P_SIZE_S, threadPool);
 
         /*ThreadPool threadPool(NB_THREAD);
         auto results = assembleResults(parallelMerge3(threadPool, R, S, P_SIZE_R, P_SIZE_S));*/
@@ -38,8 +39,10 @@ namespace SMJ{
         int* R = new int[P_SIZE_R];
         fillTable(R, P_SIZE_R, MAX_RAND_PSMJ);
 
+        ThreadPool threadPool(NB_THREAD);
+
         clock_t start = clock();
-        parallelSort(R, P_SIZE_R);
+        parallelSort(R, P_SIZE_R, threadPool);
         cout << (( clock() - start ) / (double) CLOCKS_PER_SEC) << endl;
 
         cout << "array sorted ? " << (checkSorted(R, P_SIZE_R)?"yes":"no") << endl;
@@ -82,6 +85,7 @@ namespace SMJ{
 
     void testLotOfData(){
         srand(time(NULL));
+        ThreadPool threadPool(NB_THREAD);
 
         int* R = new int[MAX_SIZE];
         int* S = new int[MAX_SIZE];
@@ -93,7 +97,7 @@ namespace SMJ{
 
         cout << "Start sort" << endl;
         start = sec();
-        parallelSort(R, MAX_SIZE);
+        parallelSort(R, MAX_SIZE, threadPool);
         cout << "Sorting R with parallel radix : " << (sec() - start) << " seconds" << endl;
         cout << "Sorted : " << checkSorted(R, MAX_SIZE) << endl;
 
@@ -115,7 +119,6 @@ namespace SMJ{
         cout << "Merging R with parallel merge 2: " << (sec() - start) << " seconds" << endl;
         //cout << "Merged? -> " << checkMerge(R, MAX_SIZE, S, MAX_SIZE, assembleResults(result)) << endl;
 
-        ThreadPool threadPool(NB_THREAD);
         cout << "Start merge" << endl;
         start = sec();
         result = parallelMerge3(threadPool, R, S, MAX_SIZE, MAX_SIZE);

@@ -6,14 +6,13 @@ namespace SMJ{
 
     uint NB_THREAD;
 
-    void parallelSort(int *table, uint size){
+    void parallelSort(int *table, uint size, ThreadPool& threadPool){
         double start = sec();
 
         ostringstream oss;
-        oss << parallelMax(table, size);
+        oss << parallelMax(table, size, threadPool);
 
         cout << "max : " << (sec() - start) << endl << endl;
-
 
         // compute size of the max int
         ulong digitLength = oss.str().size();
@@ -37,20 +36,16 @@ namespace SMJ{
 
             // create <NB_THREAD> threads which will sort a sublist
             for(uint nbThread = 0 ; nbThread < NB_THREAD ; ++nbThread){
-                uint start = nbThread * sizePerThread;
-                uint end = start + sizePerThread;
-                end += (nbThread == NB_THREAD-1)? (size%end):0;
-                threads.push_back( thread(radixSort, table, ref(threadArrays[nbThread]), nbDigit, start, end));
+                int *start = table + nbThread * sizePerThread;
+                int *end = start + sizePerThread;
+                end += (nbThread == NB_THREAD-1)? (size % (nbThread * sizePerThread + sizePerThread)):0;
+                threadPool.Enqueue( bind(radixSort, start, end, ref(threadArrays[nbThread]), nbDigit) );
             }
 
             cout << "   prepare threads : " << (sec() - start) << endl;
             start = sec();
 
-            // wait end of sort and delete threads
-            for(auto thread = threads.begin(); thread != threads.end(); ++thread){
-                thread->join();
-            }
-            threads.clear();
+            threadPool.WaitEndOfWork();
 
             cout << "   compute radix : " << (sec() - start) << endl;
             start = sec();
@@ -72,34 +67,31 @@ namespace SMJ{
         }
     }
 
-    void radixSort(int *table, digits_bucket &buckets,
-                   uint posDigit, uint start, uint end){
+    void radixSort(int *start, int *end, digits_bucket &buckets,
+                   uint posDigit){
         // loop over each values of the sub-list
-        for(uint n = start; n < end; ++n){
+        while(start != end){
             // put the value in the digit bucket
-            buckets[ getDigit(table[n], posDigit) ].push_back(table[n]);
+            buckets[ getDigit(*start, posDigit) ].push_back(*start);
+            ++start;
         }
     }
 
-    int parallelMax(int *table, uint size){
+    int parallelMax(int *table, uint size, ThreadPool& threadPool){
         // init vars
         vector<thread> threads;
         uint rowsPerThread = size / NB_THREAD;
-        int* maxFromThreads = new int[NB_THREAD];
+        int maxFromThreads[NB_THREAD];
 
         // compute max by each thread
         for(int nbThread=0; nbThread < NB_THREAD; ++nbThread){
             int* start = table + nbThread * rowsPerThread;
             int* end = start + rowsPerThread;
             end += (nbThread == NB_THREAD-1)? (size % (nbThread * rowsPerThread + rowsPerThread)):0;
-            threads.push_back( thread(maxRoutine, start, end, maxFromThreads+nbThread) );
+            threadPool.Enqueue( bind(maxRoutine, start, end, &maxFromThreads[nbThread]) );
         }
 
-        // wait the end of threads
-        for(auto thread = threads.begin(); thread != threads.end(); ++thread){
-            thread->join();
-        }
-        threads.clear();
+        threadPool.WaitEndOfWork();
 
         // find max of threads' max
         int* start = maxFromThreads, *end = start + NB_THREAD, max = *(start++);
@@ -108,9 +100,6 @@ namespace SMJ{
                 max = *start;
             ++start;
         }
-
-        // free memory
-        delete[] maxFromThreads;
 
         return max;
     }
