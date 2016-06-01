@@ -82,7 +82,7 @@ void ParallelHashJoin::ParallelHashTable(int *table, size_t size) {
     for(auto const &hash_table : hash_tables){
         for(auto const &map : hash_table){
             for(auto const &tuple : map.second) {
-                results_[map.first].push_back( tuple );
+                hash_buckets_[map.first].push_back( tuple );
             }
         }
     }
