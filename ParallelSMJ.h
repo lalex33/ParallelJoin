@@ -26,11 +26,6 @@ namespace SMJ{
     int parallelMax(int *table, uint size, ThreadPool& threadPool);
 
     /*
-     * find the max value of an array and store it in <max>
-     */
-    void maxRoutine(int* start, int* end, int* max);
-
-    /*
      * return the digit at the given position
      * pos of least digit = 0
      * credit : http://stackoverflow.com/a/7438270

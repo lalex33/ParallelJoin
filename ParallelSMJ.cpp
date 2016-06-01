@@ -16,6 +16,7 @@ namespace SMJ{
 
         // compute size of the max int
         ulong digitLength = oss.str().size();
+        cout << digitLength << " : " << oss.str() << endl;
 
         // compute number of int to sort by a thread
         uint sizePerThread = size / NB_THREAD;
@@ -26,8 +27,6 @@ namespace SMJ{
             digits_bucket digitsBucket(MAX_DIGIT_EXCLUDED);
             threadArrays.push_back(digitsBucket);
         }
-
-        vector<thread> threads;
 
         // loop on each digit (from the least to the most)
         for(uint nbDigit = 0 ; nbDigit < digitLength ; ++nbDigit){
@@ -55,8 +54,8 @@ namespace SMJ{
             for(uint digit=0; digit < MAX_DIGIT_EXCLUDED; ++digit){
                 for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
                     auto array = &threadArrays[nbThread][digit];
-                    for(auto value = array->begin(); value != array->end(); ++value){
-                        *(pos++) = *value;
+                    for(auto const &value : *array){
+                        *(pos++) = value;
                     }
                     // clear data
                     array->clear();
@@ -79,7 +78,6 @@ namespace SMJ{
 
     int parallelMax(int *table, uint size, ThreadPool& threadPool){
         // init vars
-        vector<thread> threads;
         uint rowsPerThread = size / NB_THREAD;
         int maxFromThreads[NB_THREAD];
 
@@ -88,30 +86,16 @@ namespace SMJ{
             int* start = table + nbThread * rowsPerThread;
             int* end = start + rowsPerThread;
             end += (nbThread == NB_THREAD-1)? (size % (nbThread * rowsPerThread + rowsPerThread)):0;
-            threadPool.Enqueue( bind(maxRoutine, start, end, &maxFromThreads[nbThread]) );
+            auto max = &maxFromThreads[nbThread];
+            threadPool.Enqueue([start, end, max](){
+                *max = *(std::max_element(start, end));
+            });
         }
 
         threadPool.WaitEndOfWork();
 
         // find max of threads' max
-        int* start = maxFromThreads, *end = start + NB_THREAD, max = *(start++);
-        while(start != end){
-            if(*start > max)
-                max = *start;
-            ++start;
-        }
-
-        return max;
-    }
-
-    void maxRoutine(int* start, int* end, int* max){
-        *max = *(start++);
-        while(start != end){
-            if(*start > *max){
-                *max = *start;
-            }
-            start++;
-        }
+        return *(std::max_element(maxFromThreads, maxFromThreads + NB_THREAD));
     }
 
     int getDigit (int number, int pos) {
