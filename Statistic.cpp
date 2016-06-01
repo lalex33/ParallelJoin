@@ -12,7 +12,7 @@ void benchmarkSMJ(){
     double start, durationSort, durationMerge;
 
     // open a file to store results
-    ofstream file(FILE_NAME_JOIN, ofstream::out);
+    ofstream file(kF_JOIN, ofstream::out);
 
     // write settings
     file << "MAX INT = " << INTEGER_MAX << "\r\n";
@@ -69,7 +69,7 @@ void benchmarkSMJ(){
 void benchmarkParallelSMJ(){
     vector<vector<string>> join;
     double start, durationSort, durationMerge;
-    ofstream file(FILE_NAME_PARALLEL_JOIN, ofstream::out);
+    ofstream file(kF_PARALLEL_JOIN, ofstream::out);
 
     if(!file.fail()){
         file << "Number of rows;Parallel sort;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
@@ -110,7 +110,7 @@ void benchmarkParallelSMJ(){
 void benchmarkThreadPSMJ() {
     vector<vector<string>> join;
     double start;
-    ofstream file(FILE_NAME_THREAD_PJOIN, ofstream::out);
+    ofstream file(kF_THREAD_PJOIN, ofstream::out);
 
     if(!file.fail()){
         file << "Number of thread;Parallel sort;Parallel merge;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
@@ -192,7 +192,7 @@ void benchmarkThreadPSMJ() {
 void benchmarkData() {
     double start, d_stdSort, d_parallelRadix;
     NB_THREAD = 24;
-    ofstream file(FILE_NAME_DATA, ofstream::out);
+    ofstream file(kF_DATA, ofstream::out);
 
     if(!file.fail()){
         file << "Number of rows;std::sort;Radix sort;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX_2 << endl;
@@ -227,7 +227,7 @@ void benchmarkData2() {
     double start;
     NB_THREAD = 48;
     vector<string> results;
-    ofstream file(FILE_NAME_DATA2, ofstream::out);
+    ofstream file(kF_DATA2, ofstream::out);
 
     if(!file.fail()){
         file << "Number of rows;std::sort;Simple merge;Radix sort;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
@@ -276,7 +276,7 @@ void benchmarkData2() {
 void benchmarkMerge() {
     double start;
     vector<string> results;
-    ofstream file(FILE_NAME_MERGE, ofstream::out);
+    ofstream file(kF_MERGE, ofstream::out);
 
     if(!file.fail()){
         file << "Number of rows;Simple merge;Parallel merge;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX_3 << endl;
@@ -316,7 +316,7 @@ void benchmarkMerge() {
 void benchmarkMergeThread() {
     vector<vector<string>> join;
     double start;
-    ofstream file(FILE_NAME_THREAD_PJOIN, ofstream::out);
+    ofstream file(kF_THREAD_PJOIN, ofstream::out);
 
     if(!file.fail()){
         file << "Number of thread;Parallel merge;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
@@ -360,15 +360,10 @@ void benchmarkMergeThread() {
 }
 
 void benchmarkParallelHashJoin() {
-    ofstream file(FILE_NAME_PARALLEL_HASHJOIN, ofstream::out);
+    ofstream file(kF_PARALLEL_HASHJOIN, ofstream::out);
 
     if(!file.fail()){
         file << "Number of thread;Parallel hash join;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
-
-        int* R1 = new int[NB_ROWS_THREAD];
-        int* S1 = new int[NB_ROWS_THREAD];
-        fillTable(R1, NB_ROWS_THREAD, INTEGER_MAX);
-        fillTable(S1, NB_ROWS_THREAD, INTEGER_MAX);
 
         for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
             NB_THREAD = nbThread;
@@ -377,27 +372,76 @@ void benchmarkParallelHashJoin() {
 
             double avg_merge = 0.0;
 
-            for(int i = 0; i < NB_TRY; ++i){
-                ParallelHashJoin parallelHashJoin(NB_ROWS_THREAD, NB_ROWS_THREAD, 1000000, nbThread);
-                parallelHashJoin.InitTables(NB_ROWS_THREAD);
-
-                int *r = parallelHashJoin.GetR(), *s = parallelHashJoin.GetS();
-                copy(R1, R1 + NB_ROWS_THREAD, r);
-                copy(S1, S1 + NB_ROWS_THREAD, s);
+            for(int i = 0; i < NB_TRY_2; ++i){
+                ParallelHashJoin parallelHashJoin(NB_ROWS_THREAD, NB_ROWS_THREAD, 5000000, nbThread);
+                parallelHashJoin.InitTables(INTEGER_MAX);
 
                 parallelHashJoin.ParallelHashJoinOnR();
 
                 avg_merge += parallelHashJoin.GetProcessingTime();
             }
 
-            cout << "  DONE in " << (avg_merge/NB_TRY) << " seconds" << endl;
-            file << nbThread << ";" << (avg_merge/NB_TRY) << "\r\n";
+            cout << "  DONE in " << (avg_merge/NB_TRY_2) << " seconds" << endl;
+            file << nbThread << ";" << (avg_merge/NB_TRY_2) << "\r\n";
         }
 
-        delete[] R1;
-        delete[] S1;
         file.close();
     }else{
         cout << "ERROR : opening file failed" << endl;
     }
 }
+
+void benchmarkHashVsSMJoin() {
+    ofstream file(kF_COMPARISON, ofstream::out);
+    double start = 0.0;
+
+    if(!file.fail()){
+        file << "Number of thread;Parallel hash join;Parallel SMJ;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
+
+        for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
+            NB_THREAD = nbThread;
+
+            cout << "--> Computing " << NB_ROWS_THREAD << " rows with " << nbThread << " threads" << endl;
+
+            double avg_merge_hash = 0.0, avg_merge_smj = 0.0;
+
+            for(int i = 0; i < NB_TRY_2; ++i){
+                // hash join
+                cout << "Hash join :" << endl;
+                ParallelHashJoin parallelHashJoin(NB_ROWS_THREAD, NB_ROWS_THREAD, 5000000, nbThread);
+                parallelHashJoin.InitTables(INTEGER_MAX);
+                parallelHashJoin.ParallelHashJoinOnR();
+                avg_merge_hash += parallelHashJoin.GetProcessingTime();
+
+                // sort merge join
+                cout << "Sort merge join :" << endl;
+                int* R = new int[NB_ROWS_THREAD];
+                int* S = new int[NB_ROWS_THREAD];
+                fillTable(R, NB_ROWS_THREAD, INTEGER_MAX);
+                fillTable(S, NB_ROWS_THREAD, INTEGER_MAX);
+
+                start = sec();
+                parallelSort(R, NB_ROWS_THREAD);
+                parallelSort(S, NB_ROWS_THREAD);
+                avg_merge_smj += sec() - start;
+
+                ThreadWork threadWork((uint8_t) nbThread);
+                start = sec();
+                parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
+                avg_merge_smj += sec() - start;
+
+                delete[] R;
+                delete[] S;
+            }
+
+            cout << "  DONE in " << (avg_merge_hash/NB_TRY_2) << " seconds and " << (avg_merge_smj/NB_TRY_2) << " seconds." << endl;
+            file << nbThread << ";" << (avg_merge_hash/NB_TRY_2) << ";" << (avg_merge_smj/NB_TRY_2) << "\r\n";
+        }
+
+        file.close();
+    }else{
+        cout << "ERROR : opening file failed" << endl;
+    }
+}
+
+

@@ -4,6 +4,7 @@
 using namespace SMJ;
 
 int main(){
+    // generate a seed for random values
     srand((unsigned int) time(NULL));
 
     // set default number of thread
@@ -12,7 +13,6 @@ int main(){
     /*
      * Sort Merge Join
      */
-
     // shows an example of sort-merge join
     //testSortMergeJoin();
 
@@ -39,8 +39,12 @@ int main(){
     /*
      * Hash Join
      */
+    //benchmarkParallelHashJoin();
 
-    benchmarkParallelHashJoin();
+    /*
+     * Hash Join vs Sort Merge Join
+     */
+    benchmarkHashVsSMJoin();
 
     return 0;
 }

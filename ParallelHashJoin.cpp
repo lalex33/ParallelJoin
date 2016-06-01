@@ -26,12 +26,13 @@ void ParallelHashJoin::ComputeParallelHashJoin(int *r, size_t size_R, int *s, si
     results_ = assembleResults(results);
 }
 
+
 /*
  * Simple Hash Join
  */
-
 void ParallelHashJoin::HashTable(int *table, size_t size, std::vector<Bucket> &hash_buckets) {
     int* end = table + size;
+    //double start = sec();
 
     while (table != end){
         auto bucket = &hash_buckets[ Hash(table) ];
@@ -40,10 +41,13 @@ void ParallelHashJoin::HashTable(int *table, size_t size, std::vector<Bucket> &h
         (*bucket).bucket_lock.unlock();
         ++table;
     }
+
+    //std::cout << " hash table : " << (sec() - start) << std::endl;
 }
 
 void ParallelHashJoin::HashJoin(int *table, size_t size, std::vector<std::string> &results) {
     int* end = table + size, value;
+    //double start = sec();
 
     while(table != end){
         auto bucket = &hash_buckets_[ Hash(table) ].values;
@@ -57,12 +61,14 @@ void ParallelHashJoin::HashJoin(int *table, size_t size, std::vector<std::string
 
         ++table;
     }
+
+    //std::cout << " hash join : " << (sec() - start) << std::endl;
 }
+
 
 /*
  * Parallel Hash Join
  */
-
 void ParallelHashJoin::ParallelHashTable(int *table, size_t size) {
     size_t num_rows = size / num_threads_;
 
