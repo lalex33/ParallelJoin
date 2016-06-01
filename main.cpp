@@ -39,15 +39,8 @@ int main(){
     /*
      * Hash Join
      */
-    /*ParallelHashJoin parallelHashJoin(10000, 10000, 100);
-    parallelHashJoin.InitTables(100000);
-    parallelHashJoin.HashJoinOnR();
-    parallelHashJoin.PrintResult();*/
 
-    ParallelHashJoin parallelHashJoin1(1000000, 1000000, 1000000, 1);
-    parallelHashJoin1.InitTables(INT_MAX);
-    parallelHashJoin1.ParallelHashJoinOnR();
-    parallelHashJoin1.PrintResult();
+    benchmarkParallelHashJoin();
 
     return 0;
 }

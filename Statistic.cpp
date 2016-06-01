@@ -1,6 +1,7 @@
 #define NDEBUG
 
 #include "Statistic.h"
+#include "ParallelHashJoin.hpp"
 
 using namespace std;
 using namespace SMJ;
@@ -344,6 +345,49 @@ void benchmarkMergeThread() {
                 avg_merge += sec() - start;
 
                 join.clear();
+            }
+
+            cout << "  DONE in " << (avg_merge/NB_TRY) << " seconds" << endl;
+            file << nbThread << ";" << (avg_merge/NB_TRY) << "\r\n";
+        }
+
+        delete[] R1;
+        delete[] S1;
+        file.close();
+    }else{
+        cout << "ERROR : opening file failed" << endl;
+    }
+}
+
+void benchmarkParallelHashJoin() {
+    ofstream file(FILE_NAME_PARALLEL_HASHJOIN, ofstream::out);
+
+    if(!file.fail()){
+        file << "Number of thread;Parallel hash join;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
+
+        int* R1 = new int[NB_ROWS_THREAD];
+        int* S1 = new int[NB_ROWS_THREAD];
+        fillTable(R1, NB_ROWS_THREAD, INTEGER_MAX);
+        fillTable(S1, NB_ROWS_THREAD, INTEGER_MAX);
+
+        for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
+            NB_THREAD = nbThread;
+
+            cout << "--> Computing " << NB_ROWS_THREAD << " rows with " << nbThread << " threads" << endl;
+
+            double avg_merge = 0.0;
+
+            for(int i = 0; i < NB_TRY; ++i){
+                ParallelHashJoin parallelHashJoin(NB_ROWS_THREAD, NB_ROWS_THREAD, 1000000, nbThread);
+                parallelHashJoin.InitTables(NB_ROWS_THREAD);
+
+                int *r = parallelHashJoin.GetR(), *s = parallelHashJoin.GetS();
+                copy(R1, R1 + NB_ROWS_THREAD, r);
+                copy(S1, S1 + NB_ROWS_THREAD, s);
+
+                parallelHashJoin.ParallelHashJoinOnR();
+
+                avg_merge += parallelHashJoin.GetProcessingTime();
             }
 
             cout << "  DONE in " << (avg_merge/NB_TRY) << " seconds" << endl;

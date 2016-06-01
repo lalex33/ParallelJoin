@@ -122,9 +122,9 @@ void ParallelHashJoin::PrintResult(bool verbose) {
     }
 
     cout << "Execution time : " << GetProcessingTime() << endl;
-    cout << "Good merge? " << checkMerge(R, size_r_, S, size_s_, results_) << endl;
 
     if(verbose) {
+        cout << "Good merge? " << checkMerge(R, size_r_, S, size_s_, results_) << endl;
         for (auto match : results_) {
             cout << match << endl;
         }

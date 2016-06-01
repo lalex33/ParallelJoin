@@ -15,12 +15,13 @@ const std::string FILE_NAME_THREAD_PJOIN = "thread_join.csv"; // file for thread
 const std::string FILE_NAME_DATA = "data.csv"; // file for data results
 const std::string FILE_NAME_DATA2 = "data2.csv"; // file for data 2 results
 const std::string FILE_NAME_MERGE = "merge.csv"; // file for merge results
+const std::string FILE_NAME_PARALLEL_HASHJOIN = "p_hashjoin.csv"; // file for parallel hash join results
 
 const int NB_THREAD_MIN = 1;
 const int NB_THREAD_MAX = 16;
 const int NB_ROWS_THREAD = 10000000;
 
-const int NB_TRY = 1;
+const int NB_TRY = 3;
 const int NB_TRY_2 = 4;
 
 /*
@@ -57,6 +58,11 @@ void benchmarkMerge();
  * start a benchmark : merge speed with threads
  */
 void benchmarkMergeThread();
+
+/*
+ * start a benchmark : parallel hash join
+ */
+void benchmarkParallelHashJoin();
 
 
 #endif //SORTMERGEJOIN_STATISTIQUE_H
