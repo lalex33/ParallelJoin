@@ -14,6 +14,9 @@ namespace SMJ{
         int *tupleR2, rowR2, *tupleS2, rowS2;
         int valueR, valueS, valueR2, valueS2;
 
+        tupleS = lower_bound(startS, endS, *startR);
+        endS = upper_bound(startS, endS, *(endR-1));
+
         //double start = sec();
 
         // loop until there is no tuples to read in both relation

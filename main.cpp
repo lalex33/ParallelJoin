@@ -31,7 +31,7 @@ int main(){
 
     // launch test of parallel sort-merge
     //benchmarkParallelSMJ();
-    //benchmarkThreadPSMJ();
+    benchmarkThreadPSMJ();
 
     //benchmarkMergeThread();
 
@@ -44,7 +44,7 @@ int main(){
     /*
      * Hash Join vs Sort Merge Join
      */
-    benchmarkHashVsSMJoin();
+    //benchmarkHashVsSMJoin();
 
     return 0;
 }

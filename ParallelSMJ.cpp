@@ -7,8 +7,13 @@ namespace SMJ{
     uint NB_THREAD;
 
     void parallelSort(int *table, uint size){
+        double start = sec();
+
         ostringstream oss;
         oss << parallelMax(table, size);
+
+        cout << "max : " << (sec() - start) << endl << endl;
+
 
         // compute size of the max int
         ulong digitLength = oss.str().size();
@@ -27,6 +32,8 @@ namespace SMJ{
 
         // loop on each digit (from the least to the most)
         for(uint nbDigit = 0 ; nbDigit < digitLength ; ++nbDigit){
+            cout << "one digit :" << endl;
+            start = sec();
 
             // create <NB_THREAD> threads which will sort a sublist
             for(uint nbThread = 0 ; nbThread < NB_THREAD ; ++nbThread){
@@ -36,11 +43,17 @@ namespace SMJ{
                 threads.push_back( thread(radixSort, table, ref(threadArrays[nbThread]), nbDigit, start, end));
             }
 
+            cout << "   prepare threads : " << (sec() - start) << endl;
+            start = sec();
+
             // wait end of sort and delete threads
             for(auto thread = threads.begin(); thread != threads.end(); ++thread){
                 thread->join();
             }
             threads.clear();
+
+            cout << "   compute radix : " << (sec() - start) << endl;
+            start = sec();
 
             // put sorted digit values in array
             int* pos = table;
@@ -54,6 +67,8 @@ namespace SMJ{
                     array->clear();
                 }
             }
+
+            cout << "   store integers : " << (sec() - start) << endl << endl;
         }
     }
 

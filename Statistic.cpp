@@ -408,7 +408,7 @@ void benchmarkHashVsSMJoin() {
             for(int i = 0; i < NB_TRY_2; ++i){
                 // hash join
                 cout << "Hash join :" << endl;
-                ParallelHashJoin parallelHashJoin(NB_ROWS_THREAD, NB_ROWS_THREAD, 5000000, nbThread);
+                ParallelHashJoin parallelHashJoin(NB_ROWS_THREAD, NB_ROWS_THREAD, 10000000, nbThread);
                 parallelHashJoin.InitTables(INTEGER_MAX);
                 parallelHashJoin.ParallelHashJoinOnR();
                 avg_merge_hash += parallelHashJoin.GetProcessingTime();
