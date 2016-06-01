@@ -37,6 +37,8 @@ public:
         ComputeParallelHashJoin(S, size_s_, R, size_r_);
     }
 
+    inline double GetHashTime(){ return time_hash_; }
+    inline double GetJoinTime(){ return time_join_; }
     inline double GetProcessingTime(){ return time_hash_join_; }
     inline std::vector<std::string> GetResults(){ return results_; }
     inline int* GetR(){ return R; }
@@ -64,7 +66,7 @@ private:
 
     std::vector<std::string> results_;
 
-    double time_hash_join_;
+    double time_hash_join_, time_hash_, time_join_;
 
     uint num_threads_;
     ThreadPool threadpool_;

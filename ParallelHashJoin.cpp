@@ -13,16 +13,25 @@ ParallelHashJoin::~ParallelHashJoin() {
 void ParallelHashJoin::ComputeHashJoin(int *r, size_t size_R, int *s, size_t size_S) {
     double start = sec();
     HashTable(r, size_R, hash_buckets_);
+    time_hash_ = sec() - start;
+
+    start = sec();
     HashJoin(s, size_S, results_);
-    time_hash_join_ = sec() - start;
+    time_join_ = sec() - start;
+
+    time_hash_join_ = time_hash_ + time_join_;
 }
 
 void ParallelHashJoin::ComputeParallelHashJoin(int *r, size_t size_R, int *s, size_t size_S) {
     double start = sec();
     ParallelHashTable(r, size_R);
-    auto results = ParallelHashjoin(s, size_S);
-    time_hash_join_ = sec() - start;
+    time_hash_ = sec() - start;
 
+    start = sec();
+    auto results = ParallelHashjoin(s, size_S);
+    time_join_ = sec() - start;
+
+    time_hash_join_ = time_hash_ + time_join_;
     results_ = assembleResults(results);
 }
 

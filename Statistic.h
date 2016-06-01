@@ -19,8 +19,8 @@ const std::string kF_PARALLEL_HASHJOIN = "p_hashjoin.csv"; // file for parallel 
 const std::string kF_COMPARISON = "join_comparison.csv"; // file for join algo comparison
 
 const int NB_THREAD_MIN = 1;
-const int NB_THREAD_MAX = 10;
-const int NB_ROWS_THREAD = 1000000;
+const int NB_THREAD_MAX = 16;
+const int NB_ROWS_THREAD = 10000000;
 
 const int NB_TRY = 1;
 const int NB_TRY_2 = 1;

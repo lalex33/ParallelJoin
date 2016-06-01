@@ -412,11 +412,15 @@ void benchmarkHashVsSMJoin() {
                 parallelHashJoin.InitTables(INTEGER_MAX);
                 parallelHashJoin.ParallelHashJoinOnR();
                 avg_merge_hash += parallelHashJoin.GetProcessingTime();
+                cout << "hash = " << parallelHashJoin.GetHashTime() << endl;
+                cout << "join = " << parallelHashJoin.GetJoinTime() << endl;
+            }
 
+            for(int i = 0; i < NB_TRY_2; ++i) {
                 // sort merge join
                 cout << "Sort merge join :" << endl;
-                int* R = new int[NB_ROWS_THREAD];
-                int* S = new int[NB_ROWS_THREAD];
+                int *R = new int[NB_ROWS_THREAD];
+                int *S = new int[NB_ROWS_THREAD];
                 fillTable(R, NB_ROWS_THREAD, INTEGER_MAX);
                 fillTable(S, NB_ROWS_THREAD, INTEGER_MAX);
 
@@ -424,11 +428,13 @@ void benchmarkHashVsSMJoin() {
                 parallelSort(R, NB_ROWS_THREAD);
                 parallelSort(S, NB_ROWS_THREAD);
                 avg_merge_smj += sec() - start;
+                cout << "sort = " << (sec() - start) << endl;
 
                 ThreadWork threadWork((uint8_t) nbThread);
                 start = sec();
-                parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
+                auto result = parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
                 avg_merge_smj += sec() - start;
+                cout << "merge = " << (sec() - start) << endl;
 
                 delete[] R;
                 delete[] S;
