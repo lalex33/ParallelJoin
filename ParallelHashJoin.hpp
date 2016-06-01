@@ -44,6 +44,12 @@ public:
     inline size_t GetSizeR(){ return size_r_; }
     inline size_t GetSizeS(){ return size_s_; }
 
+protected:
+    struct Bucket{
+        std::vector<int> values;
+        std::mutex bucket_lock;
+    };
+
 private:
     static const int kMAX_INT = INT_MAX;
     static const uint kNUM_BUCKETS = 100;
@@ -54,7 +60,7 @@ private:
 
     uint num_buckets_;
     std::hash<int> hash_fn_;
-    std::map<int, std::vector<int>> hash_buckets_;
+    std::vector<Bucket> hash_buckets_;
 
     std::vector<std::string> results_;
 
@@ -66,7 +72,7 @@ private:
 private:
 
     inline int Hash(int* value){
-        //return ( hash_fn_(*value) % num_buckets_); // useful with template
+        //return ( hash_fn_(*value) % num_buckets_); // useful with template class
         return (*value) % num_buckets_;
     }
 
@@ -74,7 +80,7 @@ private:
 
     void ComputeParallelHashJoin(int* r, size_t size_R, int* s, size_t size_S);
 
-    void HashTable(int* table, size_t size, std::map<int, std::vector<int>> &hash_buckets);
+    void HashTable(int* table, size_t size, std::vector<Bucket> &hash_buckets);
 
     void HashJoin(int* table, size_t size, std::vector<std::string> &results);
 

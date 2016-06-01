@@ -44,8 +44,8 @@ int main(){
     parallelHashJoin.HashJoinOnR();
     parallelHashJoin.PrintResult();*/
 
-    ParallelHashJoin parallelHashJoin1(10000, 10000, 100, 2);
-    parallelHashJoin1.InitTables(100000);
+    ParallelHashJoin parallelHashJoin1(1000000, 1000000, 1000000, 1);
+    parallelHashJoin1.InitTables(INT_MAX);
     parallelHashJoin1.ParallelHashJoinOnR();
     parallelHashJoin1.PrintResult();
 

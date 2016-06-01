@@ -2,7 +2,7 @@
 
 ParallelHashJoin::ParallelHashJoin(uint num_rows_r, uint num_rows_s, uint num_buckets, uint num_threads):
     size_r_(num_rows_r), size_s_(num_rows_s), num_buckets_(num_buckets), num_threads_(num_threads),
-    threadpool_(num_threads)
+    threadpool_(num_threads), hash_buckets_(num_buckets)
 { }
 
 ParallelHashJoin::~ParallelHashJoin() {
@@ -30,11 +30,14 @@ void ParallelHashJoin::ComputeParallelHashJoin(int *r, size_t size_R, int *s, si
  * Simple Hash Join
  */
 
-void ParallelHashJoin::HashTable(int *table, size_t size, std::map<int, std::vector<int>> &hash_buckets) {
+void ParallelHashJoin::HashTable(int *table, size_t size, std::vector<Bucket> &hash_buckets) {
     int* end = table + size;
 
     while (table != end){
-        hash_buckets[ Hash(table) ].push_back( *table );
+        auto bucket = &hash_buckets[ Hash(table) ];
+        (*bucket).bucket_lock.lock();
+        (*bucket).values.push_back(*table);
+        (*bucket).bucket_lock.unlock();
         ++table;
     }
 }
@@ -43,10 +46,10 @@ void ParallelHashJoin::HashJoin(int *table, size_t size, std::vector<std::string
     int* end = table + size, value;
 
     while(table != end){
-        auto bucket = hash_buckets_[ Hash(table) ];
+        auto bucket = &hash_buckets_[ Hash(table) ].values;
         value = *table;
 
-        for(auto tuple : bucket){
+        for(auto tuple : (*bucket)){
             if(tuple == value){
                 results.push_back(" [" + std::to_string(tuple) + " == " + std::to_string(value) + "]");
             }
@@ -63,8 +66,6 @@ void ParallelHashJoin::HashJoin(int *table, size_t size, std::vector<std::string
 void ParallelHashJoin::ParallelHashTable(int *table, size_t size) {
     size_t num_rows = size / num_threads_;
 
-    std::vector< std::map< int, std::vector<int> > > hash_tables(num_threads_);
-
     for(int thread = 0; thread < num_threads_; ++thread){
         int* start = table + thread * num_rows;
         size_t end_size = num_rows;
@@ -74,18 +75,10 @@ void ParallelHashJoin::ParallelHashTable(int *table, size_t size) {
         }
 
         threadpool_.Enqueue( std::bind(&ParallelHashJoin::HashTable, this, start, end_size,
-                                       std::ref(hash_tables[thread]) ) );
+                                       std::ref(hash_buckets_) ) );
     }
 
     threadpool_.WaitEndOfWork();
-
-    for(auto const &hash_table : hash_tables){
-        for(auto const &map : hash_table){
-            for(auto const &tuple : map.second) {
-                hash_buckets_[map.first].push_back( tuple );
-            }
-        }
-    }
 }
 
 std::vector<std::vector<std::string>> ParallelHashJoin::ParallelHashjoin(int *table, size_t size) {

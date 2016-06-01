@@ -9,6 +9,7 @@ ThreadPool::ThreadPool(int threads) :
         terminate(false),
         stopped(false), running(0) {
     #ifdef __linux__
+        long numberOfProcessors = sysconf(_SC_NPROCESSORS_ONLN);
         cpu_set_t cpuset;
     #endif
 
@@ -19,7 +20,7 @@ ThreadPool::ThreadPool(int threads) :
         #ifdef __linux__
             CPU_ZERO(&cpuset);
             CPU_SET( (i+1) % numberOfProcessors, &cpuset);
-            pthread_setaffinity_np(workers[i].native_handle(), sizeof(cpu_set_t), &cpuset);
+            pthread_setaffinity_np(threadPool[i].native_handle(), sizeof(cpu_set_t), &cpuset);
         #endif
     }
 }
