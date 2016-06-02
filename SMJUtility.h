@@ -79,6 +79,20 @@ inline double sec() {
 }
 
 /*
+ * return max value in the range [start,end)
+ */
+inline int max(int *start, int *end){
+    int max = *(start++);
+    while(start != end){
+        if(*start > max){
+            max = *start;
+        }
+        ++start;
+    }
+    return max;
+}
+
+/*
  * return the final merge list
  */
 std::vector<std::string> assembleResults(std::vector<std::vector<std::string>> results);

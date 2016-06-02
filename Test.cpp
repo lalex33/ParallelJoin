@@ -14,16 +14,12 @@ namespace SMJ{
         fillTable(S, P_SIZE_S, MAX_RAND_PSMJ);
 
         ThreadPool threadPool(NB_THREAD);
-        parallelSort(R, P_SIZE_R, threadPool, partitionArray(R, P_SIZE_R, NB_THREAD));
-        parallelSort(S, P_SIZE_S, threadPool, partitionArray(S, P_SIZE_S, NB_THREAD));
+        auto pR = partitionArray(R, P_SIZE_R, NB_THREAD);
+        auto pS = partitionArray(S, P_SIZE_S, NB_THREAD);
+        parallelSort(R, P_SIZE_R, threadPool, pR);
+        parallelSort(S, P_SIZE_S, threadPool, pS);
 
-        /*ThreadPool threadPool(NB_THREAD);
-        auto results = assembleResults(parallelMerge3(threadPool, R, S, P_SIZE_R, P_SIZE_S));*/
-
-        ThreadWork threadWork((uint8_t) NB_THREAD);
-        auto results = assembleResults(parallelMerge4(threadWork, R, S, P_SIZE_R, P_SIZE_S));
-
-        //auto results = assembleResults(parallelMerge5(R, S, P_SIZE_R, P_SIZE_S));
+        auto results = assembleResults(parallelMerge3(threadPool, R, S, P_SIZE_R, P_SIZE_S, pR));
 
         printSortMerge(R, S, P_SIZE_R, P_SIZE_S, results);
 
