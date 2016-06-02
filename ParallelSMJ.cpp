@@ -19,15 +19,13 @@ namespace SMJ{
         return partitions;
     }
 
-    void parallelSort(int *table, uint size, ThreadPool& threadPool){
-        double time = sec();
-
-        auto partitions = partitionArray(table, size, NB_THREAD);
+    void parallelSort(int *table, uint size, ThreadPool& threadPool, const std::vector<Partition> &partitions){
+        //double time = sec();
 
         ostringstream oss;
         oss << parallelMax(table, size, threadPool, partitions);
 
-        cout << "max : " << (sec() - time) << endl << endl;
+        //cout << "max : " << (sec() - time) << endl << endl;
 
         // compute size of the max int
         ulong digitLength = oss.str().size();
@@ -41,8 +39,8 @@ namespace SMJ{
 
         // loop on each digit (from the least to the most)
         for(uint nbDigit = 0 ; nbDigit < digitLength ; ++nbDigit){
-            cout << "one digit :" << endl;
-            time = sec();
+            //cout << "one digit :" << endl;
+            //time = sec();
 
             // create <NB_THREAD> threads which will sort a sublist
             for(uint nbThread = 0 ; nbThread < NB_THREAD ; ++nbThread){
@@ -50,13 +48,13 @@ namespace SMJ{
                                          ref(threadArrays[nbThread]), nbDigit) );
             }
 
-            cout << "   prepare threads : " << (sec() - time) << endl;
-            time = sec();
+            //cout << "   prepare threads : " << (sec() - time) << endl;
+            //time = sec();
 
             threadPool.WaitEndOfWork();
 
-            cout << "   compute radix : " << (sec() - time) << endl;
-            time = sec();
+            //cout << "   compute radix : " << (sec() - time) << endl;
+            //time = sec();
 
             // put sorted digit values in array
             int* pos = table;
@@ -71,7 +69,7 @@ namespace SMJ{
                 }
             }
 
-            cout << "   store integers : " << (sec() - time) << endl << endl;
+            //cout << "   store integers : " << (sec() - time) << endl << endl;
         }
     }
 
@@ -177,21 +175,15 @@ namespace SMJ{
         return results;
     }
 
-    vector<vector<string>> parallelMerge3(ThreadPool& threadPool, int* R, int* S, uint sizeR, uint sizeS){
+    vector<vector<string>> parallelMerge3(ThreadPool& threadPool, int* R, int* S,
+                                          uint sizeR, uint sizeS, const vector<Partition> &partitions){
         // allocate merge result for each thread
         vector<vector<string>> results(NB_THREAD);
-
-        // compute the number of rows merged by a thread
         uint rowsPerThread = sizeR / NB_THREAD;
 
         // start <NB_THREAD> threads for merge
         for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
-            int* startR = R + nbThread*rowsPerThread;
-            int* endR = startR + rowsPerThread;
-            endR += (nbThread == NB_THREAD-1)? (sizeR % (nbThread * rowsPerThread + rowsPerThread)):0;
-
-            int* startS = S, *endS = S + sizeS;
-            threadPool.Enqueue( bind(mergeRelations, startR, endR, startS, endS,
+            threadPool.Enqueue( bind(mergeRelations, partitions[nbThread].start, partitions[nbThread].end, S, S + sizeS,
                                      ref(results[nbThread]), nbThread*rowsPerThread, 0) );
         }
 
@@ -203,8 +195,6 @@ namespace SMJ{
 
     vector<vector<string>> parallelMerge4(ThreadWork& threadWork, int *R, int *S, uint sizeR,
                                                          uint sizeS) {
-        double start = sec();
-
         // allocate merge result for each thread
         vector<vector<string>> results(NB_THREAD);
 

@@ -26,8 +26,8 @@ void benchmarkMerge() {
                 int* S = new int[nbRows];
                 fillTable(R, nbRows, INTEGER_MAX_3);
                 fillTable(S, nbRows, INTEGER_MAX_3);
-                parallelSort(R, nbRows, threadPool);
-                parallelSort(S, nbRows, threadPool);
+                parallelSort(R, nbRows, threadPool, partitionArray(R, nbRows, NB_THREAD));
+                parallelSort(S, nbRows, threadPool, partitionArray(S, nbRows, NB_THREAD));
 
                 start = sec();
                 mergeRelations(R, R + nbRows, S, S + nbRows, results, 0, 0);
@@ -134,8 +134,8 @@ void benchmarkParallelSMJ(){
             ThreadPool threadPool(NB_THREAD);
             cout << "Computing " << nb_rows << " rows" << endl;
             start = sec();
-            parallelSort(R, nb_rows, threadPool);
-            parallelSort(S, nb_rows, threadPool);
+            parallelSort(R, nb_rows, threadPool, partitionArray(R, nb_rows, NB_THREAD));
+            parallelSort(S, nb_rows, threadPool, partitionArray(S, nb_rows, NB_THREAD));
             durationSort = sec() - start;
             assert(checkSorted(R, nb_rows));
             assert(checkSorted(S, nb_rows));
@@ -181,7 +181,7 @@ void benchmarkData() {
             fillTable(S, nbRows, INTEGER_MAX);
             ThreadPool threadPool(NB_THREAD);
             start = sec();
-            parallelSort(S, nbRows, threadPool);
+            parallelSort(S, nbRows, threadPool, partitionArray(S, nbRows, NB_THREAD));
             d_parallelRadix = sec() - start;
 
             file << nbRows << ";" << d_stdSort << ";" << d_parallelRadix << "\r\n";
@@ -223,7 +223,7 @@ void benchmarkData2() {
 
                 fillTable(S, nbRows, INTEGER_MAX_3);
                 start = sec();
-                parallelSort(S, nbRows, threadPool);
+                parallelSort(S, nbRows, threadPool, partitionArray(S, nbRows, NB_THREAD));
                 d_parallelRadix += sec() - start;
 
                 start = sec();
@@ -266,8 +266,8 @@ void benchmarkMergeThread() {
         fillTable(R1, NB_ROWS_THREAD, INTEGER_MAX);
         fillTable(S1, NB_ROWS_THREAD, INTEGER_MAX);
         ThreadPool threadPool(NB_THREAD);
-        parallelSort(R1, NB_ROWS_THREAD, threadPool);
-        parallelSort(S1, NB_ROWS_THREAD, threadPool);
+        parallelSort(R1, NB_ROWS_THREAD, threadPool, partitionArray(R1, NB_ROWS_THREAD, NB_THREAD));
+        parallelSort(S1, NB_ROWS_THREAD, threadPool, partitionArray(S1, NB_ROWS_THREAD, NB_THREAD));
 
         for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
             NB_THREAD = nbThread;

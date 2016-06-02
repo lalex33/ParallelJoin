@@ -51,17 +51,17 @@ void benchmarkThreadPSMJ() {
                 copy(S1, S1 + NB_ROWS_THREAD, S);
 
                 start = sec();
-                parallelSort(R, NB_ROWS_THREAD, threadPool);
-                parallelSort(S, NB_ROWS_THREAD, threadPool);
+                auto partitionsR = partitionArray(R, NB_ROWS_THREAD, NB_THREAD);
+                auto partitionsS = partitionArray(S, NB_ROWS_THREAD, NB_THREAD);
+                parallelSort(R, NB_ROWS_THREAD, threadPool, partitionsR);
+                parallelSort(S, NB_ROWS_THREAD, threadPool, partitionsS);
                 avg_sort += sec() - start;
 
                 cout << "R sorted? = " << checkSorted(R, NB_ROWS_THREAD) << endl;
                 cout << "S sorted? = " << checkSorted(S, NB_ROWS_THREAD) << endl;
 
-                ThreadWork threadWork((uint8_t) nbThread);
-
                 start = sec();
-                join = parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
+                join = parallelMerge3(threadPool, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD, partitionsR);
                 avg_merge += sec() - start;
 
                 #ifdef __linux__
@@ -127,9 +127,11 @@ void benchmarkParallelHashJoin() {
 void benchmarkHashVsSMJoin() {
     ofstream file(kF_COMPARISON, ofstream::out);
     double start = 0.0;
+    const int num_buckets = 10000000;
 
     if(!file.fail()){
-        file << "Number of thread;Parallel hash join;Parallel SMJ;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
+        file << "Number of thread;Parallel hash join;Parallel SMJ;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX
+        << "; number of buckets : " << num_buckets << endl;
 
         for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
             NB_THREAD = nbThread;
@@ -141,7 +143,7 @@ void benchmarkHashVsSMJoin() {
             for(int i = 0; i < NB_TRY_2; ++i){
                 // hash join
                 cout << "Hash join :" << endl;
-                ParallelHashJoin parallelHashJoin(NB_ROWS_THREAD, NB_ROWS_THREAD, 5000000, nbThread);
+                ParallelHashJoin parallelHashJoin(NB_ROWS_THREAD, NB_ROWS_THREAD, num_buckets, nbThread);
                 parallelHashJoin.InitTables(INTEGER_MAX);
                 parallelHashJoin.ParallelHashJoinOnR();
                 avg_merge_hash += parallelHashJoin.GetProcessingTime();
@@ -159,14 +161,15 @@ void benchmarkHashVsSMJoin() {
 
                 ThreadPool threadPool(nbThread);
                 start = sec();
-                parallelSort(R, NB_ROWS_THREAD, threadPool);
-                parallelSort(S, NB_ROWS_THREAD, threadPool);
+                auto partitionsR = partitionArray(R, NB_ROWS_THREAD, nbThread);
+                auto partitionsS = partitionArray(S, NB_ROWS_THREAD, nbThread);
+                parallelSort(R, NB_ROWS_THREAD, threadPool, partitionsR);
+                parallelSort(S, NB_ROWS_THREAD, threadPool, partitionsS);
                 avg_merge_smj += sec() - start;
-                cout << "sort = " << (sec() - start) << endl;
+                cout << "partitions and sort = " << (sec() - start) << endl;
 
-                ThreadWork threadWork((uint8_t) nbThread);
                 start = sec();
-                auto result = parallelMerge4(threadWork, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD);
+                parallelMerge3(threadPool, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD, partitionsR);
                 avg_merge_smj += sec() - start;
                 cout << "merge = " << (sec() - start) << endl;
 

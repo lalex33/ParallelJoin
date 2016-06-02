@@ -19,7 +19,7 @@ namespace SMJ{
     /*
      * start a radix sort using threads
      */
-    void parallelSort(int *table, uint size, ThreadPool& threadPool);
+    void parallelSort(int *table, uint size, ThreadPool& threadPool, const std::vector<Partition> &partitions);
 
     /*
      * sort values in buckets by a digit
@@ -51,7 +51,8 @@ namespace SMJ{
     /*
      * parallel merge using ThreadPool, partitions of R
      */
-    std::vector<std::vector<std::string>> parallelMerge3(ThreadPool& threadPool, int* R, int* S, uint sizeR, uint sizeS);
+    std::vector<std::vector<std::string>> parallelMerge3(ThreadPool& threadPool, int* R, int* S,
+                                                         uint sizeR, uint sizeS, const std::vector<Partition> &partitions);
 
     /*
      * parallel merge using WorkThread, partitions of R
