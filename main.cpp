@@ -20,7 +20,7 @@ int main(){
 
     // shows example of parallel sort-merge join
     //testParallelSort(false);
-    testParallelJoin();
+    //testParallelJoin();
 
     //testLotOfData();
 
@@ -43,7 +43,7 @@ int main(){
     /*
      * Hash Join vs Sort Merge Join
      */
-    //benchmarkHashVsSMJoin();
+    benchmarkHashVsSMJoin();
 
     return 0;
 }

@@ -31,7 +31,7 @@ namespace SMJ{
 
         // compute size of the max int
         ulong digitLength = oss.str().size();
-        cout << oss.str() << endl;
+        //cout << oss.str() << endl;
 
         // init a digit_bucket for each thread
         vector<digits_bucket> threadArrays;
