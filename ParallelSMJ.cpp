@@ -6,52 +6,61 @@ namespace SMJ{
 
     uint NB_THREAD;
 
+    vector<Partition> partitionArray(int *table, uint size, uint num_threads){
+        vector<Partition> partitions(num_threads);
+        uint sizePerThread = size / NB_THREAD;
+
+        for(uint nbThread = 0 ; nbThread < num_threads ; ++nbThread){
+            partitions[nbThread].start = table + nbThread * sizePerThread;
+            partitions[nbThread].end = partitions[nbThread].start + sizePerThread;
+            partitions[nbThread].end += (nbThread == num_threads-1)? (size % (nbThread * sizePerThread + sizePerThread)):0;
+        }
+
+        return partitions;
+    }
+
     void parallelSort(int *table, uint size, ThreadPool& threadPool){
-        double start = sec();
+        double time = sec();
+
+        auto partitions = partitionArray(table, size, NB_THREAD);
 
         ostringstream oss;
-        oss << parallelMax(table, size, threadPool);
+        oss << parallelMax(table, size, threadPool, partitions);
 
-        cout << "max : " << (sec() - start) << endl << endl;
+        cout << "max : " << (sec() - time) << endl << endl;
 
         // compute size of the max int
         ulong digitLength = oss.str().size();
-        cout << digitLength << " : " << oss.str() << endl;
-
-        // compute number of int to sort by a thread
-        uint sizePerThread = size / NB_THREAD;
 
         // init a digit_bucket for each thread
         vector<digits_bucket> threadArrays;
-        for(int n=0; n<NB_THREAD; n++){
-            digits_bucket digitsBucket(MAX_DIGIT_EXCLUDED);
+        for(int i=0; i<NB_THREAD; ++i){
+            digits_bucket digitsBucket(MAX_DIGIT);
             threadArrays.push_back(digitsBucket);
         }
 
         // loop on each digit (from the least to the most)
         for(uint nbDigit = 0 ; nbDigit < digitLength ; ++nbDigit){
             cout << "one digit :" << endl;
-            start = sec();
+            time = sec();
 
             // create <NB_THREAD> threads which will sort a sublist
             for(uint nbThread = 0 ; nbThread < NB_THREAD ; ++nbThread){
-                int *start = table + nbThread * sizePerThread;
-                int *end = start + sizePerThread;
-                end += (nbThread == NB_THREAD-1)? (size % (nbThread * sizePerThread + sizePerThread)):0;
-                threadPool.Enqueue( bind(radixSort, start, end, ref(threadArrays[nbThread]), nbDigit) );
+                threadPool.Enqueue( bind(radixSort, partitions[nbThread].start, partitions[nbThread].end,
+                                         ref(threadArrays[nbThread]), nbDigit) );
             }
 
-            cout << "   prepare threads : " << (sec() - start) << endl;
-            start = sec();
+            cout << "   prepare threads : " << (sec() - time) << endl;
+            time = sec();
 
             threadPool.WaitEndOfWork();
 
-            cout << "   compute radix : " << (sec() - start) << endl;
-            start = sec();
+            cout << "   compute radix : " << (sec() - time) << endl;
+            time = sec();
 
             // put sorted digit values in array
             int* pos = table;
-            for(uint digit=0; digit < MAX_DIGIT_EXCLUDED; ++digit){
+            for(uint digit=0; digit < MAX_DIGIT; ++digit){
                 for(uint nbThread=0; nbThread < NB_THREAD; ++nbThread){
                     auto array = &threadArrays[nbThread][digit];
                     for(auto const &value : *array){
@@ -62,7 +71,7 @@ namespace SMJ{
                 }
             }
 
-            cout << "   store integers : " << (sec() - start) << endl << endl;
+            cout << "   store integers : " << (sec() - time) << endl << endl;
         }
     }
 
@@ -76,16 +85,14 @@ namespace SMJ{
         }
     }
 
-    int parallelMax(int *table, uint size, ThreadPool& threadPool){
+    int parallelMax(int *table, uint size, ThreadPool& threadPool, const vector<Partition> &partitions){
         // init vars
-        uint rowsPerThread = size / NB_THREAD;
         int maxFromThreads[NB_THREAD];
 
         // compute max by each thread
         for(int nbThread=0; nbThread < NB_THREAD; ++nbThread){
-            int* start = table + nbThread * rowsPerThread;
-            int* end = start + rowsPerThread;
-            end += (nbThread == NB_THREAD-1)? (size % (nbThread * rowsPerThread + rowsPerThread)):0;
+            int* start = partitions[nbThread].start;
+            int* end = partitions[nbThread].end;
             auto max = &maxFromThreads[nbThread];
             threadPool.Enqueue([start, end, max](){
                 *max = *(std::max_element(start, end));
@@ -98,7 +105,7 @@ namespace SMJ{
         return *(std::max_element(maxFromThreads, maxFromThreads + NB_THREAD));
     }
 
-    int getDigit (int number, int pos) {
+    int getDigit (int number, int pos){
         return (pos == 0) ? number % 10 : getDigit (number/10, --pos);
     }
 

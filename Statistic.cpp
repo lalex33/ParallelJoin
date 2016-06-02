@@ -55,6 +55,9 @@ void benchmarkThreadPSMJ() {
                 parallelSort(S, NB_ROWS_THREAD, threadPool);
                 avg_sort += sec() - start;
 
+                cout << "R sorted? = " << checkSorted(R, NB_ROWS_THREAD) << endl;
+                cout << "S sorted? = " << checkSorted(S, NB_ROWS_THREAD) << endl;
+
                 ThreadWork threadWork((uint8_t) nbThread);
 
                 start = sec();

@@ -7,8 +7,14 @@
 namespace SMJ{
 
     typedef std::vector<std::vector<int>> digits_bucket;
-    const uint MAX_DIGIT_EXCLUDED = 10;
+    const uint MAX_DIGIT = 10;
     extern uint NB_THREAD;
+
+    struct Partition{
+        int *start, *end;
+    };
+
+    std::vector<Partition> partitionArray(int *table, uint size, uint num_threads);
 
     /*
      * start a radix sort using threads
@@ -23,7 +29,7 @@ namespace SMJ{
     /*
      * find max value of array using thread
      */
-    int parallelMax(int *table, uint size, ThreadPool& threadPool);
+    int parallelMax(int *table, uint size, ThreadPool& threadPool, const std::vector<Partition> &partitions);
 
     /*
      * return the digit at the given position
