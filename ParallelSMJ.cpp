@@ -96,17 +96,17 @@ namespace SMJ{
             int* end = partitions[nbThread].end;
             auto max_value = &maxFromThreads[nbThread];
             threadPool.Enqueue([start, end, max_value](){
-                *max_value = max(start, end);
+                *max_value = *max_element(start, end);
             });
         }
 
         threadPool.WaitEndOfWork();
 
         // find max of threads' max
-        return max(maxFromThreads, maxFromThreads + NB_THREAD);
+        return *max_element(maxFromThreads, maxFromThreads + NB_THREAD);
     }
 
-    int getDigit (int number, int pos){
+    int getDigit(int number, int pos){
         return (pos == 0) ? number % 10 : getDigit (number/10, --pos);
     }
 

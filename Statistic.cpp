@@ -163,11 +163,17 @@ void benchmarkHashVsSMJoin() {
                 start = sec();
                 auto partitionsR = partitionArray(R, NB_ROWS_THREAD, nbThread);
                 auto partitionsS = partitionArray(S, NB_ROWS_THREAD, nbThread);
+
                 parallelSort(R, NB_ROWS_THREAD, threadPool, partitionsR);
+                avg_merge_smj += sec() - start;
+                cout << "sort R = " << (sec() - start) << endl;
+
+                start = sec();
                 parallelSort(S, NB_ROWS_THREAD, threadPool, partitionsS);
                 avg_merge_smj += sec() - start;
-                cout << "sort = " << (sec() - start) << " | sorted? ";
-                cout << checkSorted(R, NB_ROWS_THREAD) << " , " << checkSorted(S, NB_ROWS_THREAD) << endl;
+                cout << "sort S = " << (sec() - start) << endl;
+
+                cout << "sorted ? " << checkSorted(R, NB_ROWS_THREAD) << " , " << checkSorted(S, NB_ROWS_THREAD) << endl;
 
                 start = sec();
                 parallelMerge3(threadPool, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD, partitionsR);

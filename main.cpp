@@ -1,5 +1,7 @@
 #include "Statistic1.h"
 
+#include "ParallelRadixSort.hpp"
+
 using namespace SMJ;
 
 int main(){
@@ -43,7 +45,15 @@ int main(){
     /*
      * Hash Join vs Sort Merge Join
      */
-    benchmarkHashVsSMJoin();
+    //benchmarkHashVsSMJoin();
+
+    int i = 12345;
+    std::cout << GetDigit(i, 0);
+
+    int *table = new int[20];
+    fillTable(table, 20, 10);
+
+    
 
     return 0;
 }
