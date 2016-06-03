@@ -32,7 +32,7 @@ void ThreadPool::Enqueue(function<void()> f) {
         unique_lock<mutex> lock(tasksMutex);
 
         // Push task into queue.
-        tasks.push(f);
+        tasks.emplace(f);
     }
 
     // Wake up one thread.
@@ -56,7 +56,7 @@ void ThreadPool::Invoke() {
             }
 
             // Get next task in the queue.
-            task = tasks.front();
+            task = std::move(tasks.front());
 
             // Remove it from the queue.
             tasks.pop();

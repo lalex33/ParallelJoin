@@ -6,6 +6,7 @@
 #define SORTMERGEJOIN_TEST_H
 
 #include "ParallelSMJ.h"
+#include "ParallelRadixSort.hpp"
 
 namespace SMJ{
 
@@ -41,6 +42,11 @@ namespace SMJ{
      * test on large amount of data
      */
     void testLotOfData();
+
+    /*
+     * test last parallel radix sort
+     */
+    void testParallelRadixSort();
 
 }
 

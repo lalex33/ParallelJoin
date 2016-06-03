@@ -131,5 +131,24 @@ namespace SMJ{
         delete[] S;
     }
 
+    void testParallelRadixSort() {
+        int *table = new int[20];
+        fillTable(table, 20, 20);
+        printTable(table, 20);
+        cout << endl;
+
+        NB_THREAD = 2;
+        ThreadPool threadPool(NB_THREAD);
+        auto partition = partitionArray(table, 20, NB_THREAD);
+
+        ParallelRadixSort(table, 20, threadPool, partition, NB_THREAD);
+
+        printTable(table, 20);
+
+        cout << "sorted? " << ((checkSorted(table, 20))?"yes":"no") << endl;
+
+        delete[] table;
+    }
+
 }
 
