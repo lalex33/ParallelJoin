@@ -40,6 +40,7 @@ int main(){
      * Parallel radix sort, second version
      */
     //testParallelRadixSort();
+    radixSortMillionElements();
 
     /*
      * Hash Join
@@ -49,7 +50,7 @@ int main(){
     /*
      * Hash Join vs Sort Merge Join
      */
-    benchmarkHashVsSMJoin();
+    //benchmarkHashVsSMJoin();
 
     return 0;
 }

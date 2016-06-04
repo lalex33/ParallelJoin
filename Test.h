@@ -48,6 +48,8 @@ namespace SMJ{
      */
     void testParallelRadixSort();
 
+    void radixSortMillionElements();
+
 }
 
 

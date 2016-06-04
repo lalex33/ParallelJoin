@@ -150,5 +150,20 @@ namespace SMJ{
         delete[] table;
     }
 
+    void radixSortMillionElements() {
+        int *table = new int[10000000];
+        fillTable(table, 10000000, INT_MAX);
+
+        NB_THREAD = 4;
+        ThreadPool threadPool(NB_THREAD);
+        auto partition = partitionArray(table, 10000000, NB_THREAD);
+
+        ParallelRadixSort(table, 10000000, threadPool, partition, NB_THREAD);
+
+        cout << "sorted? " << ((checkSorted(table, 10000000))?"yes":"no") << endl;
+
+        delete[] table;
+    }
+
 }
 
