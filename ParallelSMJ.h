@@ -10,6 +10,11 @@ namespace SMJ{
     const uint MAX_DIGIT = 10;
     extern uint NB_THREAD;
 
+    static int pow10[10] = {
+        1, 10, 100, 1000, 10000,
+        100000, 1000000, 10000000, 100000000, 1000000000
+    };
+
     struct Partition{
         int *start, *end;
     };
@@ -34,9 +39,12 @@ namespace SMJ{
     /*
      * return the digit at the given position
      * pos of least digit = 0
-     * credit : http://stackoverflow.com/a/7438270
      */
-    int getDigit (int number, int pos);
+    inline int getDigit(int number, int pos){
+        //return (pos == 0) ? number % 10 : getDigit (number/10, --pos);
+        if(pos == 0) return number%10;
+        return ( (number / pow10[pos]) % 10);
+    }
 
     /*
      * start a merge using threads, partitions of R

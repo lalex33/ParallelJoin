@@ -39,7 +39,7 @@ int main(){
     /*
      * Parallel radix sort, second version
      */
-    testParallelRadixSort();
+    //testParallelRadixSort();
 
     /*
      * Hash Join
@@ -49,7 +49,7 @@ int main(){
     /*
      * Hash Join vs Sort Merge Join
      */
-    //benchmarkHashVsSMJoin();
+    benchmarkHashVsSMJoin();
 
     return 0;
 }

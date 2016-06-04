@@ -106,10 +106,6 @@ namespace SMJ{
         return *max_element(maxFromThreads, maxFromThreads + NB_THREAD);
     }
 
-    int getDigit(int number, int pos){
-        return (pos == 0) ? number % 10 : getDigit (number/10, --pos);
-    }
-
     vector<vector<string>> parallelMerge(int* R, int* S, uint sizeR, uint sizeS){
         // allocate merge result for each thread
         vector<vector<string>> results(NB_THREAD);

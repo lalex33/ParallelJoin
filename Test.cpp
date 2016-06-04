@@ -133,7 +133,7 @@ namespace SMJ{
 
     void testParallelRadixSort() {
         int *table = new int[20];
-        fillTable(table, 20, 20);
+        fillTable(table, 20, 120);
         printTable(table, 20);
         cout << endl;
 

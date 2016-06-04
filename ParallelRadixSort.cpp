@@ -6,7 +6,7 @@ namespace SMJ {
         max = *start;
         while (start != end) {
             if(*start > max) max = *start;
-            histogram[getDigit(*(start++), digit)]++;
+            ++histogram[getDigit(*(start++), digit)];
         }
     }
 
@@ -25,27 +25,14 @@ namespace SMJ {
 
         max = *std::max_element(maxArray, maxArray + num_threads);
 
-        auto histogramCopy = histograms;
-        for (int thread = 0; thread < num_threads; ++thread) {
-            for(int i = 0; i < kNumDigit; ++i){
-                histograms[thread][i] = 0;
-                for(int th= 0; th < num_threads; ++th){
-                    for(int j = 0; j < i; ++j){
-                        histograms[thread][i] += histogramCopy[th][j];
-                    }
-                    if(th < thread){
-                        histograms[thread][i] += histogramCopy[th][i];
-                    }
-                }
-            }
-        }
+        ComputePositions(histograms, num_threads);
 
         return histograms;
     }
 
     void CreateHistogram(int *start, int *end, int digit, std::vector<int> &histogram) {
         while (start != end) {
-            histogram[getDigit(*(start++), digit)]++;
+            ++histogram[getDigit(*(start++), digit)];
         }
     }
 
@@ -61,20 +48,7 @@ namespace SMJ {
         }
         threadPool.WaitEndOfWork();
 
-        auto histogramCopy = histograms;
-        for (int thread = 0; thread < num_threads; ++thread) {
-            for(int i = 0; i < kNumDigit; ++i){
-                histograms[thread][i] = 0;
-                for(int th= 0; th < num_threads; ++th){
-                    for(int j = 0; j < i; ++j){
-                        histograms[thread][i] += histogramCopy[th][j];
-                    }
-                    if(th < thread){
-                        histograms[thread][i] += histogramCopy[th][i];
-                    }
-                }
-            }
-        }
+        ComputePositions(histograms, num_threads);
 
         return histograms;
     }
@@ -96,30 +70,35 @@ namespace SMJ {
         }
     }
 
-    void ParallelRadixSort(int *table, uint size, ThreadPool &threadPool, std::vector<Partition> &partitions,
+    void ParallelRadixSort(int* &table, uint size, ThreadPool &threadPool, std::vector<Partition> &partitions,
                            int num_thread) {
-        int* copy = new int[size];
-        auto copyPartition = partitionArray(copy, size, num_thread);
+        int* buffer = new int[size];
+        auto bufferPartition = partitionArray(buffer, size, num_thread);
         int max = 0;
 
-        std::copy(table, table + size, copy);
-        auto histograms = MakeHistogramsWithMax(threadPool, partitions, num_thread, 0, max);
-        MoveResults(table, copyPartition, threadPool, histograms, num_thread, 0);
+        int* p_table = table;
+        int* p_buffer = buffer;
+        auto buffer_partition = &bufferPartition;
+        auto table_partition = &partitions;
+
+        auto histograms = MakeHistogramsWithMax(threadPool, *table_partition, num_thread, 0, max);
+        MoveResults(p_buffer, *table_partition, threadPool, histograms, num_thread, 0);
 
         std::ostringstream oss;
         oss << max;
         ulong digitLength = oss.str().size();
 
         for(uint digit = 1; digit < digitLength ; ++digit){
-            // parallel copy?
-            std::copy(table, table + size, copy);
-
-            histograms = MakeHistograms(threadPool, partitions, num_thread, digit);
-
-            MoveResults(table, copyPartition, threadPool, histograms, num_thread, digit);
+            std::swap(p_table, p_buffer);
+            std::swap(table_partition, buffer_partition);
+            histograms = MakeHistograms(threadPool, *table_partition, num_thread, digit);
+            MoveResults(p_buffer, *table_partition, threadPool, histograms, num_thread, digit);
         }
 
-        delete[] copy;
+        table = p_buffer;
+        partitions = *buffer_partition;
+
+        delete[] p_table;
     }
 
 }

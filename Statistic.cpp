@@ -164,12 +164,14 @@ void benchmarkHashVsSMJoin() {
                 auto partitionsR = partitionArray(R, NB_ROWS_THREAD, nbThread);
                 auto partitionsS = partitionArray(S, NB_ROWS_THREAD, nbThread);
 
-                parallelSort(R, NB_ROWS_THREAD, threadPool, partitionsR);
+                //parallelSort(R, NB_ROWS_THREAD, threadPool, partitionsR);
+                ParallelRadixSort(R, NB_ROWS_THREAD, threadPool, partitionsR, nbThread);
                 avg_merge_smj += sec() - start;
                 cout << "sort R = " << (sec() - start) << endl;
 
                 start = sec();
-                parallelSort(S, NB_ROWS_THREAD, threadPool, partitionsS);
+                //parallelSort(S, NB_ROWS_THREAD, threadPool, partitionsS);
+                ParallelRadixSort(S, NB_ROWS_THREAD, threadPool, partitionsS, nbThread);
                 avg_merge_smj += sec() - start;
                 cout << "sort S = " << (sec() - start) << endl;
 
