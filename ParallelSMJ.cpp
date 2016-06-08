@@ -22,16 +22,13 @@ namespace SMJ{
     }
 
     void parallelSort(int *table, uint size, ThreadPool& threadPool, const std::vector<Partition> &partitions){
-        //double time = sec();
+        double time = sec();
 
         ostringstream oss;
         oss << parallelMax(table, size, threadPool, partitions);
 
-        //cout << "max : " << (sec() - time) << endl << endl;
-
         // compute size of the max int
         ulong digitLength = oss.str().size();
-        //cout << oss.str() << endl;
 
         // init a digit_bucket for each thread
         vector<digits_bucket> threadArrays;
@@ -42,8 +39,8 @@ namespace SMJ{
 
         // loop on each digit (from the least to the most)
         for(uint nbDigit = 0 ; nbDigit < digitLength ; ++nbDigit){
-            //cout << "one digit :" << endl;
-            //time = sec();
+            cout << "one digit :" << endl;
+            time = sec();
 
             // create <NB_THREAD> threads which will sort a sublist
             for(uint nbThread = 0 ; nbThread < NB_THREAD ; ++nbThread){
@@ -51,13 +48,13 @@ namespace SMJ{
                 threadPool.Enqueue( bind(radixSort, start, end, ref(threadArrays[nbThread]), nbDigit) );
             }
 
-            //cout << "   prepare threads : " << (sec() - time) << endl;
-            //time = sec();
+            cout << "   prepare threads : " << (sec() - time) << endl;
+            time = sec();
 
             threadPool.WaitEndOfWork();
 
-            //cout << "   compute radix : " << (sec() - time) << endl;
-            //time = sec();
+            cout << "   compute radix : " << (sec() - time) << endl;
+            time = sec();
 
             // put sorted digit values in array
             int* pos = table;
@@ -71,7 +68,7 @@ namespace SMJ{
                 }
             }
 
-            //cout << "   store integers : " << (sec() - time) << endl << endl;
+            cout << "   store integers : " << (sec() - time) << endl << endl;
         }
     }
 

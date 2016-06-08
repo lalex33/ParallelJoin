@@ -1,4 +1,5 @@
 #include "Test.h"
+#include "ParallelHashJoin.hpp"
 
 using namespace std;
 
@@ -151,18 +152,29 @@ namespace SMJ{
     }
 
     void radixSortMillionElements() {
-        int *table = new int[10000000];
-        fillTable(table, 10000000, INT_MAX);
+        const int size = 10000000;
 
-        NB_THREAD = 4;
+        int *table = new int[size];
+        fillTable(table, size, INT_MAX);
+
+        NB_THREAD = 3;
         ThreadPool threadPool(NB_THREAD);
-        auto partition = partitionArray(table, 10000000, NB_THREAD);
 
-        ParallelRadixSort(table, 10000000, threadPool, partition, NB_THREAD);
+        double t = sec();
+        auto partition = partitionArray(table, size, NB_THREAD);
+        ParallelRadixSort(table, size, threadPool, partition, NB_THREAD);
+        cout << "sorted in " << (sec() - t) << " seconds" << endl;
 
-        cout << "sorted? " << ((checkSorted(table, 10000000))?"yes":"no") << endl;
+        cout << "sorted? " << ((checkSorted(table, size))?"yes":"no") << endl;
 
         delete[] table;
+    }
+
+    void testParallelHashJoin() {
+        ParallelHashJoin parallelHashJoin(20, 20, 10, 4);
+        parallelHashJoin.InitTables(20);
+        parallelHashJoin.HashJoinOnR();
+        parallelHashJoin.PrintResult(true);
     }
 
 }

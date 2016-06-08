@@ -10,6 +10,7 @@ using namespace SMJ;
  * start a benchmark : comparison between simple and parallel merge
  */
 void benchmarkMerge() {
+    NB_THREAD = 4;
     double start;
     vector<string> results;
     ofstream file(kF_MERGE, ofstream::out);
@@ -26,8 +27,12 @@ void benchmarkMerge() {
                 int* S = new int[nbRows];
                 fillTable(R, nbRows, INTEGER_MAX_3);
                 fillTable(S, nbRows, INTEGER_MAX_3);
-                parallelSort(R, nbRows, threadPool, partitionArray(R, nbRows, NB_THREAD));
-                parallelSort(S, nbRows, threadPool, partitionArray(S, nbRows, NB_THREAD));
+
+                auto pR = partitionArray(R, nbRows, NB_THREAD);
+                auto pS = partitionArray(S, nbRows, NB_THREAD);
+
+                parallelSort(R, nbRows, threadPool, pR);
+                parallelSort(S, nbRows, threadPool, pS);
 
                 start = sec();
                 mergeRelations(R, R + nbRows, S, S + nbRows, results, 0, 0);
@@ -35,7 +40,7 @@ void benchmarkMerge() {
                 results.clear();
 
                 start = sec();
-                auto join = parallelMerge(R, S, nbRows, nbRows);
+                auto join = parallelMerge3(threadPool, R, S, nbRows, nbRows, pR);
                 avg_pmerge += sec() - start;
 
                 delete[] R;

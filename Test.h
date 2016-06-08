@@ -48,7 +48,15 @@ namespace SMJ{
      */
     void testParallelRadixSort();
 
+    /*
+     * radix sort on million elements
+     */
     void radixSortMillionElements();
+
+    /*
+     * test parallel hash join
+     */
+    void testParallelHashJoin();
 
 }
 

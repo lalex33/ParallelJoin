@@ -3,11 +3,13 @@
 namespace SMJ {
 
     void CreateHistogramWithMax(int *start, int *end, int digit, std::vector<int> &histogram, int &max){
+        double s = sec();
         max = *start;
         while (start != end) {
             if(*start > max) max = *start;
             ++histogram[getDigit(*(start++), digit)];
         }
+        std::cout << "histogram routine : " << (sec() - s) << std::endl;
     }
 
     std::vector<std::vector<int>> MakeHistogramsWithMax(ThreadPool &threadPool, const std::vector<Partition> &partitions,
@@ -31,9 +33,11 @@ namespace SMJ {
     }
 
     void CreateHistogram(int *start, int *end, int digit, std::vector<int> &histogram) {
+        double s = sec();
         while (start != end) {
             ++histogram[getDigit(*(start++), digit)];
         }
+        std::cout << "histogram routine : " << (sec() - s) << std::endl;
     }
 
     std::vector<std::vector<int>> MakeHistograms(ThreadPool &threadPool, const std::vector<Partition> &partitions,
@@ -72,10 +76,10 @@ namespace SMJ {
 
     void MoveRoutine(int *table, const Partition &copy, std::vector<int> &histogram, int digit) {
         double s = sec();
-        int *start = copy.start, *end = copy.end, pos;
+        int *start = copy.start, *end = copy.end;
         while (start != end){
-            pos = getDigit(*start, digit);
-            *(table + histogram[pos]++) = *(start++);
+            *(table + histogram[getDigit(*start, digit)]++) = *start;
+            ++start;
         }
         std::cout << "move routine : " << (sec() - s) << std::endl;
     }
@@ -96,7 +100,7 @@ namespace SMJ {
         std::cout << "histograms with max : " << (sec() - start) << std::endl;
         start = sec();
         MoveResults(p_buffer, *table_partition, threadPool, histograms, num_thread, 0);
-        std::cout << "move results : " << (sec() - start) << std::endl;
+        std::cout << "move results : " << (sec() - start) << std::endl << std::endl;
 
         std::ostringstream oss;
         oss << max;
@@ -110,7 +114,7 @@ namespace SMJ {
             std::cout << "histograms : " << (sec() - start) << std::endl;
             start = sec();
             MoveResults(p_buffer, *table_partition, threadPool, histograms, num_thread, digit);
-            std::cout << "move results : " << (sec() - start) << std::endl;
+            std::cout << "move results : " << (sec() - start) << std::endl << std::endl;
         }
 
         table = p_buffer;

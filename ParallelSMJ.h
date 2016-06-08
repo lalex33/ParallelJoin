@@ -10,11 +10,6 @@ namespace SMJ{
     const uint MAX_DIGIT = 10;
     extern uint NB_THREAD;
 
-    static int pow10[10] = {
-        1, 10, 100, 1000, 10000,
-        100000, 1000000, 10000000, 100000000, 1000000000
-    };
-
     struct Partition{
         int *start, *end;
     };
@@ -36,13 +31,17 @@ namespace SMJ{
      */
     int parallelMax(int *table, uint size, ThreadPool& threadPool, const std::vector<Partition> &partitions);
 
+
+    static int pow10[10] = {
+            1, 10, 100, 1000, 10000,
+            100000, 1000000, 10000000, 100000000, 1000000000
+    };
+
     /*
      * return the digit at the given position
      * pos of least digit = 0
      */
     inline int getDigit(int number, int pos){
-        //return (pos == 0) ? number % 10 : getDigit (number/10, --pos);
-        if(pos == 0) return number%10;
         return ( (number / pow10[pos]) % 10);
     }
 

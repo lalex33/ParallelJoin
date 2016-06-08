@@ -40,12 +40,13 @@ int main(){
      * Parallel radix sort, second version
      */
     //testParallelRadixSort();
-    radixSortMillionElements();
+    //radixSortMillionElements();
 
     /*
      * Hash Join
      */
     //benchmarkParallelHashJoin();
+    //testParallelHashJoin();
 
     /*
      * Hash Join vs Sort Merge Join

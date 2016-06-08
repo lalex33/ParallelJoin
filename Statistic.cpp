@@ -127,7 +127,7 @@ void benchmarkParallelHashJoin() {
 void benchmarkHashVsSMJoin() {
     ofstream file(kF_COMPARISON, ofstream::out);
     double start = 0.0;
-    const int num_buckets = 10000000;
+    const int num_buckets = NB_ROWS_THREAD * 2;
 
     if(!file.fail()){
         file << "Number of thread;Parallel hash join;Parallel SMJ;Number of rows : " << NB_ROWS_THREAD << ";Integer range : 0-" << INTEGER_MAX
@@ -160,10 +160,10 @@ void benchmarkHashVsSMJoin() {
                 fillTable(S, NB_ROWS_THREAD, INTEGER_MAX);
 
                 ThreadPool threadPool(nbThread);
-                start = sec();
                 auto partitionsR = partitionArray(R, NB_ROWS_THREAD, nbThread);
                 auto partitionsS = partitionArray(S, NB_ROWS_THREAD, nbThread);
 
+                start = sec();
                 //parallelSort(R, NB_ROWS_THREAD, threadPool, partitionsR);
                 ParallelRadixSort(R, NB_ROWS_THREAD, threadPool, partitionsR, nbThread);
                 avg_merge_smj += sec() - start;
