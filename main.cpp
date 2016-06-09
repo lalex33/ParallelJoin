@@ -52,7 +52,12 @@ int main(){
     /*
      * Hash Join vs Sort Merge Join
      */
-    benchmarkHashVsSMJoin();
+    //benchmarkHashVsSMJoin();
+
+    /*
+     * papi cache miss
+     */
+    benchmarkPAPI();
 
     return 0;
 }

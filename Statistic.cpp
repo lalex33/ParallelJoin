@@ -7,7 +7,73 @@ using namespace std;
 using namespace SMJ;
 
 void benchmarkPAPI() {
+    NB_THREAD = 10;
+#ifdef __linux__
+    const int NB_EVENTS = 5;
+    const int NB_ALGORITHMS = 3;
+    int events[NB_EVENTS] = {PAPI_L1_DCM, PAPI_L1_ICM, PAPI_L2_DCM, PAPI_L2_ICM, PAPI_L3_TCM};
+    int ret;
+    long_long values[NB_ALGORITHMS][NB_EVENTS];
 
+    const int nb_rows = 10000000;
+    ThreadPool threadPool(NB_THREAD);
+    int *R = new int[nb_rows], *S = new int[nb_rows];
+    auto part_r = partitionArray(R, nb_rows, NB_THREAD);
+    auto part_s = partitionArray(S, nb_rows, NB_THREAD);
+    vector<string> result;
+
+    int retval = PAPI_library_init(PAPI_VER_CURRENT);
+    if (retval != PAPI_VER_CURRENT && retval < 0) {
+        printf("PAPI library version mismatch!\n");
+        exit(1);
+    }
+    if (PAPI_num_counters() < NB_EVENTS) {
+        fprintf(stderr, "No hardware counters here, or PAPI not supported.\n");
+        exit(1);
+    }
+    if ((ret = PAPI_start_counters(events, NB_EVENTS)) != PAPI_OK) {
+        fprintf(stderr, "PAPI failed to start counters: %s\n", PAPI_strerror(ret));
+        exit(1);
+    }
+
+    fillTable(R, nb_rows, INT_MAX);
+    fillTable(S, nb_rows, INT_MAX);
+    std::sort(R, R + nb_rows);
+    std::sort(S, S + nb_rows);
+    mergeRelations(R, R + nb_rows, S, S + nb_rows, result, 0, 0);
+
+    if ((ret = PAPI_read_counters(values[0], NB_EVENTS)) != PAPI_OK) {
+        fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
+        exit(1);
+    }
+
+    fillTable(R, nb_rows, INT_MAX);
+    fillTable(S, nb_rows, INT_MAX);
+    parallelSort(R, nb_rows, threadPool, part_r);
+    parallelSort(S, nb_rows, threadPool, part_s);
+    parallelMerge3(threadPool, R, S, nb_rows, nb_rows, part_r);
+
+    if ((ret = PAPI_read_counters(values[1], NB_EVENTS)) != PAPI_OK) {
+        fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
+        exit(1);
+    }
+
+    fillTable(R, nb_rows, INT_MAX);
+    fillTable(S, nb_rows, INT_MAX);
+    ParallelRadixSort(R, nb_rows, threadPool, part_r, NB_THREAD);
+    ParallelRadixSort(S, nb_rows, threadPool, part_s, NB_THREAD);
+    parallelMerge3(threadPool, R, S, nb_rows, nb_rows, part_r);
+
+    if ((ret = PAPI_read_counters(values[2], NB_EVENTS)) != PAPI_OK) {
+        fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
+        exit(1);
+    }
+
+    cout << "L1 data cache miss | L1 instr. cache miss | L2 data cache miss | L2 instr. cache miss | L3 total cache miss" << endl;
+    cout << "Sort merge join : " << values[0][0] << " , " << values[0][1] << " , " << values[0][2] << " , " << values[0][3] << " , " << values[0][4] << endl;
+    cout << "Parallel sort merge join 1: " << values[1][0] << " , " << values[1][1] << " , " << values[1][2] << " , " << values[1][3] << " , " << values[1][4] << endl;
+    cout << "Parallel sort merge join 2: " << values[2][0] << " , " << values[2][1] << " , " << values[2][2] << " , " << values[2][3] << " , " << values[2][4] << endl;
+#endif
 }
 
 void benchmarkThreadPSMJ() {
@@ -22,22 +88,6 @@ void benchmarkThreadPSMJ() {
         int* S1 = new int[NB_ROWS_THREAD];
         fillTable(R1, NB_ROWS_THREAD, INTEGER_MAX);
         fillTable(S1, NB_ROWS_THREAD, INTEGER_MAX);
-
-        #ifdef __linux__
-            const int NB_EVENTS = 4;
-            int events[NB_EVENTS] = {PAPI_L1_DCM, PAPI_L2_DCM, PAPI_L2_DCA, PAPI_L1_LDM};
-            int ret;
-            long_long values[NB_EVENTS];
-
-            if (PAPI_num_counters() < NB_EVENTS) {
-                fprintf(stderr, "No hardware counters here, or PAPI not supported.\n");
-                exit(1);
-            }
-            if ((ret = PAPI_start_counters(events, NB_EVENTS)) != PAPI_OK) {
-                fprintf(stderr, "PAPI failed to start counters: %s\n", PAPI_strerror(ret));
-                exit(1);
-            }
-        #endif
 
         for(uint nbThread = NB_THREAD_MIN; nbThread <= NB_THREAD_MAX; ++nbThread){
             NB_THREAD = nbThread;
@@ -67,17 +117,6 @@ void benchmarkThreadPSMJ() {
                 start = sec();
                 join = parallelMerge3(threadPool, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD, partitionsR);
                 avg_merge += sec() - start;
-
-                #ifdef __linux__
-                    if ((ret = PAPI_read_counters(values, NB_EVENTS)) != PAPI_OK) {
-                        fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
-                        exit(1);
-                    }
-                    for(int i=0; i<NB_EVENTS; ++i){
-                        cout << "values[" << i << "] = " << values[i] << endl;
-                    }
-                    cout << "Miss rate : " << (((double)values[1]/values[2])*100) << endl;
-                #endif
 
                 join.clear();
                 delete[] R;
