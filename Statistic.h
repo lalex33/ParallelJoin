@@ -22,8 +22,13 @@ const int NB_THREAD_MIN = 1;
 const int NB_THREAD_MAX = 16;
 const int NB_ROWS_THREAD = 10000000;
 
-const int NB_TRY = 1;
-const int NB_TRY_2 = 1;
+const int NB_TRY = 5;
+const int NB_TRY_2 = 5;
+
+/*
+ * cache miss stats
+ */
+void benchmarkPAPI();
 
 /*
  * start a benchmark (number of threads) of PSMJ

@@ -6,6 +6,10 @@
 using namespace std;
 using namespace SMJ;
 
+void benchmarkPAPI() {
+
+}
+
 void benchmarkThreadPSMJ() {
     vector<vector<string>> join;
     double start;
@@ -164,18 +168,14 @@ void benchmarkHashVsSMJoin() {
                 auto partitionsS = partitionArray(S, NB_ROWS_THREAD, nbThread);
 
                 start = sec();
-                //parallelSort(R, NB_ROWS_THREAD, threadPool, partitionsR);
                 ParallelRadixSort(R, NB_ROWS_THREAD, threadPool, partitionsR, nbThread);
                 avg_merge_smj += sec() - start;
                 cout << "sort R = " << (sec() - start) << endl;
 
                 start = sec();
-                //parallelSort(S, NB_ROWS_THREAD, threadPool, partitionsS);
                 ParallelRadixSort(S, NB_ROWS_THREAD, threadPool, partitionsS, nbThread);
                 avg_merge_smj += sec() - start;
                 cout << "sort S = " << (sec() - start) << endl;
-
-                cout << "sorted ? " << checkSorted(R, NB_ROWS_THREAD) << " , " << checkSorted(S, NB_ROWS_THREAD) << endl;
 
                 start = sec();
                 parallelMerge3(threadPool, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD, partitionsR);

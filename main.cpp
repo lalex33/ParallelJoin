@@ -1,12 +1,11 @@
 #include "Statistic1.h"
-
 #include "ParallelRadixSort.hpp"
 
 using namespace SMJ;
 
 int main(){
     // generate a seed for random values
-    srand((unsigned int) time(NULL));
+    srand(time(NULL));
 
     // set default number of thread
     NB_THREAD = 4;
@@ -23,6 +22,8 @@ int main(){
     // shows example of parallel sort-merge join
     //testParallelSort(false);
     //testParallelJoin();
+
+    //benchmarkSort();
 
     //testLotOfData();
 
@@ -51,7 +52,7 @@ int main(){
     /*
      * Hash Join vs Sort Merge Join
      */
-    //benchmarkHashVsSMJoin();
+    benchmarkHashVsSMJoin();
 
     return 0;
 }

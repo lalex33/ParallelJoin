@@ -12,7 +12,7 @@ namespace SMJ {
     }
 
     inline void ComputePositions(std::vector<std::vector<int>> &histograms, int num_threads){
-        double s = sec();
+        //double s = sec();
         auto histogramCopy = histograms;
 
         for (int thread = 0; thread < num_threads; ++thread) {
@@ -29,7 +29,7 @@ namespace SMJ {
             }
         }
 
-        std::cout << "compute positions : " << (sec() - s) << std::endl;
+        //std::cout << "compute positions : " << (sec() - s) << std::endl;
     }
 
     void CreateHistogramWithMax(int *start, int *end, int digit, std::vector<int> &histogram, int &max);

@@ -6,6 +6,48 @@
 using namespace std;
 using namespace SMJ;
 
+void benchmarkSort() {
+    NB_THREAD = 8;
+    double start;
+    ofstream file("sort1.csv", ofstream::out);
+    ThreadPool threadPool(NB_THREAD);
+
+    if(!file.fail()){
+        file << "Number of rows;std::sort;1st radix sort;2nd radix sort;Number of threads : " << NB_THREAD << ";Integer range : 0-" << INTEGER_MAX << endl;
+        for(uint nbRows = 1000000; nbRows <= 20000000; nbRows += 1000000){
+            cout << "Computing " << nbRows << endl;
+
+            double avg_std_sort = 0.0, avg_sort_1 = 0.0, avg_sort_2 = 0.0;
+            for(int i = 0; i < 1; ++i){
+                int* R = new int[nbRows];
+                auto pR = partitionArray(R, nbRows, NB_THREAD);
+
+                fillTable(R, nbRows, INTEGER_MAX);
+                start = sec();
+                std::sort(R, R + nbRows);
+                avg_std_sort += sec() - start;
+
+                fillTable(R, nbRows, INTEGER_MAX);
+                start = sec();
+                parallelSort(R, nbRows, threadPool, pR);
+                avg_sort_1 += sec() - start;
+
+                fillTable(R, nbRows, INTEGER_MAX);
+                start = sec();
+                ParallelRadixSort(R, nbRows, threadPool, pR, NB_THREAD);
+                avg_sort_2 += sec() - start;
+
+                delete[] R;
+            }
+
+            file << nbRows << ";" << (avg_std_sort/NB_TRY_2) << ";" << (avg_sort_1/NB_TRY_2) << ";" << (avg_sort_2/NB_TRY_2) << "\r\n";
+        }
+        file.close();
+    }else{
+        cout << "ERROR : opening file failed" << endl;
+    }
+}
+
 /*
  * start a benchmark : comparison between simple and parallel merge
  */
