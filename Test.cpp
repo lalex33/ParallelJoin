@@ -20,7 +20,7 @@ namespace SMJ{
         parallelSort(R, P_SIZE_R, threadPool, pR);
         parallelSort(S, P_SIZE_S, threadPool, pS);
 
-        auto results = assembleResults(parallelMerge3(threadPool, R, S, P_SIZE_R, P_SIZE_S, pR));
+        auto results = assembleResults(parallelMerge(threadPool, R, S, P_SIZE_R, P_SIZE_S, pR));
 
         printSortMerge(R, S, P_SIZE_R, P_SIZE_S, results);
 
@@ -80,58 +80,6 @@ namespace SMJ{
         delete[] S;
     }
 
-    void testLotOfData(){
-        srand(time(NULL));
-        ThreadPool threadPool(NB_THREAD);
-
-        int* R = new int[MAX_SIZE];
-        int* S = new int[MAX_SIZE];
-
-        double start;
-
-        fillTable(R, MAX_SIZE, MAX_RAND_TEST);
-        fillTable(S, MAX_SIZE, MAX_RAND_TEST);
-
-        cout << "Start sort" << endl;
-        start = sec();
-        parallelSort(R, MAX_SIZE, threadPool, partitionArray(R, MAX_SIZE, NB_THREAD));
-        cout << "Sorting R with parallel radix : " << (sec() - start) << " seconds" << endl;
-        cout << "Sorted : " << checkSorted(R, MAX_SIZE) << endl;
-
-        cout << "Start sort" << endl;
-        start = sec();
-        sort(S, S + MAX_SIZE);
-        cout << "Sorting S with std::sort : " << (sec() - start) << " seconds" << endl;
-        cout << "Sorted : " << checkSorted(S, MAX_SIZE) << endl;
-
-        cout << "Start merge" << endl;
-        start = sec();
-        auto result = parallelMerge(R, S, MAX_SIZE, MAX_SIZE);
-        cout << "Merging R with parallel merge 1: " << (sec() - start) << " seconds" << endl;
-        //cout << "Merged? -> " << checkMerge(R, MAX_SIZE, S, MAX_SIZE, assembleResults(result)) << endl;
-
-        cout << "Start merge" << endl;
-        start = sec();
-        result = parallelMerge2(R, S, MAX_SIZE, MAX_SIZE);
-        cout << "Merging R with parallel merge 2: " << (sec() - start) << " seconds" << endl;
-        //cout << "Merged? -> " << checkMerge(R, MAX_SIZE, S, MAX_SIZE, assembleResults(result)) << endl;
-
-        cout << "Start merge" << endl;
-        start = sec();
-        result = parallelMerge3(threadPool, R, S, MAX_SIZE, MAX_SIZE, partitionArray(R, MAX_SIZE, NB_THREAD));
-        cout << "Merging R with parallel merge 3: " << (sec() - start) << " seconds" << endl;
-
-        cout << "Start merge" << endl;
-        vector<string> join;
-        start = sec();
-        mergeRelations(R, R + MAX_SIZE, S, S + MAX_SIZE, join, 0, 0);
-        cout << "Merging R with merge : " << (sec() - start) << " seconds" << endl;
-        //cout << "Merged? -> " << checkMerge(R, MAX_SIZE, S, MAX_SIZE, join) << endl;
-
-        delete[] R;
-        delete[] S;
-    }
-
     void testParallelRadixSort() {
         int *table = new int[20];
         fillTable(table, 20, 120);
@@ -157,7 +105,7 @@ namespace SMJ{
         int *table = new int[size];
         fillTable(table, size, INT_MAX);
 
-        NB_THREAD = 3;
+        NB_THREAD = 40;
         ThreadPool threadPool(NB_THREAD);
 
         double t = sec();
@@ -171,10 +119,11 @@ namespace SMJ{
     }
 
     void testParallelHashJoin() {
-        ParallelHashJoin parallelHashJoin(20, 20, 10, 4);
-        parallelHashJoin.InitTables(20);
-        parallelHashJoin.HashJoinOnR();
-        parallelHashJoin.PrintResult(true);
+        const int size = 10000000;
+        ParallelHashJoin parallelHashJoin(size, size, size*2, 16);
+        parallelHashJoin.InitTables(INT_MAX);
+        parallelHashJoin.ParallelHashJoinOnR();
+        cout << parallelHashJoin.GetHashTime() << " + " << parallelHashJoin.GetJoinTime() << " = " << parallelHashJoin.GetProcessingTime() << endl;
     }
 
 }

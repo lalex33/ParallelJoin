@@ -25,17 +25,12 @@ int main(){
 
     //benchmarkSort();
 
-    //testLotOfData();
-
     //benchmarkData();
-    //benchmarkData2();
     //benchmarkMerge();
 
     // launch test of parallel sort-merge
     //benchmarkParallelSMJ();
     //benchmarkThreadPSMJ();
-
-    //benchmarkMergeThread();
 
     /*
      * Parallel radix sort, second version
@@ -47,7 +42,7 @@ int main(){
      * Hash Join
      */
     //benchmarkParallelHashJoin();
-    //testParallelHashJoin();
+    testParallelHashJoin();
 
     /*
      * Hash Join vs Sort Merge Join
@@ -57,7 +52,7 @@ int main(){
     /*
      * papi cache miss
      */
-    benchmarkPAPI();
+    //benchmarkPAPI();
 
     return 0;
 }

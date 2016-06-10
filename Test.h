@@ -39,11 +39,6 @@ namespace SMJ{
     void testParallelJoin();
 
     /*
-     * test on large amount of data
-     */
-    void testLotOfData();
-
-    /*
      * test last parallel radix sort
      */
     void testParallelRadixSort();

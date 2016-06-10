@@ -51,7 +51,7 @@ void benchmarkPAPI() {
     fillTable(S, nb_rows, INT_MAX);
     parallelSort(R, nb_rows, threadPool, part_r);
     parallelSort(S, nb_rows, threadPool, part_s);
-    parallelMerge3(threadPool, R, S, nb_rows, nb_rows, part_r);
+    parallelMerge(threadPool, R, S, nb_rows, nb_rows, part_r);
 
     if ((ret = PAPI_read_counters(values[1], NB_EVENTS)) != PAPI_OK) {
         fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
@@ -62,7 +62,7 @@ void benchmarkPAPI() {
     fillTable(S, nb_rows, INT_MAX);
     ParallelRadixSort(R, nb_rows, threadPool, part_r, NB_THREAD);
     ParallelRadixSort(S, nb_rows, threadPool, part_s, NB_THREAD);
-    parallelMerge3(threadPool, R, S, nb_rows, nb_rows, part_r);
+    parallelMerge(threadPool, R, S, nb_rows, nb_rows, part_r);
 
     if ((ret = PAPI_read_counters(values[2], NB_EVENTS)) != PAPI_OK) {
         fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
@@ -115,7 +115,7 @@ void benchmarkThreadPSMJ() {
                 cout << "S sorted? = " << checkSorted(S, NB_ROWS_THREAD) << endl;
 
                 start = sec();
-                join = parallelMerge3(threadPool, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD, partitionsR);
+                join = parallelMerge(threadPool, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD, partitionsR);
                 avg_merge += sec() - start;
 
                 join.clear();
@@ -217,7 +217,7 @@ void benchmarkHashVsSMJoin() {
                 cout << "sort S = " << (sec() - start) << endl;
 
                 start = sec();
-                parallelMerge3(threadPool, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD, partitionsR);
+                parallelMerge(threadPool, R, S, NB_ROWS_THREAD, NB_ROWS_THREAD, partitionsR);
                 avg_merge_smj += sec() - start;
                 cout << "merge = " << (sec() - start) << endl;
 
