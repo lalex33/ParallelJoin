@@ -1,7 +1,12 @@
 #ifndef SORTMERGEJOIN_PARALLELRADIXSORT_HPP
 #define SORTMERGEJOIN_PARALLELRADIXSORT_HPP
 
+#include "ThreadPool.h"
 #include "ParallelSMJ.h"
+
+#include <vector>
+#include <functional>
+#include <sstream>
 
 namespace SMJ {
 

@@ -1,7 +1,12 @@
 #ifndef SORTMERGEJOIN_STATISTIQUE_H
 #define SORTMERGEJOIN_STATISTIQUE_H
 
-#include "Test.h"
+#include "ParallelHashJoin.hpp"
+#include "ParallelRadixSort.hpp"
+#include "ParallelSMJ.h"
+
+#include <fstream>
+#include <cassert>
 
 const int NB_ROWS_MAX = 2000000;
 

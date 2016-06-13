@@ -4,7 +4,7 @@ project(SortMergeJoin)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -pthread -O3")
 
 set(SOURCE_FILES main.cpp Statistic.cpp Statistic.h SortMergeJoin.cpp SortMergeJoin.h ParallelSMJ.cpp ParallelSMJ.h
-        SMJUtility.h SMJUtility.cpp Test.h Test.cpp ThreadPool.cpp ThreadPool.h ParallelHashJoin.cpp ParallelHashJoin.hpp Statistic1.h ParallelRadixSort.hpp ParallelRadixSort.cpp)
+        JoinUtility.h JoinUtility.cpp Test.h Test.cpp ThreadPool.cpp ThreadPool.h ParallelHashJoin.cpp ParallelHashJoin.hpp Statistics.h ParallelRadixSort.hpp ParallelRadixSort.cpp)
 add_executable(SortMergeJoin ${SOURCE_FILES})
 
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")

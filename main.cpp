@@ -1,5 +1,5 @@
-#include "Statistic1.h"
-#include "ParallelRadixSort.hpp"
+#include "Statistics.h"
+#include "Test.h"
 
 using namespace SMJ;
 
@@ -42,12 +42,12 @@ int main(){
      * Hash Join
      */
     //benchmarkParallelHashJoin();
-    testParallelHashJoin();
+    //testParallelHashJoin();
 
     /*
      * Hash Join vs Sort Merge Join
      */
-    //benchmarkHashVsSMJoin();
+    benchmarkHashVsSMJoin();
 
     /*
      * papi cache miss

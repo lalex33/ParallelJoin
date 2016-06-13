@@ -2,7 +2,7 @@
 #define SORTMERGEJOIN_PARALLELHASHJOIN_HPP
 
 #include <map>
-#include "SMJUtility.h"
+#include <mutex>
 #include "ThreadPool.h"
 
 class ParallelHashJoin {

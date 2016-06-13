@@ -6,55 +6,59 @@
 
 #include "SortMergeJoin.h"
 
+#include <thread>
+#include <queue>
+
 class ThreadPool {
 public:
 
-        // Constructor.
-        ThreadPool(int threads);
+    // Constructor.
+    ThreadPool(int threads);
 
-        // Destructor.
-        ~ThreadPool();
+    // Destructor.
+    ~ThreadPool();
 
-        // Adds task to a task queue.
-        void Enqueue(std::function<void()> f);
+    // Adds task to a task queue.
+    void Enqueue(std::function<void()> f);
 
-        // Shut down the pool.
-        void ShutDown();
+    // Shut down the pool.
+    void ShutDown();
 
-        void Resize(uint8_t threads);
+    void Resize(uint8_t threads);
 
-        void WaitEndOfWork();
+    void WaitEndOfWork();
 
 private:
-        // Thread pool storage.
-        std::vector<std::thread> threadPool;
 
-        // Queue to keep track of incoming tasks.
-        std::queue<std::function<void()>> tasks;
+    // Thread pool storage.
+    std::vector<std::thread> threadPool;
 
-        // Task queue mutex.
-        std::mutex tasksMutex;
+    // Queue to keep track of incoming tasks.
+    std::queue<std::function<void()>> tasks;
 
-        // Condition variable.
-        std::condition_variable condition;
+    // Task queue mutex.
+    std::mutex tasksMutex;
 
-        // Number of tasks running
-        std::atomic_uint running;
+    // Condition variable.
+    std::condition_variable condition;
 
-        // Condition variable for waiting end of all tasks
-        std::condition_variable wait_var;
+    // Number of tasks running
+    std::atomic_uint running;
 
-        // Waiting mutex
-        std::mutex wait_mutex;
+    // Condition variable for waiting end of all tasks
+    std::condition_variable wait_var;
 
-        // Indicates that pool needs to be shut down.
-        bool terminate;
+    // Waiting mutex
+    std::mutex wait_mutex;
 
-        // Indicates that pool has been terminated.
-        bool stopped;
+    // Indicates that pool needs to be shut down.
+    bool terminate;
 
-        // Function that will be invoked by our threads.
-        void Invoke();
+    // Indicates that pool has been terminated.
+    bool stopped;
+
+    // Function that will be invoked by our threads.
+    void Invoke();
 };
 
 

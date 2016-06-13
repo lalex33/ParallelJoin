@@ -1,7 +1,6 @@
 #define NDEBUG
 
 #include "Statistic.h"
-#include "ParallelHashJoin.hpp"
 
 using namespace std;
 using namespace SMJ;

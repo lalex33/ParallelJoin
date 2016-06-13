@@ -1,12 +1,11 @@
-//
-// Created by Alexis bayle on 19/04/2016.
-//
-
 #ifndef SORTMERGEJOIN_TEST_H
 #define SORTMERGEJOIN_TEST_H
 
 #include "ParallelSMJ.h"
 #include "ParallelRadixSort.hpp"
+#include "ParallelHashJoin.hpp"
+
+#include <iostream>
 
 namespace SMJ{
 

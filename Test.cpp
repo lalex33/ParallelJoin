@@ -1,5 +1,4 @@
 #include "Test.h"
-#include "ParallelHashJoin.hpp"
 
 using namespace std;
 

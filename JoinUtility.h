@@ -1,38 +1,12 @@
 #ifndef SORTMERGEJOIN_SMJUTILITY_H
 #define SORTMERGEJOIN_SMJUTILITY_H
 
-#include <iostream>
 #include <cstdlib>
 #include <string>
-#include <fstream>
-#include <cstdio>
-#include <sstream>
-
-#include <mm_malloc.h>
-
 #include <vector>
-#include <queue>
-#include <algorithm>
-
-#include <time.h>
 #include <sys/time.h>
-#include <ctime>
-#include <limits.h>
-#include <cstdint>
-#include <unistd.h>
-#include <cassert>
-
-#include <thread>
-#include <atomic>
-#include <mutex>
-#include <condition_variable>
-
-#include <sched.h>
-#include <pthread.h>
-
-#ifdef __linux__
-#include "/home/bayle/papi/include/papi.h"
-#endif
+#include <iostream>
+#include <sstream>
 
 // typedef
 typedef unsigned int uint;
