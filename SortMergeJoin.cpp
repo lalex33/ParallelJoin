@@ -17,8 +17,6 @@ namespace SMJ{
         tupleS = lower_bound(startS, endS, *startR);
         endS = upper_bound(startS, endS, *(endR-1));
 
-        //double start = sec();
-
         // loop until there is no tuples to read in both relation
         while(tupleR != endR && tupleS != endS){
             valueR = *tupleR;
@@ -64,8 +62,6 @@ namespace SMJ{
                 ++rowS;
             }
         }
-
-        //cout << "       " << this_thread::get_id() << " -> merge : " << (sec() - start) << endl;
     }
 
 }

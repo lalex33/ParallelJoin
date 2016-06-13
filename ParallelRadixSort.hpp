@@ -7,12 +7,7 @@ namespace SMJ {
 
     const int kNumDigit = 10;
 
-    inline int GetDigit(int v, int p) {
-        return (v >> p * 8) & 0x000000ff;
-    }
-
     inline void ComputePositions(std::vector<std::vector<int>> &histograms, int num_threads){
-        //double s = sec();
         auto histogramCopy = histograms;
 
         for (int thread = 0; thread < num_threads; ++thread) {
@@ -28,8 +23,6 @@ namespace SMJ {
                 }
             }
         }
-
-        //std::cout << "compute positions : " << (sec() - s) << std::endl;
     }
 
     void CreateHistogramWithMax(int *start, int *end, int digit, std::vector<int> &histogram, int &max);
