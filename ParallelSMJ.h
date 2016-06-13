@@ -1,8 +1,7 @@
 #ifndef SORTMERGEJOIN_PARALLELSORT_H
 #define SORTMERGEJOIN_PARALLELSORT_H
 
-#include "ThreadWork.h"
-#include "PartitionedArray.hpp"
+#include "ThreadPool.h"
 
 namespace SMJ{
 
